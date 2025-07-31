@@ -1,0 +1,29 @@
+<!-- reviews/templates/reviews/add_property.html -->
+{% extends "reviews/base.html" %}
+{% load i18n %}
+
+{% block title %}{% trans "Add a New Property" %} | ShelterTree{% endblock %}
+
+{% block content %}
+    <h1>{% trans "Add a New Property" %}</h1>
+    <p class="intro-text" style="color: #555; margin-bottom: 2rem;">
+        {% trans "Thank you for helping our community grow! Please provide the details of the property below. Your submission will be reviewed by an admin before it appears on the site." %}
+    </p>
+
+    <form method="post" novalidate>
+        {% csrf_token %}
+
+        <fieldset style="border: 1px solid #ddd; padding: 1.5rem; border-radius: 8px;">
+            <legend style="font-size: 1.2em; font-weight: bold; color: #005A31;">{% trans "Property Details" %}</legend>
+            
+            <p>{% trans "For now, please fill out the address fields manually. We will soon add Google Maps search to make this easier!" %}</p>
+
+            <!-- This will render each field in the PropertyForm as a paragraph -->
+            {{ form.as_p }}
+        </fieldset>
+
+        <button type="submit" class="button" style="margin-top: 1.5rem; padding: 0.8rem 1.5rem; font-size: 1.1em;">
+            {% trans "Submit Property for Review" %}
+        </button>
+    </form>
+{% endblock %}

@@ -1,0 +1,43 @@
+<!-- reviews/templates/reviews/base.html -->
+{% load i18n %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}ShelterTree{% endblock %}</title>
+    <style>
+        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; line-height: 1.6; color: #333; max-width: 960px; margin: 20px auto; padding: 0 20px; background-color: #f9f9f9; }
+        nav { background: #fff; border-bottom: 1px solid #ddd; padding: 1rem; margin-bottom: 2rem; display: flex; justify-content: space-between; align-items: center; }
+        nav a { text-decoration: none; color: #333; }
+        nav .logo { font-weight: bold; font-size: 1.2em; color: #005A31; }
+        nav .nav-links a { margin-left: 1rem; }
+        nav .nav-links a.button { background-color: #005A31; color: white; padding: 0.5rem 1rem; border-radius: 5px; }
+        .property-card, .review-card { background: #fff; border: 1px solid #ddd; padding: 1.5rem; margin-bottom: 1.5rem; border-radius: 8px; }
+        h1, h2 { color: #005A31; }
+        .pagination { margin-top: 2rem; text-align: center; }
+        .pagination a { padding: 0.5rem 1rem; border: 1px solid #ddd; text-decoration: none; color: #005A31; }
+        .pagination .current { font-weight: bold; }
+        #map { height: 300px; background-color: #eee; border-radius: 8px; margin-bottom: 2rem; }
+    </style>
+</head>
+<body>
+    <nav>
+        <a href="{% url 'property-list' %}" class="logo">ShelterTree</a>
+        <div class="nav-links">
+            {% if user.is_authenticated %}
+                <span>{% trans "Welcome" %}, {{ user.username }}</span>
+                <a href="#">{% trans "Logout" %}</a> {# Placeholder for Django's logout URL #}
+            {% else %}
+                <a href="#">{% trans "Login" %}</a> {# Placeholder for Django's login URL #}
+            {% endif %}
+            <a href="{% url 'add-property' %}" class="button">+ {% trans "Add a Property" %}</a>
+        </div>
+    </nav>
+    <main>
+        {% block content %}
+        <!-- The content of other templates will be injected here -->
+        {% endblock %}
+    </main>
+</body>
+</html>

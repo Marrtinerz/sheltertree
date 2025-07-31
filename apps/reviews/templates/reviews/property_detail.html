@@ -1,0 +1,54 @@
+<!-- reviews/templates/reviews/property_detail.html -->
+{% extends "reviews/base.html" %}
+{% load i18n %}
+
+{% block title %}{{ property.name }} | ShelterTree{% endblock %}
+
+{% block content %}
+    <h1>{{ property.name }}</h1>
+    <p><strong>{{ property.address }}</strong></p>
+    <p>{{ property.city }}, {{ property.state }}, {{ property.country }} {{ property.postal_code }}</p>
+
+    <!-- Placeholder for the Mapbox display -->
+    <div id="map"></div>
+
+    <div style="background-color: #e8f5e9; padding: 1rem; border-radius: 8px; margin-bottom: 2rem;">
+        <h2>{% trans "Share Your Experience!" %}</h2>
+        <p>{% trans "Help others by adding a review for your specific unit in this property." %}</p>
+        <!-- This button enables Journey 2: The property exists, but the user's unit might not. -->
+        <a href="{% url 'add-unit-and-review' property.pk %}" class="button">{% trans "Add Your Unit & Review" %}</a>
+    </div>
+
+    <hr>
+
+    <h2>{% trans "Reviews" %}</h2>
+
+    {% for review in approved_reviews %}
+        <div class="review-card">
+            <h3>{% trans "Unit:" %} {{ review.unit.unit_identifier }}</h3>
+            <p>
+                <small>
+                    {% blocktrans with author=review.author.username date=review.created_at|date:"F j, Y" %}
+                    Reviewed by <strong>{{ author }}</strong> on {{ date }}
+                    {% endblocktrans %}
+                </small>
+            </p>
+            <ul>
+                <li><strong>{% trans "Security" %}:</strong> {{ review.get_security_rating_display }} ({{ review.security_rating }}/5)</li>
+                <li><strong>{% trans "Electricity" %}:</strong> {{ review.get_electricity_rating_display }} ({{ review.electricity_rating }}/5)</li>
+                <li><strong>{% trans "Water" %}:</strong> {{ review.get_water_rating_display }} ({{ review.water_rating }}/5)</li>
+                <li><strong>{% trans "Management" %}:</strong> {{ review.get_management_rating_display }} ({{ review.management_rating }}/5)</li>
+            </ul>
+            <h4>{% trans "Pros" %}</h4>
+            <p>{{ review.pros|linebreaks }}</p>
+            <h4>{% trans "Cons" %}</h4>
+            <p>{{ review.cons|linebreaks }}</p>
+            
+            <!-- Placeholder for Journey 3: Add a review to a unit that already exists -->
+            <!-- <a href="#">Add another review for this unit</a> -->
+        </div>
+    {% empty %}
+        <p>{% trans "There are no approved reviews for this property yet. Be the first to add one!" %}</p>
+    {% endfor %}
+
+{% endblock %}

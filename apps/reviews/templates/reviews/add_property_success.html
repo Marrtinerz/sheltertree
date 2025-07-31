@@ -1,0 +1,32 @@
+<!-- reviews/templates/reviews/add_property_success.html -->
+{% extends "reviews/base.html" %}
+{% load i18n %}
+
+{% block title %}{% trans "Submission Successful" %} | ShelterTree{% endblock %}
+
+{% block content %}
+    <div style="text-align: center; background: #fff; border: 1px solid #ddd; padding: 2rem; border-radius: 8px;">
+        <h1 style="color: #4CAF50;">✅ {% trans "Property Submitted Successfully!" %}</h1>
+        <p>
+            {% blocktrans with property_name=property.name %}
+            Thank you for adding <strong>{{ property_name }}</strong> to ShelterTree.
+            Our team will review the submission, typically within 24 hours.
+            {% endblocktrans %}
+        </p>
+
+        <hr style="margin: 2rem 0;">
+
+        <h2>{% trans "Next Step: Add Your Review" %}</h2>
+        <p>
+            {% trans "Your property submission is complete, but your journey isn't. Now, add your specific unit details (e.g., your apartment number) and write your review." %}
+        </p>
+        <p>
+            <small>{% trans "Your review will be saved and will become public as soon as the property is approved." %}</small>
+        </p>
+        
+        <!-- This is the clear Call to Action that links to Stage 2 -->
+        <a href="{% url 'add-unit-and-review' property.pk %}" class="button" style="display: inline-block; margin-top: 1rem; padding: 1rem 2rem; font-size: 1.2em;">
+            {% trans "Continue to Add Unit & Review" %}
+        </a>
+    </div>
+{% endblock %}

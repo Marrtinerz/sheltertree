@@ -1,0 +1,32 @@
+<!-- reviews/templates/reviews/add_unit_and_review.html -->
+{% extends "reviews/base.html" %}
+{% load i18n %}
+
+{% block title %}{% trans "Add a Review" %} for {{ property.name }} | ShelterTree{% endblock %}
+
+{% block content %}
+    <h1>{% trans "Add Your Review for" %} <span style="color: #005A31;">{{ property.name }}</span></h1>
+    <p class="intro-text" style="color: #555; margin-bottom: 2rem;">
+        {% trans "Please provide your specific unit identifier and your honest feedback on the core aspects of living here." %}
+    </p>
+
+    <form method="post" novalidate>
+        {% csrf_token %}
+
+        <!-- Unit Form -->
+        <fieldset style="border: 1px solid #ddd; padding: 1.5rem; border-radius: 8px; margin-bottom: 1.5rem;">
+            <legend style="font-size: 1.2em; font-weight: bold;">{% trans "Step 1: Your Unit" %}</legend>
+            {{ unit_form.as_p }}
+        </fieldset>
+
+        <!-- Review Form -->
+        <fieldset style="border: 1px solid #ddd; padding: 1.5rem; border-radius: 8px;">
+            <legend style="font-size: 1.2em; font-weight: bold;">{% trans "Step 2: Your Review" %}</legend>
+            {{ review_form.as_p }}
+        </fieldset>
+
+        <button type="submit" class="button" style="margin-top: 1.5rem; padding: 0.8rem 1.5rem; font-size: 1.1em;">
+            {% trans "Submit Review" %}
+        </button>
+    </form>
+{% endblock %}

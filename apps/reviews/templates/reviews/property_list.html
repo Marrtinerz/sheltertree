@@ -1,0 +1,49 @@
+<!-- reviews/templates/reviews/property_list.html -->
+{% extends "reviews/base.html" %}
+{% load i18n %}
+
+{% block title %}{% trans "Browse Properties" %} | ShelterTree{% endblock %}
+
+{% block content %}
+    <h1>{% trans "Find Your Next Home" %}</h1>
+    <p>{% trans "Search for an Estate, Apartment, or Building to read and write reviews." %}</p>
+
+    <!-- This search bar is the entry point for all user journeys -->
+    <form method="get" action="{% url 'property-list' %}" style="margin-bottom: 2rem;">
+        <input type="text" name="q" placeholder="{% trans 'Search by property name or address...' %}" style="width: 80%; padding: 0.8rem;" value="{{ request.GET.q }}">
+        <button type="submit" class="button">{% trans "Search" %}</button>
+    </form>
+    
+    <p>
+        <strong>{% trans "Can't find your property?" %}</strong> 
+        <a href="{% url 'add-property' %}">{% trans "Be the first to add it and write a review." %}</a>
+    </p>
+
+    <hr>
+
+    <h2>{% trans "Recently Added Properties" %}</h2>
+    
+    {% for property in properties %}
+        <div class="property-card">
+            <h2><a href="{% url 'property-detail' property.pk %}">{{ property.name }}</a></h2>
+            <p>{{ property.city }}, {{ property.state }} - {{ property.country }}</p>
+        </div>
+    {% empty %}
+        <p>{% trans "No properties have been approved yet. If you just added one, please wait for an admin to review it." %}</p>
+    {% endfor %}
+
+    {% if is_paginated %}
+        <div class="pagination">
+            {% if page_obj.has_previous %}
+                <a href="?page={{ page_obj.previous_page_number }}">{% trans "Previous" %}</a>
+            {% endif %}
+            <span class="current">
+                {% trans "Page" %} {{ page_obj.number }} {% trans "of" %} {{ page_obj.paginator.num_pages }}.
+            </span>
+            {% if page_obj.has_next %}
+                <a href="?page={{ page_obj.next_page_number }}">{% trans "Next" %}</a>
+            {% endif %}
+        </div>
+    {% endif %}
+
+{% endblock %}
