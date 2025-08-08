@@ -26,5 +26,5 @@ urlpatterns = [
 
     # Journey 3: User adds a review to an EXISTING unit.
     # This is a placeholder for the view we will build next.
-    # path('unit/<int:unit_pk>/add-review/', views.add_review_to_unit, name='add-review-to-unit'),
+    path('unit/<int:unit_pk>/add-review/', views.add_review_to_unit, name='add-review-to-unit'),
 ]

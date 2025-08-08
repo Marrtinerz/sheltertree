@@ -1,43 +1,131 @@
-<!-- reviews/templates/reviews/base.html -->
 {% load i18n %}
 <!DOCTYPE html>
-<html lang="en">
+<html lang="{{ request.LANGUAGE_CODE }}">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{% block title %}ShelterTree{% endblock %}</title>
+    <title>{% block title %}ShelterTree{% endblock %} - {% trans "Your Home for Housing Reviews" %}</title>
+
+    <!-- Bootstrap CSS for a responsive and clean layout -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+
+    <!-- Mapbox GL JS CSS (for property detail pages) -->
+    <link href="https://api.mapbox.com/mapbox-gl-js/v2.15.0/mapbox-gl.css" rel="stylesheet">
+
+    <!-- Custom CSS can go here if needed in the future -->
     <style>
-        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; line-height: 1.6; color: #333; max-width: 960px; margin: 20px auto; padding: 0 20px; background-color: #f9f9f9; }
-        nav { background: #fff; border-bottom: 1px solid #ddd; padding: 1rem; margin-bottom: 2rem; display: flex; justify-content: space-between; align-items: center; }
-        nav a { text-decoration: none; color: #333; }
-        nav .logo { font-weight: bold; font-size: 1.2em; color: #005A31; }
-        nav .nav-links a { margin-left: 1rem; }
-        nav .nav-links a.button { background-color: #005A31; color: white; padding: 0.5rem 1rem; border-radius: 5px; }
-        .property-card, .review-card { background: #fff; border: 1px solid #ddd; padding: 1.5rem; margin-bottom: 1.5rem; border-radius: 8px; }
-        h1, h2 { color: #005A31; }
-        .pagination { margin-top: 2rem; text-align: center; }
-        .pagination a { padding: 0.5rem 1rem; border: 1px solid #ddd; text-decoration: none; color: #005A31; }
-        .pagination .current { font-weight: bold; }
-        #map { height: 300px; background-color: #eee; border-radius: 8px; margin-bottom: 2rem; }
+        body {
+            background-color: #f8f9fa; /* Light grey background */
+        }
+        .navbar {
+            box-shadow: 0 2px 4px rgba(0,0,0,.1);
+        }
+        .card {
+            border: none;
+            box-shadow: 0 2px 8px rgba(0,0,0,.1);
+        }
+        .btn-primary {
+            background-color: #005A31; /* A deep green for ShelterTree's brand */
+            border-color: #005A31;
+        }
+        .btn-primary:hover {
+            background-color: #004223;
+            border-color: #004223;
+        }
+        .form-label {
+            font-weight: bold;
+        }
     </style>
+
 </head>
 <body>
-    <nav>
-        <a href="{% url 'property-list' %}" class="logo">ShelterTree</a>
-        <div class="nav-links">
-            {% if user.is_authenticated %}
-                <span>{% trans "Welcome" %}, {{ user.username }}</span>
-                <a href="#">{% trans "Logout" %}</a> {# Placeholder for Django's logout URL #}
-            {% else %}
-                <a href="#">{% trans "Login" %}</a> {# Placeholder for Django's login URL #}
-            {% endif %}
-            <a href="{% url 'add-property' %}" class="button">+ {% trans "Add a Property" %}</a>
+
+    <!-- ================================================================= -->
+    <!-- Navigation Bar                                                  -->
+    <!-- ================================================================= -->
+    <nav class="navbar navbar-expand-lg navbar-light bg-white sticky-top">
+        <div class="container">
+            <a class="navbar-brand fw-bold" href="{% url 'property-list' %}">
+                🌳 ShelterTree
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    {% if user.is_authenticated %}
+                        <li class="nav-item">
+                            <span class="navbar-text">{% trans "Welcome" %}, {{ user.username }}</span>
+                        </li>
+                        <li class="nav-item">
+                            {# This would be the link to a future user profile page #}
+                            <a class="nav-link" href="#">{% trans "My Profile" %}</a>
+                        </li>
+                        <li class="nav-item">
+                             {# This would be a form for logout #}
+                            <a class="nav-link" href="#">{% trans "Logout" %}</a>
+                        </li>
+                    {% else %}
+                        <li class="nav-item">
+                            <a class="nav-link" href="#">{% trans "Login" %}</a>
+                        </li>
+                    {% endif %}
+                    <li class="nav-item">
+                        <a class="btn btn-primary ms-lg-2" href="{% url 'add-property' %}">+ {% trans "Add a Review" %}</a>
+                    </li>
+                </ul>
+            </div>
         </div>
     </nav>
-    <main>
+
+    <!-- ================================================================= -->
+    <!-- Main Content Block                                              -->
+    <!-- ================================================================= -->
+    <main class="container my-4">
+        {# --- Django Messages Framework Placeholder --- #}
+        {# This will display any success/error messages passed from views. #}
+        {% if messages %}
+            <div class="row justify-content-center">
+                <div class="col-md-8">
+                    {% for message in messages %}
+                        <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+                            {{ message }}
+                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                        </div>
+                    {% endfor %}
+                </div>
+            </div>
+        {% endif %}
+
         {% block content %}
-        <!-- The content of other templates will be injected here -->
+            <!-- The specific content of each page will be injected here. -->
         {% endblock %}
     </main>
+
+    <!-- ================================================================= -->
+    <!-- Footer                                                          -->
+    <!-- ================================================================= -->
+    <footer class="container text-center text-muted mt-5 mb-3">
+        <p>© {% now "Y" %} ShelterTree. {% trans "All rights reserved." %}</p>
+        <p>
+            <a href="#">{% trans "About Us" %}</a> |
+            <a href="#">{% trans "Terms of Service" %}</a> |
+            <a href="#">{% trans "Privacy Policy" %}</a>
+        </p>
+    </footer>
+
+    <!-- Bootstrap JS Bundle (includes Popper) -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+
+    <!-- ================================================================= -->
+    <!-- Extra JavaScript Block for Page-Specific Scripts                -->
+    <!-- ================================================================= -->
+    {% block extra_js %}
+        <!--
+        Page-specific JavaScript, like the Google Places API script
+        from add_property.html, will be injected here.
+        -->
+    {% endblock %}
+
 </body>
 </html>

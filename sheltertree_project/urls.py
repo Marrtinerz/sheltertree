@@ -27,6 +27,7 @@ urlpatterns += i18n_patterns(
     # This line tells Django to look at the `reviews/urls.py` file
     # for any URL that isn't handled above.
     path('', include('apps.reviews.urls')),
+    path('', include('apps.locations.urls')),
 
     # If you add more apps in the future, you would include their URLs here too.
     # path('another-app/', include('another_app.urls')),

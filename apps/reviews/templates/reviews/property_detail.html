@@ -1,54 +1,154 @@
-<!-- reviews/templates/reviews/property_detail.html -->
 {% extends "reviews/base.html" %}
 {% load i18n %}
 
 {% block title %}{{ property.name }} | ShelterTree{% endblock %}
 
 {% block content %}
-    <h1>{{ property.name }}</h1>
-    <p><strong>{{ property.address }}</strong></p>
-    <p>{{ property.city }}, {{ property.state }}, {{ property.country }} {{ property.postal_code }}</p>
+<div class="container mt-4">
+    <!-- ================================================================= -->
+    <!-- Layer 1a: Property Header & Map Section                         -->
+    <!-- ================================================================= -->
+    <div class="card mb-4">
+        <div class="card-body">
+            <h1 class="card-title">{{ property.name }}</h1>
+            <h6 class="card-subtitle mb-2 text-muted">{{ property.get_property_type_display }}</h6>
+            <p class="card-text mb-1">{{ property.address }}</p>
+            {% if property.city %}
+                <p class="card-text text-muted">{{ property.city }}, {{ property.state }} {{ property.postal_code }}, {{ property.country }}</p>
+            {% endif %}
+        </div>
 
-    <!-- Placeholder for the Mapbox display -->
-    <div id="map"></div>
-
-    <div style="background-color: #e8f5e9; padding: 1rem; border-radius: 8px; margin-bottom: 2rem;">
-        <h2>{% trans "Share Your Experience!" %}</h2>
-        <p>{% trans "Help others by adding a review for your specific unit in this property." %}</p>
-        <!-- This button enables Journey 2: The property exists, but the user's unit might not. -->
-        <a href="{% url 'add-unit-and-review' property.pk %}" class="button">{% trans "Add Your Unit & Review" %}</a>
+        {# --- GRACEFUL MAP HANDLING --- #}
+        {% if property.latitude and property.longitude %}
+            <div id="map" style="height: 400px; width: 100%;"></div>
+        {% else %}
+            <div class="card-footer text-center text-muted">
+                {% trans "Map data is not available for this property." %}
+            </div>
+        {% endif %}
     </div>
 
-    <hr>
-
-    <h2>{% trans "Reviews" %}</h2>
-
-    {% for review in approved_reviews %}
-        <div class="review-card">
-            <h3>{% trans "Unit:" %} {{ review.unit.unit_identifier }}</h3>
-            <p>
-                <small>
-                    {% blocktrans with author=review.author.username date=review.created_at|date:"F j, Y" %}
-                    Reviewed by <strong>{{ author }}</strong> on {{ date }}
-                    {% endblocktrans %}
-                </small>
-            </p>
-            <ul>
-                <li><strong>{% trans "Security" %}:</strong> {{ review.get_security_rating_display }} ({{ review.security_rating }}/5)</li>
-                <li><strong>{% trans "Electricity" %}:</strong> {{ review.get_electricity_rating_display }} ({{ review.electricity_rating }}/5)</li>
-                <li><strong>{% trans "Water" %}:</strong> {{ review.get_water_rating_display }} ({{ review.water_rating }}/5)</li>
-                <li><strong>{% trans "Management" %}:</strong> {{ review.get_management_rating_display }} ({{ review.management_rating }}/5)</li>
-            </ul>
-            <h4>{% trans "Pros" %}</h4>
-            <p>{{ review.pros|linebreaks }}</p>
-            <h4>{% trans "Cons" %}</h4>
-            <p>{{ review.cons|linebreaks }}</p>
-            
-            <!-- Placeholder for Journey 3: Add a review to a unit that already exists -->
-            <!-- <a href="#">Add another review for this unit</a> -->
+    <!-- ================================================================= -->
+    <!-- Layer 1b: The "At a Glance" Property-Wide Summary               -->
+    <!-- ================================================================= -->
+    <div class="card mb-4">
+        <div class="card-header">
+            <h3 class="mb-0">{% trans "Property At a Glance" %}</h3>
         </div>
-    {% empty %}
-        <p>{% trans "There are no approved reviews for this property yet. Be the first to add one!" %}</p>
-    {% endfor %}
+        <div class="card-body">
+            {% if summary.total_reviews > 0 %}
+                <div class="row align-items-center text-center">
+                    <div class="col-md-4 border-end">
+                        <h4 class="display-4 fw-bold">{{ summary.overall_average|floatformat:1 }} <span class="fs-5 text-muted">/ 5</span></h4>
+                        <p class="text-muted">{% blocktrans with count=summary.total_reviews %}Based on {{ count }} approved reviews{% endblocktrans %}</p>
+                    </div>
+                    <div class="col-md-8">
+                        <div class="row">
+                            <div class="col-6 text-start ps-4">{% trans "Security" %}:</div>
+                            <div class="col-6 text-end pe-4"><span class="badge bg-primary rounded-pill fs-6">{{ summary.average_security|floatformat:1 }} / 5</span></div>
+                            <div class="col-6 text-start ps-4">{% trans "Electricity" %}:</div>
+                            <div class="col-6 text-end pe-4"><span class="badge bg-primary rounded-pill fs-6">{{ summary.average_electricity|floatformat:1 }} / 5</span></div>
+                            <div class="col-6 text-start ps-4">{% trans "Water" %}:</div>
+                            <div class="col-6 text-end pe-4"><span class="badge bg-primary rounded-pill fs-6">{{ summary.average_water|floatformat:1 }} / 5</span></div>
+                            <div class="col-6 text-start ps-4">{% trans "Management" %}:</div>
+                            <div class="col-6 text-end pe-4"><span class="badge bg-primary rounded-pill fs-6">{{ summary.average_management|floatformat:1 }} / 5</span></div>
+                            <div class="col-6 text-start ps-4">{% trans "Roads" %}:</div>
+                            <div class="col-6 text-end pe-4"><span class="badge bg-primary rounded-pill fs-6">{{ summary.average_roads|floatformat:1 }} / 5</span></div>
+                            <div class="col-6 text-start ps-4">{% trans "Mobile Network" %}:</div>
+                            <div class="col-6 text-end pe-4"><span class="badge bg-primary rounded-pill fs-6">{{ summary.average_mobile|floatformat:1 }} / 5</span></div>
+                        </div>
+                    </div>
+                </div>
+            {% else %}
+                <p class="text-center text-muted">{% trans "There are no approved reviews for this property yet. Be the first to share your experience!" %}</p>
+            {% endif %}
+        </div>
+    </div>
 
+    <!-- ================================================================= -->
+    <!-- Call to Action for Flow 2 (Add New Unit)                        -->
+    <!-- ================================================================= -->
+    <div class="card mb-4">
+        <div class="card-body text-center">
+            <h5 class="card-title">{% trans "Share Your Experience" %}</h5>
+            <p class="card-text">{% trans "Is your unit not listed below? Add it here." %}</p>
+            <a href="{% url 'add-unit-and-review' property_pk=property.pk %}" class="btn btn-primary btn-lg">
+                + {% trans "Add Your Unit & Review" %}
+            </a>
+        </div>
+    </div>
+
+    <!-- ================================================================= -->
+    <!-- Layer 2 & 3: Unit-by-Unit Grouping & Individual Review Cards    -->
+    <!-- ================================================================= -->
+    <div class="card">
+        <div class="card-header">
+            <h2>{% trans "Units & Reviews" %}</h2>
+        </div>
+        <div class="list-group list-group-flush">
+            {% for unit in property.units.all %}
+                <div class="list-group-item">
+                    <div class="d-flex w-100 justify-content-between align-items-center mb-3">
+                        <h4 class="mb-0">{% trans "Unit:" %} {{ unit.unit_identifier }}</h4>
+                        {# CTA for Flow 3: Add review to this specific, existing unit #}
+                        <a href="{% url 'add-review-to-unit' unit_pk=unit.pk %}" class="btn btn-sm btn-outline-primary">+ {% trans "Review this unit" %}</a>
+                    </div>
+
+                    {% for review in unit.reviews.all %}
+                        {% if review.status == 'APPROVED' %}
+                            <div class="review-card mb-3 p-3 border rounded">
+                                <p>
+                                    <strong class="text-muted">{% trans "Reviewed by:" %}</strong> {{ review.author.username }}
+                                    <span class="mx-2 text-muted">•</span>
+                                    <em class="text-muted">{% trans "Posted:" %} {{ review.created_at|date:"F j, Y" }}</em>
+                                </p>
+                                <p>
+                                    <strong>{% trans "Lived here for:" %}</strong>
+                                    <span class="badge bg-secondary">{{ review.get_residence_length_display }}</span>
+                                </p>
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <h5>{% trans "Pros" %} 👍</h5>
+                                        <p>{{ review.pros|linebreaksbr }}</p>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <h5>{% trans "Cons" %} 👎</h5>
+                                        <p>{{ review.cons|linebreaksbr }}</p>
+                                    </div>
+                                </div>
+                            </div>
+                        {% endif %}
+                    {% empty %}
+                        <p class="text-muted ps-3">{% trans "No approved reviews for this unit yet." %}</p>
+                    {% endfor %}
+                </div>
+            {% empty %}
+                <div class="list-group-item">
+                    <p class="text-center text-muted">{% trans "No units have been added to this property yet." %}</p>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+
+{% block extra_js %}
+{# This entire script block is only rendered if the coordinates exist #}
+{% if property.latitude and property.longitude and MAPBOX_ACCESS_TOKEN %}
+    <script src="https://api.mapbox.com/mapbox-gl-js/v2.15.0/mapbox-gl.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            mapboxgl.accessToken = '{{ MAPBOX_ACCESS_TOKEN }}';
+            const map = new mapboxgl.Map({
+                container: 'map',
+                style: 'mapbox://styles/mapbox/streets-v11',
+                center: [{{ property.longitude }}, {{ property.latitude }}],
+                zoom: 15
+            });
+            new mapboxgl.Marker().setLngLat([{{ property.longitude }}, {{ property.latitude }}]).addTo(map);
+            map.addControl(new mapboxgl.NavigationControl());
+        });
+    </script>
+{% endif %}
 {% endblock %}
