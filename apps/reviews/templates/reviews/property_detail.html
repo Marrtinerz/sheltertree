@@ -13,9 +13,9 @@
             <h1 class="card-title">{{ property.name }}</h1>
             <h6 class="card-subtitle mb-2 text-muted">{{ property.get_property_type_display }}</h6>
             <p class="card-text mb-1">{{ property.address }}</p>
-            {% if property.city %}
+            {% comment %} {% if property.city %}
                 <p class="card-text text-muted">{{ property.city }}, {{ property.state }} {{ property.postal_code }}, {{ property.country }}</p>
-            {% endif %}
+            {% endif %} {% endcomment %}
         </div>
 
         {# --- GRACEFUL MAP HANDLING --- #}

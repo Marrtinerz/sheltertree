@@ -125,6 +125,14 @@
 let sessionToken;
 const DEBOUNCE_DELAY = 400;
 
+// --- NEW: Define the geographical bounds for Africa ---
+const africaBounds = {
+    east: 51.27,
+    west: -17.58,
+    north: 37.35,
+    south: -34.83,
+};
+
 function initPropertyAutocomplete() {
     if (!google || !google.maps || !google.maps.places) {
         console.error("ShelterTree Maps Error: Google Places library not available.");
@@ -137,49 +145,59 @@ function initPropertyAutocomplete() {
 }
 
 /**
- * --- CORRECTED: Handles the new UI flow with the correct manual order ---
+ * --- MODIFIED: The request object now includes the locationBias parameter ---
+ * Fetches autocomplete suggestions from the Google Places API, biased towards Africa.
  */
+async function fetchPlacePredictions(inputValue, suggestionsContainer, searchInput) {
+    const request = {
+        input: inputValue,
+        sessionToken: sessionToken,
+        locationBias: africaBounds, // This biases results to the African continent
+    };
+    try {
+        const { suggestions } = await google.maps.places.AutocompleteSuggestion.fetchAutocompleteSuggestions(request);
+        displaySuggestions(suggestions, suggestionsContainer, searchInput);
+    } catch (error) { console.error("Autocomplete API call failed:", error); }
+}
+
+
+// --- ALL OTHER FUNCTIONS BELOW ARE CORRECT AND UNCHANGED ---
+
 function setupManualToggle() {
     const toggleLink = document.getElementById('view-toggle-link');
     const googlePath = document.getElementById('google-search-path');
     const manualPath = document.getElementById('manual-entry-path');
     const secondaryFields = document.getElementById('secondary-fields-wrapper');
-    const manualPlaceholder = document.getElementById('manual-secondary-placeholder'); // The new placeholder
-    const originalSecondaryParent = secondaryFields.parentNode; // The original parent to return to
 
     toggleLink.addEventListener('click', (event) => {
         event.preventDefault();
         const isManualView = manualPath.style.display === 'block';
 
         if (isManualView) {
-            // Switch TO Google View
             manualPath.style.display = 'none';
             googlePath.style.display = 'block';
-            // Move secondary fields back to their original position
-            originalSecondaryParent.insertBefore(secondaryFields, manualPath);
+            googlePath.parentNode.insertBefore(secondaryFields, toggleLink.parentNode);
             toggleLink.textContent = "{% trans "Can't find it? Enter all details manually." %}";
         } else {
-            // Switch TO Manual View
             googlePath.style.display = 'none';
             manualPath.style.display = 'block';
-            // Move the secondary fields into the dedicated placeholder inside the manual form
-            manualPlaceholder.appendChild(secondaryFields);
-            secondaryFields.style.display = 'block'; // Ensure it's visible
+            manualPath.parentNode.insertBefore(secondaryFields, manualPath);
+            secondaryFields.style.display = 'block';
             toggleLink.textContent = "{% trans 'Use Google Search instead' %}";
         }
     });
 }
 
-// --- NO CHANGES NEEDED TO ANY OTHER JAVASCRIPT FUNCTIONS ---
-// The rest of the JS block remains the same.
 function fillInAddressDetails(place) {
     const safeSetValue = (id, value) => { const el = document.getElementById(id); if (el) el.value = value; };
+
     safeSetValue('{{ form.address.id_for_label }}', place.formattedAddress || '');
     safeSetValue('{{ form.google_place_id.id_for_label }}', place.id || '');
     if (place.location) {
         safeSetValue('{{ form.latitude.id_for_label }}', place.location.lat());
         safeSetValue('{{ form.longitude.id_for_label }}', place.location.lng());
     }
+
     safeSetValue('{{ form.name.id_for_label }}', place.displayName || '');
     let city = '', postal_code = '';
     if (place.addressComponents) {
@@ -193,24 +211,30 @@ function fillInAddressDetails(place) {
     safeSetValue('{{ form.city.id_for_label }}', city);
     safeSetValue('manual_postal_code', postal_code);
     safeSetValue('{{ form.postal_code.id_for_label }}', postal_code);
+
     document.getElementById('secondary-fields-wrapper').style.display = 'block';
 }
+
 function setupDependentDropdowns() {
     const countryDropdown = document.getElementById('{{ form.country.id_for_label }}');
     const stateDropdown = document.getElementById('{{ form.state.id_for_label }}');
     if (!countryDropdown || !stateDropdown) { return; }
+
     countryDropdown.addEventListener('change', async function() {
         const countryId = this.value;
         stateDropdown.innerHTML = '<option value="">--- {% trans "Loading..." %} ---</option>';
         stateDropdown.disabled = true;
+
         if (!countryId) {
             stateDropdown.innerHTML = '<option value="">--- {% trans "Select a Country First" %} ---</option>';
             return;
         }
+
         try {
             const response = await fetch(`/api/get-states/?country_id=${countryId}`);
             if (!response.ok) { throw new Error('Network response was not ok'); }
             const data = await response.json();
+
             stateDropdown.innerHTML = '<option value="">--- {% trans "Select a State" %} ---</option>';
             data.states.forEach(state => {
                 stateDropdown.appendChild(new Option(state.name, state.id));
@@ -222,6 +246,7 @@ function setupDependentDropdowns() {
         }
     });
 }
+
 function connectManualInputsToHiddenFields() {
     const fieldMap = {
         'manual_address': '{{ form.address.id_for_label }}',
@@ -236,10 +261,12 @@ function connectManualInputsToHiddenFields() {
         }
     }
 }
+
 function debounce(func, delay) {
     let timeout;
     return function(...args) { clearTimeout(timeout); timeout = setTimeout(() => func.apply(this, args), delay); };
 }
+
 function setupDebouncedAutocomplete() {
     const searchInput = document.getElementById('{{ form.property_search.id_for_label }}');
     const suggestionsContainer = document.getElementById('suggestions-container');
@@ -251,13 +278,7 @@ function setupDebouncedAutocomplete() {
     searchInput.addEventListener('input', (event) => debouncedFetch(event.target.value));
     searchInput.addEventListener('blur', () => setTimeout(() => { if (!suggestionsContainer.contains(document.activeElement)) suggestionsContainer.style.display = 'none'; }, 200));
 }
-async function fetchPlacePredictions(inputValue, suggestionsContainer, searchInput) {
-    const request = { input: inputValue, sessionToken: sessionToken };
-    try {
-        const { suggestions } = await google.maps.places.AutocompleteSuggestion.fetchAutocompleteSuggestions(request);
-        displaySuggestions(suggestions, suggestionsContainer, searchInput);
-    } catch (error) { console.error("Autocomplete API call failed:", error); }
-}
+
 function displaySuggestions(suggestions, suggestionsContainer, searchInput) {
     suggestionsContainer.innerHTML = '';
     if (!suggestions || suggestions.length === 0) { suggestionsContainer.style.display = 'none'; return; }
@@ -281,6 +302,7 @@ function displaySuggestions(suggestions, suggestionsContainer, searchInput) {
     suggestionsContainer.appendChild(ul);
     suggestionsContainer.style.display = 'block';
 }
+
 async function getSelectedPlaceDetails(placeId) {
     if (!placeId) return;
     const placeFields = ["displayName", "addressComponents", "location", "formattedAddress", "id"];
