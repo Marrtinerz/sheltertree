@@ -1,5 +1,7 @@
 # sheltertree_project/context_processors.py
 import os
+from apps.reviews.forms import PropertySearchForm
+
 
 def api_keys(request):
     """
@@ -8,4 +10,13 @@ def api_keys(request):
     return {
         'GOOGLE_MAPS_API_KEY': os.environ.get('GOOGLE_MAPS_API_KEY'),
         'MAPBOX_ACCESS_TOKEN': os.environ.get('MAPBOX_ACCESS_TOKEN'),
+    }
+    
+
+def global_search_form(request):
+    """
+    Makes the PropertySearchForm available to all templates.
+    """
+    return {
+        'search_form': PropertySearchForm()
     }

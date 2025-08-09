@@ -2,6 +2,9 @@ from django.db import models
 from django.contrib.auth.models import User
 from django.utils.translation import gettext_lazy as _
 from apps.locations.models import Country, State
+from django.contrib.postgres.search import SearchVectorField
+from django.contrib.postgres.indexes import GinIndex
+from django.contrib.postgres.search import SearchVector
 
 # --- Status Enums ---
 
@@ -88,6 +91,7 @@ class Property(models.Model):
         default=PropertyStatus.PENDING_APPROVAL,
         verbose_name=_("Status")
     )
+    search_vector = SearchVectorField(null=True, blank=True)
 
     added_by = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, related_name="added_properties")
     created_at = models.DateTimeField(auto_now_add=True)
@@ -95,6 +99,30 @@ class Property(models.Model):
     class Meta:
         verbose_name = _("Property")
         verbose_name_plural = _("Properties")
+        indexes = [
+            GinIndex(fields=['search_vector'])
+        ]
+
+    def save(self, *args, **kwargs):
+        """
+        Overrides the save method to ensure the search_vector is updated
+        whenever a property is saved.
+        """
+        # First, save the object to the database as normal.
+        super().save(*args, **kwargs)
+
+        # Now, perform a *separate* update operation for the search_vector
+        # on THIS instance only. This is the correct pattern.
+        # This avoids the FieldError because we are not using joins inside the .update() call itself.
+        # The joins happen in the filter and annotation parts of a different query.
+        vector = SearchVector(
+            'name', 'address', 'city', 'state__name', 'country__name'
+        )
+        
+        # Filter for the current instance, annotate it with the new vector,
+        # and then update the search_vector field with the annotated value.
+        # This looks complex, but it's the right way to tell Django to do this.
+        Property.objects.filter(pk=self.pk).update(search_vector=vector)
 
     def __str__(self):
         return f"{self.name} [{self.get_status_display()}]"

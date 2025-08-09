@@ -27,4 +27,9 @@ urlpatterns = [
     # Journey 3: User adds a review to an EXISTING unit.
     # This is a placeholder for the view we will build next.
     path('unit/<int:unit_pk>/add-review/', views.add_review_to_unit, name='add-review-to-unit'),
+    
+     # The URL for the main search page
+    path('search/', views.SearchView.as_view(), name='search'),
+    # NEW: The URL for the live HTMX results
+    path('search/live/', views.live_search_results, name='live-search'),
 ]

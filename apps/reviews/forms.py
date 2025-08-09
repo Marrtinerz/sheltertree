@@ -4,6 +4,25 @@ from .models import Property, PropertyUnit, Review, ResidenceLength
 from apps.locations.models import Country, State
 
 
+class PropertySearchForm(forms.Form):
+    q = forms.CharField(
+        label="Search",
+        required=False,
+        min_length=3, # Don't search for less than 3 characters
+        widget=forms.TextInput(attrs={
+            'class': 'form-control me-2',
+            'type': 'search',
+            'placeholder': 'Search for an Estate, Apartment, or Simply Street...',
+            'aria-label': 'Search',
+            # HTMX attributes for live search
+            'hx-get': '/search/live/', # We will create this URL
+            'hx-trigger': 'keyup changed delay:300ms', # Trigger on typing, with a delay
+            'hx-target': '#live-search-results', # Put results in this div
+            'hx-indicator': '.htmx-indicator', # Show a spinner while loading
+        })
+    )
+
+
 class PropertyForm(forms.ModelForm):
     # This field is correct because it's an extra field, not in the model.
     property_search = forms.CharField(

@@ -6,16 +6,19 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{% block title %}ShelterTree{% endblock %} - {% trans "Your Home for Housing Reviews" %}</title>
 
-    <!-- Bootstrap CSS for a responsive and clean layout -->
+    <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
 
-    <!-- Mapbox GL JS CSS (for property detail pages) -->
+    <!-- Mapbox GL JS CSS -->
     <link href="https://api.mapbox.com/mapbox-gl-js/v2.15.0/mapbox-gl.css" rel="stylesheet">
 
-    <!-- Custom CSS can go here if needed in the future -->
+    <!-- NEW: HTMX SCRIPT FOR LIVE SEARCH -->
+    <script src="https://unpkg.com/htmx.org@1.9.10" integrity="sha384-D1Kt99CQMDuVetoL1lrYwg5t+9QdHe7NLX/SoJYkXDFfX37iInKRy5xLSi8nO7UC" crossorigin="anonymous"></script>
+
+    <!-- Custom CSS -->
     <style>
         body {
-            background-color: #f8f9fa; /* Light grey background */
+            background-color: #f8f9fa;
         }
         .navbar {
             box-shadow: 0 2px 4px rgba(0,0,0,.1);
@@ -25,7 +28,7 @@
             box-shadow: 0 2px 8px rgba(0,0,0,.1);
         }
         .btn-primary {
-            background-color: #005A31; /* A deep green for ShelterTree's brand */
+            background-color: #005A31;
             border-color: #005A31;
         }
         .btn-primary:hover {
@@ -35,55 +38,100 @@
         .form-label {
             font-weight: bold;
         }
-    </style>
 
+        /* --- NEW STYLES FOR LIVE SEARCH --- */
+        #live-search-container {
+            position: relative; /* Establishes a positioning context for the results */
+        }
+        #live-search-results {
+            position: absolute; /* Allows results to float over the main content */
+            z-index: 1050; /* Ensures results are above most other content */
+            width: 100%;
+        }
+        .htmx-indicator {
+            opacity: 0; /* Hidden by default */
+            transition: opacity 200ms ease-in;
+        }
+        .htmx-request .htmx-indicator {
+            opacity: 1; /* Shown during an HTMX request */
+        }
+        .htmx-request.htmx-indicator {
+            opacity: 1;
+        }
+    </style>
 </head>
 <body>
 
     <!-- ================================================================= -->
-    <!-- Navigation Bar                                                  -->
+    <!-- Navigation Bar with Integrated Live Search                      -->
     <!-- ================================================================= -->
-    <nav class="navbar navbar-expand-lg navbar-light bg-white sticky-top">
-        <div class="container">
-            <a class="navbar-brand fw-bold" href="{% url 'property-list' %}">
-                🌳 ShelterTree
-            </a>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-            <div class="collapse navbar-collapse" id="navbarNav">
-                <ul class="navbar-nav ms-auto">
-                    {% if user.is_authenticated %}
-                        <li class="nav-item">
-                            <span class="navbar-text">{% trans "Welcome" %}, {{ user.username }}</span>
-                        </li>
-                        <li class="nav-item">
-                            {# This would be the link to a future user profile page #}
-                            <a class="nav-link" href="#">{% trans "My Profile" %}</a>
-                        </li>
-                        <li class="nav-item">
-                             {# This would be a form for logout #}
-                            <a class="nav-link" href="#">{% trans "Logout" %}</a>
-                        </li>
-                    {% else %}
-                        <li class="nav-item">
-                            <a class="nav-link" href="#">{% trans "Login" %}</a>
-                        </li>
-                    {% endif %}
-                    <li class="nav-item">
-                        <a class="btn btn-primary ms-lg-2" href="{% url 'add-property' %}">+ {% trans "Add a Review" %}</a>
+<nav class="navbar navbar-expand-lg navbar-light bg-light">
+    <div class="container-fluid">
+        <a class="navbar-brand" href="{% url 'property-list' %}">ShelterTree</a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+
+        <div class="collapse navbar-collapse" id="navbarNav">
+
+            <!-- Search Form - Centered -->
+            <form class="d-flex mx-auto" action="{% url 'search' %}" method="get" style="width: 50%;">
+                <!-- Now rendering the field from our global context processor -->
+                {{ search_form.q }}
+                <button class="btn btn-outline-success" type="submit">{% trans "Search" %}</button>
+            </form>
+
+            <!-- User-related links -->
+            <!-- THE FIX: Added "ms-auto" to this ul to push it to the right -->
+            <ul class="navbar-nav ms-auto">
+                {% if user.is_authenticated %}
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            {% trans "Welcome" %}, {{ user.get_full_name|default:user.username }}
+                        </a>
+                        <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
+                            <li><a class="dropdown-item" href="#">{% trans "My Profile" %}</a></li>
+                            <li><a class="dropdown-item" href="#">{% trans "My Reviews" %}</a></li>
+                            <li><hr class="dropdown-divider"></li>
+                            <li>
+                                <form method="post" action="{% url 'logout' %}" class="d-inline">
+                                    {% csrf_token %}
+                                    <button type="submit" class="dropdown-item">{% trans "Logout" %}</button>
+                                </form>
+                            </li>
+                        </ul>
                     </li>
-                </ul>
-            </div>
+                {% else %}
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'login' %}">{% trans "Login" %}</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href=#>{% trans "Sign Up" %}</a>
+                    </li>
+                {% endif %}
+            </ul>
+
         </div>
-    </nav>
+    </div>
+</nav>
+
+<!-- This container is where the live search results will appear -->
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-md-6" style="position: relative;">
+            <div id="live-search-results"></div>
+             <!-- Optional: Add a loading spinner for HTMX -->
+            <div class="htmx-indicator">Loading...</div>
+        </div>
+    </div>
+</div>
+
 
     <!-- ================================================================= -->
     <!-- Main Content Block                                              -->
     <!-- ================================================================= -->
     <main class="container my-4">
-        {# --- Django Messages Framework Placeholder --- #}
-        {# This will display any success/error messages passed from views. #}
+        {# Django Messages Framework Placeholder #}
         {% if messages %}
             <div class="row justify-content-center">
                 <div class="col-md-8">
@@ -117,15 +165,8 @@
     <!-- Bootstrap JS Bundle (includes Popper) -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
 
-    <!-- ================================================================= -->
-    <!-- Extra JavaScript Block for Page-Specific Scripts                -->
-    <!-- ================================================================= -->
-    {% block extra_js %}
-        <!--
-        Page-specific JavaScript, like the Google Places API script
-        from add_property.html, will be injected here.
-        -->
-    {% endblock %}
+    <!-- Extra JavaScript Block for Page-Specific Scripts -->
+    {% block extra_js %}{% endblock %}
 
 </body>
 </html>

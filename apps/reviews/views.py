@@ -5,11 +5,116 @@ from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.utils.translation import gettext_lazy as _
 from django.db.models import Avg, Count
-
+from django.views.generic import TemplateView
+from django.contrib.postgres.search import SearchQuery, SearchRank, SearchVector
 from .models import Property, PropertyUnit, Review, PropertyStatus, ReviewStatus
-from .forms import PropertyForm, PropertyUnitForm, ReviewForm
+from .forms import PropertyForm, PropertyUnitForm, ReviewForm, PropertySearchForm
+from django.db.models import Q, F
 
 # --- READ-ONLY VIEWS (for the public) ---
+
+
+# Search and find using just Prefix Full-Text Search
+# def find_properties(query_string):
+#     """Encapsulates the core search logic."""
+#     if not query_string or len(query_string) < 3:
+#         return Property.objects.none()
+
+#     # Populate search_vector on the fly. For ultimate performance, this should be a database trigger.
+#     Property.objects.update(search_vector=SearchVector('name', 'address'))
+
+#     vector = SearchVector('name', 'address')
+#     query = SearchQuery(query_string)
+    
+#     return Property.objects.annotate(
+#         rank=SearchRank(vector, query)
+#     ).filter(
+#         search_vector=query, 
+#         status=PropertyStatus.APPROVED
+#     ).order_by('-rank')
+
+
+# Hybrid search and find
+def find_properties(query_string):
+    """
+    Performs a hybrid search.
+    1. A high-relevance, ranked search using PostgreSQL FTS.
+    2. A broad, "catch-all" substring search using Q objects.
+    
+    The results are combined, with ranked results appearing first.
+    """
+    if not query_string or len(query_string) < 3:
+        return []
+
+    # === Method 1: High-Relevance FTS Search ===
+    # This search finds whole words and ranks them.
+    query = SearchQuery(query_string, search_type='websearch')
+    
+    fts_results = Property.objects.annotate(
+        rank=SearchRank(F('search_vector'), query)
+    ).filter(
+        search_vector=query,
+        status=PropertyStatus.APPROVED
+    ).order_by('-rank')
+    
+    # Get the IDs of the high-relevance results to avoid duplicates
+    fts_result_ids = {p.id for p in fts_results}
+
+    # === Method 2: Broad Substring Search (`icontains`) ===
+    # This search is our "catch-all" for partial matches.
+    substring_query = Q(name__icontains=query_string) | \
+                      Q(address__icontains=query_string) | \
+                      Q(city__icontains=query_string) | \
+                      Q(state__name__icontains=query_string) | \
+                      Q(country__name__icontains=query_string)
+
+    substring_results = Property.objects.filter(
+        substring_query,
+        status=PropertyStatus.APPROVED
+    ).exclude(
+        id__in=fts_result_ids # Exclude results we already found
+    ).distinct()
+
+    # === Combine the Results ===
+    # Convert querysets to lists and combine them. The ranked FTS results are first.
+    final_results = list(fts_results) + list(substring_results)
+    
+    return final_results
+
+
+class SearchView(TemplateView):
+    """
+    Handles the main search page request after a form submission.
+    """
+    template_name = 'reviews/search_results.html'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        form = PropertySearchForm(self.request.GET or None)
+        
+        if form.is_valid():
+            query = form.cleaned_data.get('q')
+            context['results'] = find_properties(query)
+        
+        context['form'] = form
+        context['query'] = self.request.GET.get('q', '')
+        return context
+
+# NEW view for our live search
+def live_search_results(request):
+    """
+    Returns an HTML fragment containing search results for HTMX to display.
+    """
+    form = PropertySearchForm(request.GET or None)
+    context = {"results": None}
+
+    if form.is_valid():
+        query = form.cleaned_data.get('q')
+        context['results'] = find_properties(query)
+
+    # Note: We render a DIFFERENT, smaller template here.
+    return render(request, 'reviews/partials/_live_search_results.html', context)
+
 
 class PropertyListView(ListView):
     """

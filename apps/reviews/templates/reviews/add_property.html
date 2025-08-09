@@ -123,7 +123,7 @@
 {% block extra_js %}
 <script>
 let sessionToken;
-const DEBOUNCE_DELAY = 400;
+const DEBOUNCE_DELAY = 500;
 
 // --- NEW: Define the geographical bounds for Africa ---
 const africaBounds = {
@@ -152,7 +152,7 @@ async function fetchPlacePredictions(inputValue, suggestionsContainer, searchInp
     const request = {
         input: inputValue,
         sessionToken: sessionToken,
-        locationBias: africaBounds, // This biases results to the African continent
+        // locationBias: africaBounds, // This biases results to the African continent
     };
     try {
         const { suggestions } = await google.maps.places.AutocompleteSuggestion.fetchAutocompleteSuggestions(request);

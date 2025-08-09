@@ -58,6 +58,8 @@ TEMPLATES = [
                 'django.contrib.messages.context_processors.messages',
                 # Our custom context processor for API keys
                 'sheltertree_project.context_processors.api_keys',
+                'sheltertree_project.context_processors.global_search_form',
+                
             ],
         },
     },

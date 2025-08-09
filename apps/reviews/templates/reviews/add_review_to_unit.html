@@ -1,0 +1,45 @@
+{% extends "reviews/base.html" %}
+{% load i18n %}
+
+{% block title %}{% trans "Add Review for" %} {{ unit.unit_identifier }} | ShelterTree{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card">
+                <div class="card-header">
+                    <h1>{% trans "Add Your Review" %}</h1>
+                </div>
+                <div class="card-body">
+                    {# --- Contextual Information --- #}
+                    {# It is crucial to show the user exactly what they are reviewing #}
+                    {# to prevent confusion. #}
+                    <div class="alert alert-info" role="alert">
+                        <h4 class="alert-heading">{{ property.name }}</h4>
+                        <p class="mb-0">{% trans "You are adding a review for unit:" %} <strong class="fs-5">{{ unit.unit_identifier }}</strong></p>
+                    </div>
+
+                    <p>{% trans "Please fill out the fields below to share your experience. Your feedback is valuable to the community." %}</p>
+
+                    <form method="post" novalidate>
+                        {% csrf_token %}
+
+                        {# The 'review_form' is passed from our add_review_to_unit view #}
+                        {# Using .as_p renders each form field wrapped in a <p> tag #}
+                        {{ review_form.as_p }}
+
+                        <div class="d-grid mt-4">
+                            <button type="submit" class="btn btn-primary btn-lg">{% trans "Submit Your Review" %}</button>
+                        </div>
+                    </form>
+
+                    <div class="text-center mt-3">
+                        <a href="{% url 'property-detail' pk=property.pk %}" class="link-secondary">{% trans "Cancel and return to property page" %}</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
