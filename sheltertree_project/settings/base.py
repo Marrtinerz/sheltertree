@@ -18,6 +18,9 @@ BASE_DIR = Path(__file__).resolve().parent.parent.parent
 AUTH_USER_MODEL = 'users.CustomUser'
 
 
+GEOIP_PATH = os.path.join(BASE_DIR, 'geoip')
+
+
 
 # --- Application Definition ---
 INSTALLED_APPS = [
@@ -54,6 +57,7 @@ MIDDLEWARE = [
     # The allauth middleware is required for its advanced session
     # management and other authentication-related features.
     "allauth.account.middleware.AccountMiddleware",
+    'apps.users.middleware.OnboardingMiddleware',
 ]
 
 ROOT_URLCONF = 'sheltertree_project.urls'

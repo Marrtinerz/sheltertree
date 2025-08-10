@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+{% load i18n %}
+{% block title %}{% trans "Welcome, " %} {{ user.username }}! | ShelterTree{% endblock %}
+{% block content %}
+<div class="container mt-4 mb-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card text-center">
+                <div class="card-body p-5">
+                    <h1 class="card-title">{% trans "Welcome, " %} {{ user.username }}!</h1>
+                    <p class="fs-5 text-muted">{% trans "Let's complete your profile to personalize your experience. It'll only take a moment." %}</p>
+                    
+                    <form method="post" class="text-start mt-4">
+                        {% csrf_token %}
+                        {{ form.as_p }}
+                        <div class="d-grid mt-4">
+                            <button type="submit" class="btn btn-primary btn-lg">{% trans "Save and Continue" %}</button>
+                        </div>
+                    </form>
+
+                    <div class="mt-3">
+                        <a href="{% url 'onboarding-skip' %}" class="text-muted">{% trans "Skip for now" %}</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
