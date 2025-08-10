@@ -14,6 +14,9 @@ SECRET_KEY = config('SECRET_KEY')
 # Allow requests from localhost and the Docker container's IP
 ALLOWED_HOSTS = ['localhost', '127.0.0.1']
 
+
+EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+
 # Optional: Add Django Debug Toolbar for a huge development boost
 # INSTALLED_APPS += ['debug_toolbar']
 # MIDDLEWARE += ['debug_toolbar.middleware.DebugToolbarMiddleware']

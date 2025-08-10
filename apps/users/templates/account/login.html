@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+{% load i18n %}
+{% block title %}{% trans "Log In" %} | ShelterTree{% endblock %}
+{% block content %}
+<div class="container mt-4 mb-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-body">
+                    <h2 class="card-title text-center mb-4">{% trans "Log In" %}</h2>
+                    <form method="post" action="{% url 'account_login' %}">
+                        {% csrf_token %}
+                        {{ form.as_p }}
+                        <div class="d-grid">
+                            <button type="submit" class="btn btn-primary btn-lg">{% trans "Log In" %}</button>
+                        </div>
+                    </form>
+                    {% comment %} <a class="d-block text-center mt-3" href="{% url 'account_reset_password' %}">{% trans "Forgot Password?" %}</a> {% endcomment %}
+                </div>
+            </div>
+            <p class="text-center mt-3">
+                {% blocktrans %}Don't have an account? <a href="{{ signup_url }}">Sign up</a> for free.{% endblocktrans %}
+            </p>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -280,3 +280,11 @@ def add_review_to_unit(request, unit_pk):
         'property': property_instance,
         'review_form': review_form
     })
+    
+
+class HomePageView(TemplateView):
+    """
+    Renders the static homepage. The search form is added to the context
+    via the global context processor.
+    """
+    template_name = 'reviews/home.html'

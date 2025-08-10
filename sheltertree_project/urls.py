@@ -18,6 +18,7 @@ from django.contrib.auth import views as auth_views
 # The admin interface is a primary example.
 urlpatterns = [
     path('admin/', admin.site.urls),
+    path('accounts/', include('allauth.urls')),
 ]
 urlpatterns += i18n_patterns(
     # This line tells Django to look at the `reviews/urls.py` file
@@ -25,11 +26,7 @@ urlpatterns += i18n_patterns(
     path('', include('apps.reviews.urls')),
     path('', include('apps.locations.urls')),
     # The login URL is needed so Django knows where to redirect unauthenticated users
-    path('login/', auth_views.LoginView.as_view(template_name='reviews/login.html'), name='login'), # Assuming you have a login template
     
-    # This is the line that fixes your error.
-    # It tells Django to use its built-in LogoutView for the /logout/ URL.
-    path('logout/', auth_views.LogoutView.as_view(), name='logout'),
 
     # If you add more apps in the future, you would include their URLs here too.
     # path('another-app/', include('another_app.urls')),

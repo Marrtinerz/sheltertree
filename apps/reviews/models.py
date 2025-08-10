@@ -5,6 +5,7 @@ from apps.locations.models import Country, State
 from django.contrib.postgres.search import SearchVectorField
 from django.contrib.postgres.indexes import GinIndex
 from django.contrib.postgres.search import SearchVector
+from django.conf import settings
 
 # --- Status Enums ---
 
@@ -93,7 +94,7 @@ class Property(models.Model):
     )
     search_vector = SearchVectorField(null=True, blank=True)
 
-    added_by = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, related_name="added_properties")
+    added_by = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.SET_NULL, null=True, related_name="added_properties")
     created_at = models.DateTimeField(auto_now_add=True)
 
     class Meta:
@@ -144,7 +145,7 @@ class PropertyUnit(models.Model):
 
 class Review(models.Model):
     unit = models.ForeignKey(PropertyUnit, on_delete=models.CASCADE, related_name='reviews', verbose_name=_("Property Unit"))
-    author = models.ForeignKey(User, on_delete=models.CASCADE, verbose_name=_("Author"))
+    author = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, verbose_name=_("Author"))
     residence_length = models.IntegerField(
         choices=ResidenceLength.choices,
         verbose_name=_("How long did you live here?")

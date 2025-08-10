@@ -15,6 +15,10 @@ BASE_DIR = Path(__file__).resolve().parent.parent.parent
 # This points to the project root (where manage.py is), which is more useful.
 
 
+AUTH_USER_MODEL = 'users.CustomUser'
+
+
+
 # --- Application Definition ---
 INSTALLED_APPS = [
     'django.contrib.admin',
@@ -26,6 +30,15 @@ INSTALLED_APPS = [
     # Our app - using the 'apps' prefix is a good practice for clarity.
     'apps.reviews',
     'apps.locations',
+    'apps.users.apps.UsersConfig',
+    
+    #allauth apps
+    'django.contrib.sites', # Required by allauth
+    'allauth',
+    'allauth.account',
+    'allauth.socialaccount',
+    # Optional - we will configure this in Day 7(b) or (c)
+    # 'allauth.socialaccount.providers.google',
 ]
 
 MIDDLEWARE = [
@@ -38,6 +51,9 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    # The allauth middleware is required for its advanced session
+    # management and other authentication-related features.
+    "allauth.account.middleware.AccountMiddleware",
 ]
 
 ROOT_URLCONF = 'sheltertree_project.urls'
@@ -121,7 +137,33 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 
 # --- Auth ---
-# We will create user-facing login pages eventually.
-LOGIN_URL = '/admin/login' # Name of the URL pattern for the login page
-LOGIN_REDIRECT_URL = '/' # Where to go after a successful login
-LOGOUT_REDIRECT_URL = '/' # Where to go after logging out
+SITE_ID = 1
+
+AUTHENTICATION_BACKENDS = [
+    'django.contrib.auth.backends.ModelBackend',
+    'allauth.account.auth_backends.AuthenticationBackend',
+]
+
+# --- LOGIN & SIGNUP ---
+# NEW: Replaces ACCOUNT_AUTHENTICATION_METHOD. Users can log in with username or email.
+ACCOUNT_LOGIN_METHODS = {'username', 'email'}
+
+# NEW: Replaces ACCOUNT_USERNAME_REQUIRED and ACCOUNT_EMAIL_REQUIRED.
+# Defines the fields on the signup form. '*' means the field is required.
+ACCOUNT_SIGNUP_FIELDS = ['username*', 'email*', 'password1*', 'password2*']
+
+# We are not collecting passwords on the initial form in our staged onboarding.
+# Allauth handles this, so we don't need to list password fields here.
+
+# --- EMAIL VERIFICATION ---
+ACCOUNT_EMAIL_VERIFICATION = 'mandatory'
+
+# --- REDIRECTS ---
+LOGIN_URL = 'account_login'
+LOGIN_REDIRECT_URL = '/'
+ACCOUNT_LOGOUT_REDIRECT_URL = '/'
+
+# --- OTHER SETTINGS ---
+ACCOUNT_SESSION_REMEMBER = True
+# This still correctly points to our minimal form for Stage 1.
+ACCOUNT_FORMS = {'signup': 'apps.users.forms.MinimalSignupForm'}

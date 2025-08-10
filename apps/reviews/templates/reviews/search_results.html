@@ -1,4 +1,4 @@
-{% extends "reviews/base.html" %}
+{% extends "base.html" %}
 {% load i18n %}
 
 {% block title %}{% trans "Search Results" %}{% endblock %}
@@ -33,7 +33,7 @@
 
                 <div class="list-group">
                     {% for property in results %}
-                        <a href="{% url 'property-detail' pk=property.pk %}" class="list-group-item list-group-item-action p-3">
+                        <a href="{% url 'reviews:property-detail' pk=property.pk %}" class="list-group-item list-group-item-action p-3">
                             <div class="d-flex w-100 justify-content-between">
                                 <h5 class="mb-1">{{ property.name }}</h5>
                                 <small class="text-muted">Rank: {{ property.rank|floatformat:2 }}</small>
@@ -58,7 +58,7 @@
                         {% endif %}
                         
                         <div class="mt-4">
-                            <a href="{% url 'add-property' %}" class="btn btn-primary btn-lg">
+                            <a href="{% url 'reviews:add-property' %}" class="btn btn-primary btn-lg">
                                 <i class="fas fa-plus-circle me-2"></i>{% trans "Add a New Property" %}
                             </a>
                         </div>

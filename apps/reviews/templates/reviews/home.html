@@ -1,0 +1,49 @@
+{% extends "base.html" %}
+{% load i18n %}
+
+{% block title %}{% trans "Home"%} | ShelterTree{% endblock %}
+
+{% block content %}
+<div class="container text-center my-5">
+    <div class="row">
+        <div class="col-lg-8 mx-auto">
+            
+            <!-- Main Hero Section -->
+            <h1 class="display-4 fw-bold">{% trans "Find Your Next Home's Story." %}</h1>
+            <p class="lead text-muted mt-3 mb-4">
+                {% trans "Honest, detailed reviews of apartments and estates across Africa. Search for a property to get started." %}
+            </p>
+
+            <!-- Prominent Search Bar -->
+            <div class="main-search-bar my-5">
+                <form class="d-flex" action="{% url 'reviews:search' %}" method="get">
+                    <!-- 
+                        The 'search_form' variable is globally available thanks to our context processor.
+                        We are rendering the 'q' field from that form.
+                    -->
+                    {{ search_form.q }}
+                    <button class="btn btn-primary btn-lg" type="submit" style="margin-left: -1px;">{% trans "Search" %}</button>
+                </form>
+            </div>
+
+            <!-- Live Search Results Target -->
+            <!-- This div is where the live results from HTMX will be injected. -->
+            <div id="live-search-results-container" style="position: relative;">
+                <div id="live-search-results"></div>
+                <div class="htmx-indicator">Loading...</div>
+            </div>
+
+            <hr class="my-5">
+
+            <!-- Secondary Call to Action -->
+            <div class="secondary-actions">
+                <p class="fs-5">{% trans "Can't find a property?" %}</p>
+                <a href="{% url 'reviews:add-property' %}" class="btn btn-outline-secondary">
+                    {% trans "Be the first to add and review it!" %}
+                </a>
+            </div>
+
+        </div>
+    </div>
+</div>
+{% endblock %}
