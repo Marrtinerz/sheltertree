@@ -33,6 +33,6 @@ urlpatterns = [
     
     
     # --- LOCATIONS ---
-    path('locations/', include('apps.locations.urls')),
+    path('', include('apps.locations.urls')),
     
 ]

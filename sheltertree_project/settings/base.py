@@ -171,3 +171,6 @@ ACCOUNT_LOGOUT_REDIRECT_URL = '/'
 ACCOUNT_SESSION_REMEMBER = True
 # This still correctly points to our minimal form for Stage 1.
 ACCOUNT_FORMS = {'signup': 'apps.users.forms.MinimalSignupForm'}
+
+ACCOUNT_LOGIN_ON_EMAIL_CONFIRMATION = True
+# ACCOUNT_CONFIRM_EMAIL_ON_GET = True

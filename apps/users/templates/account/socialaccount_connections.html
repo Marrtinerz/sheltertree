@@ -1,0 +1,64 @@
+<!-- templates/account/socialaccount_connections.html -->
+{% extends "base.html" %}
+{% load i18n %}
+{% load allauth %} <!-- Load allauth tags for provider info -->
+
+{% block title %}{% trans "Account Connections" %} | ShelterTree{% endblock %}
+
+{% block content %}
+<div class="container mt-4 mb-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <h1 class="mb-4">{% trans "Account Connections" %}</h1>
+
+            <!-- Card for Existing Connections -->
+            <div class="card mb-4">
+                <div class="card-header"><h4>{% trans "Your Connected Accounts" %}</h4></div>
+                {% if form.accounts %}
+                    <ul class="list-group list-group-flush">
+                        {% for account in form.accounts %}
+                        {% with provider=account.get_provider %}
+                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                            <div>
+                                <i class="fab fa-{{ provider.id }} me-2"></i> <!-- Font Awesome Icon -->
+                                <strong>{{ provider.name }}</strong> ({{ account }})
+                            </div>
+                            <form method="post" action="{% url 'socialaccount_connections' %}">
+                                {% csrf_token %}
+                                <input type="hidden" name="account" value="{{ account.id }}">
+                                <button type="submit" class="btn btn-sm btn-danger">{% trans "Remove" %}</button>
+                            </form>
+                        </li>
+                        {% endwith %}
+                        {% endfor %}
+                    </ul>
+                {% else %}
+                    <div class="card-body">
+                        <p class="text-muted">{% trans "You currently have no third-party accounts connected." %}</p>
+                    </div>
+                {% endif %}
+            </div>
+            
+            <!-- Card for Adding New Connections -->
+            <div class="card">
+                <div class="card-header"><h4>{% trans "Add a Third-Party Account" %}</h4></div>
+                <div class="card-body">
+                    {% get_providers as socialaccount_providers %}
+                    {% if socialaccount_providers %}
+                        <p>{% trans "You can connect to the following third-party accounts:" %}</p>
+                        <div>
+                        {% for provider in socialaccount_providers %}
+                            <a title="{{ provider.name }}" class="btn btn-secondary" href="{% provider_login_url provider.id process='connect' %}">
+                                <i class="fab fa-{{ provider.id }} me-2"></i> {{ provider.name }}
+                            </a>
+                        {% endfor %}
+                        </div>
+                    {% else %}
+                        <p>{% trans "There are no third-party accounts available to connect to." %}</p>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
