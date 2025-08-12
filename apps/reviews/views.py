@@ -4,12 +4,15 @@ from django.views.generic import ListView, DetailView
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.utils.translation import gettext_lazy as _
-from django.db.models import Avg, Count
+from django.db.models import Avg, Count, Sum, OuterRef, Subquery, Case, When, IntegerField
 from django.views.generic import TemplateView
 from django.contrib.postgres.search import SearchQuery, SearchRank, SearchVector
-from .models import Property, PropertyUnit, Review, PropertyStatus, ReviewStatus
+from .models import Property, PropertyUnit, Review, PropertyStatus, ReviewStatus, Vote
 from .forms import PropertyForm, PropertyUnitForm, ReviewForm, PropertySearchForm
 from django.db.models import Q, F
+from django.template.loader import render_to_string
+from django.http import HttpResponse
+from collections import defaultdict
 
 # --- READ-ONLY VIEWS (for the public) ---
 
@@ -151,16 +154,15 @@ class PropertyDetailView(DetailView):
 
     def get_context_data(self, **kwargs):
         """
-        This method is extended to add the aggregated review summary to the context.
+        Extends the context to add an aggregated review summary and to efficiently
+        pre-calculate vote counts and the current user's vote for each review.
         """
-        # First, get the base context from the superclass
         context = super().get_context_data(**kwargs)
-        property = self.get_object()
+        property_instance = self.get_object()
 
-        # --- "At a Glance" Summary Logic ---
-        # Perform a single, efficient database query to get all averages and counts.
+        # --- 1. Summary Calculation (This part remains unchanged and is correct) ---
         summary_data = Review.objects.filter(
-            unit__property=property,
+            unit__property=property_instance,
             status=ReviewStatus.APPROVED
         ).aggregate(
             average_security=Avg('security_rating'),
@@ -171,21 +173,49 @@ class PropertyDetailView(DetailView):
             average_mobile=Avg('mobile_network_rating'),
             total_reviews=Count('id')
         )
-
-        # Calculate a single overall average score from all category averages
         if summary_data['total_reviews'] > 0:
-            averages = [
-                v for v in [
-                    summary_data['average_security'], summary_data['average_electricity'],
-                    summary_data['average_water'], summary_data['average_management'],
-                    summary_data['average_roads'], summary_data['average_mobile']
-                ] if v is not None
-            ]
+            averages = [v for v in summary_data.values() if isinstance(v, float)]
             summary_data['overall_average'] = sum(averages) / len(averages) if averages else 0
         else:
             summary_data['overall_average'] = 0
-
         context['summary'] = summary_data
+
+
+        # --- 2. THE FIX: Fetch annotated reviews and group them by unit ---
+
+        # First, get all approved reviews for the property, with vote counts annotated.
+        # This is the single source of truth for our reviews.
+        all_reviews_for_property = Review.objects.filter(
+            unit__property=property_instance,
+            status=ReviewStatus.APPROVED
+        ).annotate(
+            helpful_votes=Count('votes', filter=Q(votes__value=1)),
+            unhelpful_votes=Count('votes', filter=Q(votes__value=-1))
+        ).order_by('-created_at')
+
+        # Get the user's vote for each of these reviews
+        if self.request.user.is_authenticated:
+            user_votes = Vote.objects.filter(
+                review__in=all_reviews_for_property,
+                user=self.request.user
+            ).values('review_id', 'value')
+            user_votes_map = {vote['review_id']: vote['value'] for vote in user_votes}
+        else:
+            user_votes_map = {}
+        
+        # Attach the user's vote to each review object
+        for review in all_reviews_for_property:
+            review.user_vote_value = user_votes_map.get(review.id)
+
+        # Now, group these fully-prepared reviews by their unit.
+        # This prevents the template from making new, un-annotated DB queries.
+        reviews_by_unit = defaultdict(list)
+        for review in all_reviews_for_property:
+            reviews_by_unit[review.unit].append(review)
+            
+        # Add the grouped data to the context. The key is the Unit object itself.
+        context['reviews_by_unit'] = dict(reviews_by_unit)
+        
         return context
 
 
@@ -204,7 +234,7 @@ def add_property(request):
             property_instance.added_by = request.user
             property_instance.save()
             messages.success(request, _("Property submitted for review! Now, please add your unit and review."))
-            return redirect('add-property-success', pk=property_instance.pk)
+            return redirect('reviews:add-property-success', pk=property_instance.pk)
     else:
         form = PropertyForm()
     return render(request, 'reviews/add_property.html', {'form': form})
@@ -242,7 +272,7 @@ def add_unit_and_review(request, property_pk):
                 review.status = ReviewStatus.PENDING_PROPERTY_APPROVAL
             review.save()
             messages.success(request, _("Thank you! Your review has been submitted and will be published after moderation."))
-            return redirect('property-detail', pk=property_instance.pk)
+            return redirect("reviews:property-detail", pk=property_instance.pk)
     else:
         unit_form = PropertyUnitForm()
         review_form = ReviewForm()
@@ -271,7 +301,7 @@ def add_review_to_unit(request, unit_pk):
             review.status = ReviewStatus.PENDING_CONTENT_REVIEW
             review.save()
             messages.success(request, _("Thank you! Your review has been submitted and will be published after moderation."))
-            return redirect('property-detail', pk=property_instance.pk)
+            return redirect('reviews:property-detail', pk=property_instance.pk)
     else:
         review_form = ReviewForm()
 
@@ -288,3 +318,58 @@ class HomePageView(TemplateView):
     via the global context processor.
     """
     template_name = 'reviews/home.html'
+
+
+def vote_on_review(request, review_pk):
+    # --- THE FIX ---
+    # Fetch the review object ONCE at the very top, and ALWAYS annotate it
+    # with the current vote counts. This ensures the 'review' variable
+    # has the .helpful_votes and .unhelpful_votes attributes available
+    # for all logic paths below (logged-in or not).
+    
+    # We use a subquery to get the object and its counts in one go.
+    annotated_reviews = Review.objects.annotate(
+        helpful_votes=Count('votes', filter=Q(votes__value=1)),
+        unhelpful_votes=Count('votes', filter=Q(votes__value=-1))
+    )
+    review = get_object_or_404(annotated_reviews, pk=review_pk)
+
+    # --- Path 1: User is NOT logged in ---
+    if not request.user.is_authenticated:
+        # Now, the 'review' object we pass to the template already has the
+        # correct vote counts attached to it.
+        return render(request, 'reviews/partials/_login_to_vote.html', {'review': review})
+
+    # --- Path 2: User IS logged in (original logic continues) ---
+    vote_type = request.POST.get('vote_type')
+    vote_value = 1 if vote_type == 'helpful' else -1
+
+    existing_vote = Vote.objects.filter(review=review, user=request.user).first()
+
+    if existing_vote:
+        if existing_vote.value == vote_value:
+            existing_vote.delete()
+        else:
+            existing_vote.value = vote_value
+            existing_vote.save()
+    else:
+        Vote.objects.create(review=review, user=request.user, value=vote_value)
+
+    # --- IMPORTANT: Re-render the main partial after a successful vote ---
+    # We must re-calculate the vote counts and user's vote status *after*
+    # the vote has been saved to get the most up-to-date information.
+    
+    helpful_votes = review.votes.filter(value=1).count()
+    unhelpful_votes = review.votes.filter(value=-1).count()
+    
+    current_user_vote = review.votes.filter(user=request.user).first()
+    user_vote_value = current_user_vote.value if current_user_vote else None
+
+    context = {
+        'review': review,
+        'helpful_votes': helpful_votes,
+        'unhelpful_votes': unhelpful_votes,
+        'user_vote_value': user_vote_value,
+    }
+    
+    return render(request, 'reviews/partials/_vote_buttons.html', context)

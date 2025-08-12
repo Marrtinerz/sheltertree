@@ -1,0 +1,22 @@
+<!-- templates/reviews/partials/_vote_buttons.html (Corrected) -->
+<div class="review-footer mt-3" id="review-vote-{{ review.pk }}">
+    <small class="text-muted">Was this review helpful?</small>
+    
+    <form hx-post="{% url 'reviews:vote_on_review' review.pk %}" hx-target="#review-vote-{{ review.pk }}" hx-swap="outerHTML" class="d-inline">
+        {% csrf_token %}
+        <input type="hidden" name="vote_type" value="helpful">
+        <!-- THE FIX: Check the simple integer variable directly -->
+        <button type="submit" class="btn btn-sm {% if user_vote_value == 1 %}btn-success{% else %}btn-outline-success{% endif %} ms-2">
+            <i class="fas fa-thumbs-up"></i> ({{ helpful_votes|default:0 }})
+        </button>
+    </form>
+    
+    <form hx-post="{% url 'reviews:vote_on_review' review.pk %}" hx-target="#review-vote-{{ review.pk }}" hx-swap="outerHTML" class="d-inline">
+        {% csrf_token %}
+        <input type="hidden" name="vote_type" value="unhelpful">
+        <!-- THE FIX: Check the simple integer variable directly -->
+        <button type="submit" class="btn btn-sm {% if user_vote_value == -1 %}btn-danger{% else %}btn-outline-secondary{% endif %} ms-1">
+            <i class="fas fa-thumbs-down"></i> ({{ unhelpful_votes|default:0 }})
+        </button>
+    </form>
+</div>

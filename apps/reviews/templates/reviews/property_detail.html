@@ -1,5 +1,6 @@
 {% extends "base.html" %}
 {% load i18n %}
+{% load review_tags %}
 
 {% block title %}{{ property.name }} | ShelterTree{% endblock %}
 
@@ -72,13 +73,12 @@
         <div class="card-body text-center">
             <h5 class="card-title">{% trans "Share Your Experience" %}</h5>
             <p class="card-text">{% trans "Is your unit not listed below? Add it here." %}</p>
-            <a href="{% url 'add-unit-and-review' property_pk=property.pk %}" class="btn btn-primary btn-lg">
+            <a href="{% url 'reviews:add-unit-and-review' property_pk=property.pk %}" class="btn btn-primary btn-lg">
                 + {% trans "Add Your Unit & Review" %}
             </a>
         </div>
     </div>
 
-    <!-- ================================================================= -->
     <!-- Layer 2 & 3: Unit-by-Unit Grouping & Individual Review Cards    -->
     <!-- ================================================================= -->
     <div class="card">
@@ -86,38 +86,41 @@
             <h2>{% trans "Units & Reviews" %}</h2>
         </div>
         <div class="list-group list-group-flush">
-            {% for unit in property.units.all %}
+            {% for unit, reviews_list in reviews_by_unit.items %}
                 <div class="list-group-item">
                     <div class="d-flex w-100 justify-content-between align-items-center mb-3">
                         <h4 class="mb-0">{% trans "Unit:" %} {{ unit.unit_identifier }}</h4>
-                        {# CTA for Flow 3: Add review to this specific, existing unit #}
-                        <a href="{% url 'add-review-to-unit' unit_pk=unit.pk %}" class="btn btn-sm btn-outline-primary">+ {% trans "Review this unit" %}</a>
+                        <a href="{% url 'reviews:add-review-to-unit' unit_pk=unit.pk %}" class="btn btn-sm btn-outline-primary">+ {% trans "Review this unit" %}</a>
                     </div>
 
-                    {% for review in unit.reviews.all %}
-                        {% if review.status == 'APPROVED' %}
-                            <div class="review-card mb-3 p-3 border rounded">
-                                <p>
-                                    <strong class="text-muted">{% trans "Reviewed by:" %}</strong> {{ review.author.username }}
-                                    <span class="mx-2 text-muted">•</span>
-                                    <em class="text-muted">{% trans "Posted:" %} {{ review.created_at|date:"F j, Y" }}</em>
-                                </p>
-                                <p>
-                                    <strong>{% trans "Lived here for:" %}</strong>
-                                    <span class="badge bg-secondary">{{ review.get_residence_length_display }}</span>
-                                </p>
-                                <div class="row">
-                                    <div class="col-md-6">
-                                        <h5>{% trans "Pros" %} 👍</h5>
-                                        <p>{{ review.pros|linebreaksbr }}</p>
-                                    </div>
-                                    <div class="col-md-6">
-                                        <h5>{% trans "Cons" %} 👎</h5>
-                                        <p>{{ review.cons|linebreaksbr }}</p>
-                                    </div>
+                    {% for review in reviews_list %}
+                        {# The 'if review.status == 'APPROVED'' check is no longer needed here, #}
+                        {# because the view has already pre-filtered them. #}
+                        <div class="review-card mb-3 p-3 border rounded">
+                            <span>
+                                {% verification_badge review %}
+                            </span>
+                            <p>
+                                <strong class="text-muted">{% trans "Reviewed by:" %}</strong> {{ review.author.username }}
+                                <span class="mx-2 text-muted">•</span>
+                                <em class="text-muted">{% trans "Posted:" %} {{ review.created_at|date:"F j, Y" }}</em>
+                            </p>
+                            <p>
+                                <strong>{% trans "Lived here for:" %}</strong>
+                                <span class="badge bg-secondary">{{ review.get_residence_length_display }}</span>
+                            </p>
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <h5>{% trans "Pros" %} 👍</h5>
+                                    <p>{{ review.pros|linebreaksbr }}</p>
+                                </div>
+                                <div class="col-md-6">
+                                    <h5>{% trans "Cons" %} 👎</h5>
+                                    <p>{{ review.cons|linebreaksbr }}</p>
                                 </div>
                             </div>
-                        {% endif %}
+                            {% include 'reviews/partials/_vote_buttons.html' with review=review helpful_votes=review.helpful_votes unhelpful_votes=review.unhelpful_votes user_vote_value=review.user_vote_value %}
+                        </div>
                     {% empty %}
                         <p class="text-muted ps-3">{% trans "No approved reviews for this unit yet." %}</p>
                     {% endfor %}

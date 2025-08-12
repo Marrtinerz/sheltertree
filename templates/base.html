@@ -2,7 +2,7 @@
 {% load i18n %}
 
 <!DOCTYPE html>
-<html lang="en">
+<html lang="{{ request.LANGUAGE_CODE|default:'en' }}">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -16,6 +16,15 @@
     
     <!-- HTMX for live search functionality -->
     <script src="https://unpkg.com/htmx.org@1.9.10"></script>
+    
+
+    <!-- 1. Mapbox CSS: The "Blueprint and Paint Job" -->
+    <link href='https://api.mapbox.com/mapbox-gl-js/v2.9.1/mapbox-gl.css' rel='stylesheet' />
+    
+    <!-- 2. Mapbox JavaScript: The "Engine" -->
+    <script src='https://api.mapbox.com/mapbox-gl-js/v2.9.1/mapbox-gl.js'></script>
+
+    {% block extra_head %}{% endblock %}
 </head>
 <body>
 
@@ -24,7 +33,7 @@
     <!-- ==================================================================== -->
     <nav class="navbar navbar-expand-lg navbar-light bg-light border-bottom">
         <div class="container-fluid">
-            <a class="navbar-brand fw-bold" href="{% url 'reviews:property-list' %}">ShelterTree</a>
+            <a class="navbar-brand fw-bold" href="{% url 'reviews:home' %}">ShelterTree</a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
             </button>
@@ -36,8 +45,15 @@
                     <button class="btn btn-outline-success" type="submit">{% trans "Search" %}</button>
                 </form>
 
-                <!-- User Menu - Aligned to the right using ms-auto -->
-                <ul class="navbar-nav ms-auto">
+                <!-- Right-aligned Menu Items -->
+                <ul class="navbar-nav ms-auto align-items-center">
+
+                    <!-- NEW: Browse Properties Link -->
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'reviews:property-list' %}">{% trans "Browse Properties" %}</a>
+                    </li>
+
+                    <!-- User Menu -->
                     {% if user.is_authenticated %}
                         <li class="nav-item dropdown">
                             <a class="nav-link dropdown-toggle" href="#" id="navbarUserDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
@@ -85,6 +101,28 @@
 
     <!-- Main Content Block -->
     <main class="container py-4">
+        {% if messages %}
+                <div class="toast-container position-fixed top-0 end-0 p-3" style="z-index: 1100">
+                    {% for message in messages %}
+                        <div class="toast show" role="alert" aria-live="assertive" aria-atomic="true">
+                            <div class="toast-header">
+                                <strong class="me-auto {% if message.tags == 'success' %}text-success{% elif message.tags == 'error' %}text-danger{% elif message.tags == 'warning' %}text-warning{% else %}text-info{% endif %}">
+                                    {% if message.tags == 'success' %}<i class="fas fa-check-circle me-2"></i>{% translate "Success" %}
+                                    {% elif message.tags == 'error' %}<i class="fas fa-times-circle me-2"></i>{% translate "Error" %}
+                                    {% elif message.tags == 'warning' %}<i class="fas fa-exclamation-triangle me-2"></i>{% translate "Warning" %}
+                                    {% else %}<i class="fas fa-info-circle me-2"></i>{% translate "Notification" %}
+                                    {% endif %}
+                                </strong>
+                                <small class="text-muted">{% translate "just now" %}</small>
+                                <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
+                            </div>
+                            <div class="toast-body">
+                                {{ message }}
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+            {% endif %}
         {% block content %}{% endblock %}
     </main>
 

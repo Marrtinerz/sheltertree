@@ -6,7 +6,7 @@ from django.utils.html import format_html
 from django.utils.translation import ngettext
 from django.utils.translation import gettext_lazy as _
 
-from .models import Property, PropertyUnit, Review, PropertyStatus, ReviewStatus
+from .models import Property, PropertyUnit, Review, PropertyStatus, ReviewStatus, Vote
 
 # A constant list of review statuses that are considered "active" and
 # should be affected when a parent property is rejected or removed.
@@ -135,7 +135,7 @@ class ReviewAdmin(admin.ModelAdmin):
     search_fields = ('unit__property__name', 'unit__unit_identifier', 'author__username', 'pros', 'cons')
     raw_id_fields = ('unit', 'author')
     readonly_fields = ('created_at', 'unit', 'get_property_link', 'pros', 'cons', 'author', 'security_rating', 'electricity_rating', 'water_rating', 'mobile_network_rating', 'road_network_rating', 'management_rating')
-    fields = ('unit', 'get_property_link', 'author', 'security_rating', 'electricity_rating', 'water_rating', 'mobile_network_rating', 'road_network_rating', 'management_rating', 'pros', 'cons', 'status', 'created_at')
+    fields = ('unit', 'get_property_link', 'author', 'security_rating', 'electricity_rating', 'water_rating', 'mobile_network_rating', 'road_network_rating', 'management_rating', 'pros', 'cons', 'is_author_phone_verified', 'status', 'created_at')
 
     @admin.display(description=_('Parent Property'))
     def get_property_link(self, obj):
@@ -171,3 +171,8 @@ class PropertyUnitAdmin(admin.ModelAdmin):
     @admin.display(description=_('Parent Property'), ordering='property__name')
     def get_property_name(self, obj):
         return obj.property.name
+    
+
+@admin.register(Vote)
+class UserAdmin(admin.ModelAdmin):
+        list_display = ('user', 'review', 'value')

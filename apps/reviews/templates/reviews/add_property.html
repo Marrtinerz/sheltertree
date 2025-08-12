@@ -16,7 +16,7 @@
                         {% csrf_token %}
                         {% if form.errors %}
                             <div class="alert alert-danger">
-                                <strong>Please correct the errors below.</strong>
+                                <strong>Please correct the errors below:</strong>
                                 {{ form.non_field_errors }}
                                 {# You can uncomment the line below to see a list of all field errors #}
                                 {# <p>{{ form.errors }}</p> #}

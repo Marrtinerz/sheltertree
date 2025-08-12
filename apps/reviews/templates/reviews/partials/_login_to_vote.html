@@ -1,0 +1,17 @@
+<div class="review-footer mt-3" id="review-vote-{{ review.pk }}">
+    <small class="text-muted">Was this review helpful?</small>
+
+    <button type="button" class="btn btn-sm btn-outline-success ms-2" disabled>
+        <i class="fas fa-thumbs-up"></i> ({{ review.helpful_votes|default:0 }})
+    </button>
+    <button type="button" class="btn btn-sm btn-outline-secondary ms-1" disabled>
+        <i class="fas fa-thumbs-down"></i> ({{ review.unhelpful_votes|default:0 }})
+    </button>
+
+    <span class="ms-3">
+        {# --- THE FULLY CORRECTED LINK --- #}
+        {# 1. It builds the URL to the property detail page. #}
+        {# 2. It adds a URL fragment (#) that tells the browser to scroll to our vote buttons div. #}
+        <a href="{% url 'account_login' %}?next={% url 'reviews:property-detail' pk=review.unit.property.pk %}#review-vote-{{ review.pk }}">Please log in to vote.</a>
+    </span>
+</div>

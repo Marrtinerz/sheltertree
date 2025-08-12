@@ -19,7 +19,6 @@ WORKDIR /app
 # We copy the requirements file first to take advantage of Docker caching
 COPY requirements.txt /app/
 RUN pip install --no-cache-dir -r requirements.txt
-RUN python manage.py populate_locations
 
 # Copy the rest of the project files into the container
 COPY . /app/

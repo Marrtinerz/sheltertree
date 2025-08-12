@@ -2,6 +2,8 @@ from django import forms
 from django.utils.translation import gettext_lazy as _
 from .models import Property, PropertyUnit, Review, ResidenceLength
 from apps.locations.models import Country, State
+from django.urls import reverse
+from django.utils.safestring import mark_safe
 
 
 class PropertySearchForm(forms.Form):
@@ -98,6 +100,43 @@ class PropertyForm(forms.ModelForm):
                 self.fields['state'].queryset = State.objects.filter(country_id=country_id).order_by('name')
             except (ValueError, TypeError):
                 pass
+            
+    def clean(self):
+        cleaned_data = super().clean()
+        google_place_id = cleaned_data.get('google_place_id')
+        name = cleaned_data.get('name')
+        address = cleaned_data.get('address')
+        
+        # Define the existing property instance
+        existing_property = None
+
+        # Scenario 1: User submitted with a Google Place ID
+        if google_place_id:
+            # Check if a property with this Google ID already exists.
+            # This is the most reliable check.
+            existing_property = Property.objects.filter(google_place_id=google_place_id).first()
+
+        # Scenario 2: Manual entry (no Google Place ID)
+        # We check for a close match on name and address. This is less precise but necessary.
+        elif name and address:
+            existing_property = Property.objects.filter(name__iexact=name, address__iexact=address).first()
+
+        # If we found an existing property by either method...
+        if existing_property:
+            # Create the URL to the existing property's detail page.
+            detail_url = reverse('reviews:property-detail', kwargs={'pk': existing_property.pk})
+            
+            # Create a user-friendly, HTML-formatted error message with a link.
+            error_message = mark_safe(
+                _('This property already exists in our system. '
+                  '<a href="{url}" class="alert-link">Click here to view it.</a>')
+                .format(url=detail_url)
+            )
+            
+            # Raise a non-field validation error with our custom message.
+            raise forms.ValidationError(error_message)
+            
+        return cleaned_data
 
 class PropertyUnitForm(forms.ModelForm):
     """

@@ -92,7 +92,7 @@ class Property(models.Model):
         default=PropertyStatus.PENDING_APPROVAL,
         verbose_name=_("Status")
     )
-    search_vector = SearchVectorField(null=True, blank=True)
+    search_vector = SearchVectorField(null=True, blank=True, editable=False)
 
     added_by = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.SET_NULL, null=True, related_name="added_properties")
     created_at = models.DateTimeField(auto_now_add=True)
@@ -103,27 +103,6 @@ class Property(models.Model):
         indexes = [
             GinIndex(fields=['search_vector'])
         ]
-
-    def save(self, *args, **kwargs):
-        """
-        Overrides the save method to ensure the search_vector is updated
-        whenever a property is saved.
-        """
-        # First, save the object to the database as normal.
-        super().save(*args, **kwargs)
-
-        # Now, perform a *separate* update operation for the search_vector
-        # on THIS instance only. This is the correct pattern.
-        # This avoids the FieldError because we are not using joins inside the .update() call itself.
-        # The joins happen in the filter and annotation parts of a different query.
-        vector = SearchVector(
-            'name', 'address', 'city', 'state__name', 'country__name'
-        )
-        
-        # Filter for the current instance, annotate it with the new vector,
-        # and then update the search_vector field with the annotated value.
-        # This looks complex, but it's the right way to tell Django to do this.
-        Property.objects.filter(pk=self.pk).update(search_vector=vector)
 
     def __str__(self):
         return f"{self.name} [{self.get_status_display()}]"
@@ -145,11 +124,18 @@ class PropertyUnit(models.Model):
 
 class Review(models.Model):
     unit = models.ForeignKey(PropertyUnit, on_delete=models.CASCADE, related_name='reviews', verbose_name=_("Property Unit"))
-    author = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, verbose_name=_("Author"))
-    residence_length = models.IntegerField(
-        choices=ResidenceLength.choices,
-        verbose_name=_("How long did you live here?")
+    
+    # --- CRITICAL IMPROVEMENT ---
+    # Change on_delete to SET_NULL to preserve reviews if a user deletes their account.
+    # The author field must also be allowed to be NULL.
+    author = models.ForeignKey(
+        settings.AUTH_USER_MODEL, 
+        on_delete=models.SET_NULL, 
+        null=True, # Allow the author field to be empty
+        verbose_name=_("Author")
     )
+    
+    residence_length = models.IntegerField(choices=ResidenceLength.choices, verbose_name=_("How long did you live here?"))
     security_rating = models.IntegerField(choices=OverallRating.choices, verbose_name=_("Security Rating"))
     electricity_rating = models.IntegerField(choices=OverallRating.choices, verbose_name=_("Electricity Rating"))
     water_rating = models.IntegerField(choices=OverallRating.choices, verbose_name=_("Water Rating"))
@@ -158,7 +144,10 @@ class Review(models.Model):
     management_rating = models.IntegerField(choices=OverallRating.choices, verbose_name=_("Management Rating"))
 
     pros = models.TextField(help_text=_("What are the best things about living here?"), verbose_name=_("Pros"))
-    cons = models.TextField(help_text=_("What are the best things about living here?"), verbose_name=_("Cons"))
+    
+    # --- MINOR FIX ---
+    # Corrected the help_text for the 'cons' field.
+    cons = models.TextField(help_text=_("What are the biggest challenges or worst things about living here?"), verbose_name=_("Cons"))
 
     status = models.CharField(
         max_length=20,
@@ -166,6 +155,9 @@ class Review(models.Model):
         default=ReviewStatus.PENDING_PROPERTY_APPROVAL,
         verbose_name=_("Status")
     )
+    
+    # These new fields are perfectly implemented.
+    is_author_phone_verified = models.BooleanField(default=False)
 
     created_at = models.DateTimeField(auto_now_add=True)
 
@@ -173,5 +165,28 @@ class Review(models.Model):
         verbose_name = _("Review")
         verbose_name_plural = _("Reviews")
 
+    # The save method is perfectly implemented.
+    def save(self, *args, **kwargs):
+        if self._state.adding and self.author:
+            self.is_author_phone_verified = self.author.is_phone_verified
+        super().save(*args, **kwargs)
+        
     def __str__(self):
-        return f"Review for {self.unit} [{self.get_status_display()}]"
+        # Handle the case where the author has been deleted
+        author_name = self.author.username if self.author else "Anonymous"
+        return f"Review by {author_name} for {self.unit} [{self.get_status_display()}]"
+    
+
+class Vote(models.Model):
+    class VoteChoice(models.IntegerChoices):
+        UPVOTE = 1, 'Upvote'
+        DOWNVOTE = -1, 'Downvote'
+    
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+    review = models.ForeignKey('Review', on_delete=models.CASCADE, related_name='votes')
+    value = models.IntegerField(choices=VoteChoice.choices)
+
+    class Meta:
+        # --- THE CRITICAL CONSTRAINT ---
+        # This ensures a user can only have one vote record per review.
+        unique_together = ('user', 'review')

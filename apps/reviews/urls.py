@@ -30,6 +30,7 @@ urlpatterns = [
     path('property/add/success/<int:pk>/', views.add_property_success, name='add-property-success'),
     path('property/<int:property_pk>/add-review/', views.add_unit_and_review, name='add-unit-and-review'),
     path('unit/<int:unit_pk>/add-review/', views.add_review_to_unit, name='add-review-to-unit'),
+    path('review/<int:review_pk>/vote/', views.vote_on_review, name='vote_on_review'),
     
     
     # --- LOCATIONS ---
