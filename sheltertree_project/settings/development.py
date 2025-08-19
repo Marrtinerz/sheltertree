@@ -21,3 +21,16 @@ EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 # INSTALLED_APPS += ['debug_toolbar']
 # MIDDLEWARE += ['debug_toolbar.middleware.DebugToolbarMiddleware']
 # INTERNAL_IPS = ['127.0.0.1']
+
+# --- TWILIO PRODUCTION CONFIGURATION ---
+TWILIO_ACCOUNT_SID = config('TWILIO_ACCOUNT_SID', default=None)
+TWILIO_AUTH_TOKEN = config('TWILIO_AUTH_TOKEN', default=None)
+TWILIO_SMS_FROM_NUMBER = config('TWILIO_SMS_FROM_NUMBER', default=None)
+TWILIO_WHATSAPP_FROM_NUMBER = config('TWILIO_WHATSAPP_FROM_NUMBER', default=None)
+
+
+# AfricasTalking Settings
+AFRICASTALKING_API_KEY = config('AFRICASTALKING_API_KEY', default=None)
+AFRICASTALKING_USERNAME = config('AFRICASTALKING_USERNAME', default=None)
+AFRICASTALKING_SENDER_ID = config('AFRICASTALKING_SENDER_ID', default=None)
+AFRICASTALKING_WHATSAPP_NUMBER = config('AFRICASTALKING_WHATSAPP_NUMBER', default=None)

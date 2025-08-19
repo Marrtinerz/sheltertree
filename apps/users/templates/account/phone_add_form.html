@@ -1,0 +1,117 @@
+{% extends "base.html" %}
+{% load i18n %}
+
+{% block title %}{% trans "Add Your Phone Number" %} | ShelterTree{% endblock %}
+
+{% block extra_head %}
+    <!-- 
+      This block adds the necessary CSS for the international phone input library.
+      It's placed in 'extra_head' to ensure it loads before the page content.
+    -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.8/css/intlTelInput.css"/>
+    <style>
+        /* Small style adjustment to ensure the flag dropdown looks good with Bootstrap */
+        .iti {
+            width: 100%;
+        }
+    </style>
+{% endblock %}
+
+{% block content %}
+<div class="container mt-5 mb-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card shadow-sm">
+                <div class="card-body p-4 p-md-5">
+                    <div class="text-center mb-4">
+                        <i class="fas fa-mobile-alt fa-3x text-primary"></i>
+                    </div>
+                    <h2 class="card-title text-center">{% trans "Verify Your Phone" %}</h2>
+                    <p class="card-text text-center text-muted mb-4">
+                        {% trans "To ensure the quality of our community, please provide your phone number. A 6-digit code will be sent to you for verification." %}
+                    </p>
+
+                    <form method="post" id="phone-form">
+                        {% csrf_token %}
+
+                        <!-- This hidden input will be populated by our JavaScript with the selected country's ISO code (e.g., 'NG') -->
+                        <input type="hidden" name="country_code" id="id_country_code">
+                        
+                        <!-- Display any non-field errors from the backend (e.g., "Could not send SMS") -->
+                        {% if form.non_field_errors %}
+                            <div class="alert alert-danger">
+                                {% for error in form.non_field_errors %}{{ error }}{% endfor %}
+                            </div>
+                        {% endif %}
+
+                        <!-- The phone number input field -->
+                        <div class="mb-3">
+                            <label for="id_phone_number" class="form-label">{{ form.phone_number.label }}</label>
+                            <!-- The 'type="tel"' is important for mobile browser usability -->
+                            <input type="tel" name="phone_number" id="id_phone_number" class="form-control" required>
+                            
+                            <!-- Display any errors related to the phone number field itself -->
+                            {% for error in form.phone_number.errors %}
+                                <div class="invalid-feedback d-block">{{ error }}</div>
+                            {% endfor %}
+                        </div>
+                        
+                        <!-- THE CHOICE BUTTONS -->
+                        <div class="d-grid gap-2 mt-4">
+                            <!-- Primary Action: WhatsApp -->
+                            <button type="submit" name="method" value="whatsapp" class="btn btn-success btn-lg">
+                                <i class="fab fa-whatsapp me-2"></i>{% trans "Send Code via WhatsApp" %}
+                            </button>
+                            <!-- Secondary Action: SMS -->
+                            <button type="submit" name="method" value="sms" class="btn btn-outline-secondary">
+                                <i class="fas fa-sms me-2"></i>{% trans "Send Code via SMS" %}
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+    <!-- 
+      This block adds the JavaScript for the international phone input library.
+      It must be loaded after the page content to find the input field.
+    -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.8/js/intlTelInput.min.js"></script>
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            const phoneInputField = document.querySelector("#id_phone_number");
+            const countryCodeField = document.querySelector("#id_country_code");
+            const form = document.querySelector("#phone-form");
+
+            // Initialize the intl-tel-input widget
+            const phoneInput = window.intlTelInput(phoneInputField, {
+                // The utilsScript is necessary for validation and formatting
+                utilsScript: "https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.8/js/utils.js",
+                // Attempt to guess the user's country based on their IP address
+                initialCountry: "auto",
+                geoIpLookup: function(callback) {
+                    // We can use a free service for this. In a high-traffic production
+                    // app, you might use a paid service or your own lookup.
+                    fetch("https://ipapi.co/json")
+                        .then(res => res.json())
+                        .then(data => callback(data.country_code))
+                        .catch(() => callback(""));
+                },
+                // Prefer national codes for a cleaner look
+                nationalMode: true,
+                // List of countries to prioritize in the dropdown
+                preferredCountries: ["ng", "ke", "gh", "za"], 
+            });
+
+            // The most robust way to ensure the country code is up-to-date is
+            // to set its value right before the form is submitted.
+            form.addEventListener("submit", function() {
+                countryCodeField.value = phoneInput.getSelectedCountryData().iso2.toUpperCase();
+            });
+        });
+    </script>
+{% endblock %}

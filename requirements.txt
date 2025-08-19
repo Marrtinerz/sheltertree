@@ -1,5 +1,7 @@
+africastalking==1.2.9
 aiohappyeyeballs==2.6.1
 aiohttp==3.12.15
+aiohttp-retry==2.9.1
 aiosignal==1.4.0
 asgiref==3.9.1
 attrs==25.3.0
@@ -12,13 +14,17 @@ geoip2==5.1.0
 idna==3.10
 maxminddb==2.8.2
 multidict==6.6.3
+phonenumbers==9.0.11
 propcache==0.3.2
 psycopg2-binary==2.9.10
 pycountry==24.6.1
+PyJWT==2.10.1
 python-decouple==3.8
 python-dotenv==1.1.1
 requests==2.32.4
+schema==0.7.7
 sqlparse==0.5.3
+twilio==9.7.0
 typing_extensions==4.14.1
 tzdata==2025.2
 urllib3==2.5.0

@@ -1,0 +1,51 @@
+{% extends "base.html" %}
+{% load i18n %}
+
+{% block title %}{% trans "Review Submitted for Approval" %} | ShelterTree{% endblock %}
+
+{% block content %}
+<div class="container mt-5 mb-5 text-center">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <i class="fas fa-paper-plane fa-4x text-success mb-3"></i>
+            <h1>{% trans "Thank You For Your Contribution!" %}</h1>
+
+            <!-- ==================================================================== -->
+            <!-- THE CORRECTED MESSAGING                                            -->
+            <!-- ==================================================================== -->
+            <p class="lead text-muted">
+                {% trans "Your review has been submitted for a quick quality check by our team." %}
+            </p>
+            <p>
+                {% trans "To ensure we maintain a high-quality, trustworthy community, all reviews are published after being approved. This usually takes 24-48 hours." %}
+            </p>
+            
+            <div class="card my-4">
+                <div class="card-header">
+                    {% trans "Your Submitted Review (Pending Approval)" %}
+                </div>
+                <div class="card-body">
+                    <p class="fst-italic">"{{ review.pros|truncatewords:20 }}..."</p>
+                </div>
+            </div>
+
+            <!-- ==================================================================== -->
+            <!-- The Incentive Prompt (This logic remains the same and is correct)  -->
+            <!-- ==================================================================== -->
+            {% if not user.is_phone_verified %}
+                <div class="alert alert-info shadow-sm">
+                    <h4 class="alert-heading">{% trans "Make Your Review Stand Out!" %}</h4>
+                    <p>{% trans "Reviews from 'Verified Reviewers' are often prioritized and trusted more by the community. Get your badge now—it's a one-time, free process." %}</p>
+                    <hr>
+                    <a href="{% url 'phone_add' %}" class="btn btn-primary btn-lg">
+                        <i class="fas fa-mobile-alt me-2"></i>{% trans "Get Verified Badge" %}
+                    </a>
+                    <a href="{% url 'reviews:property-detail' pk=review.unit.property.pk %}" class="btn btn-outline-secondary mt-2 mt-md-0">
+                        {% trans "Maybe Later" %}
+                    </a>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}

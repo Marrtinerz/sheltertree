@@ -7,7 +7,7 @@
 <div class="container mt-4 mb-5">
     <h1 class="mb-4">{% trans "My Profile & Settings" %}</h1>
     
-    <!-- This block will display success messages passed from views (e.g., after editing profile) -->
+    {% comment %} <!-- This block will display success messages passed from views -->
     {% if messages %}
         {% for message in messages %}
             <div class="alert alert-success alert-dismissible fade show" role="alert">
@@ -15,12 +15,12 @@
                 <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
             </div>
         {% endfor %}
-    {% endif %}
+    {% endif %} {% endcomment %}
 
     <div class="row g-4">
 
         <!-- ==================================================================== -->
-        <!-- Personal Information Card                                          -->
+        <!-- Personal Information Card (No changes needed here)                  -->
         <!-- ==================================================================== -->
         <div class="col-lg-6">
             <div class="card h-100">
@@ -40,7 +40,7 @@
         </div>
 
         <!-- ==================================================================== -->
-        <!-- Account Security Card                                              -->
+        <!-- Account Security Card (This section is updated)                     -->
         <!-- ==================================================================== -->
         <div class="col-lg-6">
             <div class="card h-100">
@@ -58,7 +58,7 @@
                         </a>
                     </li>
                     <li class="list-group-item d-flex justify-content-between align-items-center">
-                        <span><strong>{% trans "Password" %}:</strong> ********</span>
+                        <span><strong>{% trans "Password" %}:</strong> ••••••••</span>
                         <a href="{% url 'account_change_password' %}" class="btn btn-outline-secondary btn-sm">
                             <i class="fas fa-key me-1"></i>{% trans "Change" %}
                         </a>
@@ -69,20 +69,35 @@
                             <i class="fas fa-link me-1"></i>{% trans "Manage" %}
                         </a>
                     </li>
+
+                    <!-- ==================================================================== -->
+                    <!-- THE IMPROVED PHONE VERIFICATION SECTION                              -->
+                    <!-- ==================================================================== -->
                     <li class="list-group-item d-flex justify-content-between align-items-center">
                         <span>
-                            <strong>{% trans "Phone Number" %}:</strong> 
+                            <strong>{% trans "Phone Number" %}:</strong>
                             {% if user.is_phone_verified %}
-                                <span class="badge bg-success ms-1">{% trans "Verified" %}</span> {{ user.phone_number }}
+                                <span class="ms-2">{{ user.phone_number }}</span>
+                                <span class="badge bg-success rounded-pill ms-2">{% trans "Verified" %}</span>
                             {% else %}
-                                <span class="text-muted">Not added</span>
+                                <span class="text-muted ms-2">{% trans "Not added" %}</span>
                             {% endif %}
                         </span>
-                        <!-- This button is where the phone verification flow will be triggered in the future -->
-                        <a href="#" class="btn btn-outline-primary btn-sm disabled" aria-disabled="true">
-                            <i class="fas fa-plus me-1"></i>{% trans "Add & Verify" %}
-                        </a>
+                        
+                        {% if user.is_phone_verified %}
+                            <!-- If verified, the action is to 'Change' the number -->
+                            <a href="{% url 'phone_add' %}" class="btn btn-outline-secondary btn-sm">
+                                <i class="fas fa-edit me-1"></i>{% trans "Change" %}
+                            </a>
+                        {% else %}
+                            <!-- If not verified, the primary action is to 'Add & Verify' -->
+                            <a href="{% url 'phone_add' %}" class="btn btn-primary btn-sm">
+                                <i class="fas fa-plus-circle me-1"></i>{% trans "Add & Verify" %}
+                            </a>
+                        {% endif %}
                     </li>
+                    <!-- ==================================================================== -->
+
                 </ul>
             </div>
         </div>

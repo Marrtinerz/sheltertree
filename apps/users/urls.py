@@ -1,10 +1,12 @@
 # apps/users/urls.py
 from django.urls import path
-from .views import OnboardingView, SkipOnboardingView, ProfileView, ProfileEditView
+from .views import OnboardingView, SkipOnboardingView, ProfileView, ProfileEditView, AddPhoneView, VerifyPhoneView
 
 urlpatterns = [
     path('onboarding/', OnboardingView.as_view(), name='onboarding'),
     path('onboarding/skip/', SkipOnboardingView.as_view(), name='onboarding-skip'),
     path('profile/', ProfileView.as_view(), name='account_profile'),
     path('profile/edit/', ProfileEditView.as_view(), name='account_profile_edit'),
+    path('phone/add/', AddPhoneView.as_view(), name='phone_add'),
+    path('phone/verify/', VerifyPhoneView.as_view(), name='phone_verify'),
 ]

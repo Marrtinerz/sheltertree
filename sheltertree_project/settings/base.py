@@ -20,7 +20,8 @@ AUTH_USER_MODEL = 'users.CustomUser'
 
 GEOIP_PATH = os.path.join(BASE_DIR, 'geoip')
 
-
+# sms and whatsapp vendor
+SMS_VENDOR = config('SMS_VENDOR', default='CONSOLE')
 
 # --- Application Definition ---
 INSTALLED_APPS = [
@@ -175,4 +176,11 @@ ACCOUNT_FORMS = {'signup': 'apps.users.forms.MinimalSignupForm'}
 
 ACCOUNT_LOGIN_ON_EMAIL_CONFIRMATION = True
 # ACCOUNT_CONFIRM_EMAIL_ON_GET = True
+
+
+# --- ShelterTree Business Logic Settings ---
+
+# The time window (in hours) within which a new review will be retroactively
+# marked as "verified" if the user verifies their phone number.
+REVIEW_VERIFICATION_GRACE_PERIOD_HOURS = 48
 

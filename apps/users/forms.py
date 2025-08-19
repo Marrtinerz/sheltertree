@@ -3,6 +3,8 @@ from django import forms
 from allauth.account.forms import SignupForm
 from .models import CustomUser, Country
 from django.utils.translation import gettext_lazy as _
+import phonenumbers
+from django.core.exceptions import ValidationError
 
 
 class MinimalSignupForm(SignupForm):
@@ -69,3 +71,79 @@ class OnboardingForm(forms.ModelForm):
 #         self.fields['country'].queryset = Country.objects.all().order_by('name')
 #         self.fields['country'].label = _("Your Home Country")
 #         self.fields['user_type'].label = _("How do you plan to use ShelterTree?")
+
+
+class PhoneNumberForm(forms.Form):
+    phone_number = forms.CharField(label="Your Phone Number")
+    country_code = forms.CharField(widget=forms.HiddenInput())
+
+    def __init__(self, *args, **kwargs):
+        """
+        Accept the user object from the view.
+        """
+        # Pop 'user' from kwargs before calling super(), as the default Form.__init__ doesn't expect it.
+        self.user = kwargs.pop('user', None)
+        super().__init__(*args, **kwargs)
+
+    def clean(self):
+        """
+        Perform cross-field validation.
+        """
+        cleaned_data = super().clean()
+        phone_number = cleaned_data.get('phone_number')
+        country_code = cleaned_data.get('country_code')
+
+        if not self.user:
+            # This should never happen if the view is correct, but it's a good safeguard.
+            raise ValidationError("An unexpected error occurred. User not found.")
+
+        if not phone_number or not country_code:
+            # This will be caught by the individual field validators, but it's good practice.
+            return cleaned_data
+
+        try:
+            parsed_number = phonenumbers.parse(phone_number, country_code)
+            if not phonenumbers.is_valid_number(parsed_number):
+                raise ValidationError("Please enter a valid phone number for the selected country.")
+            
+            phone_number_e164 = phonenumbers.format_number(parsed_number, phonenumbers.PhoneNumberFormat.E164)
+            cleaned_data['phone_number_e164'] = phone_number_e164
+
+            # --- THE VALIDATION THAT USES self.user ---
+            # Check if this phone number is already in use by another verified user.
+            if CustomUser.objects.filter(phone_number=phone_number_e164, is_phone_verified=True).exclude(pk=self.user.pk).exists():
+                raise ValidationError("This phone number is already associated with another verified account.")
+
+        except phonenumbers.NumberParseException:
+            raise ValidationError("Could not parse the phone number. Please check the format.")
+        
+        return cleaned_data
+
+class PhoneVerificationCodeForm(forms.Form):
+    code = forms.CharField(
+        label="6-Digit Verification Code",
+        max_length=6,
+        widget=forms.TextInput(attrs={'autocomplete': 'one-time-code'})
+    )
+
+    def __init__(self, *args, **kwargs):
+        """
+        Accept the request object from the view so we can access the user.
+        """
+        self.request = kwargs.pop('request', None)
+        super().__init__(*args, **kwargs)
+
+    def clean_code(self):
+        """
+        This method is automatically called by Django during form validation.
+        This is where we check if the code is correct.
+        """
+        code = self.cleaned_data.get('code')
+        user = self.request.user
+
+        if not user.verify_phone_code(code):
+            # If the model method returns False, we raise a validation error.
+            # This error will be attached to the 'code' field and displayed on the form.
+            raise ValidationError("The code is invalid or has expired. Please try again.")
+        
+        return code

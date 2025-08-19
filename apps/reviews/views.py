@@ -13,6 +13,7 @@ from django.db.models import Q, F
 from django.template.loader import render_to_string
 from django.http import HttpResponse
 from collections import defaultdict
+from django.contrib.auth.mixins import LoginRequiredMixin
 
 # --- READ-ONLY VIEWS (for the public) ---
 
@@ -254,28 +255,44 @@ def add_property_success(request, pk):
 def add_unit_and_review(request, property_pk):
     """
     View for Flow 2: Adding a new unit AND a review for a given property.
+    Now redirects to the review success page.
     """
     property_instance = get_object_or_404(Property, pk=property_pk)
+
     if request.method == 'POST':
         unit_form = PropertyUnitForm(request.POST)
         review_form = ReviewForm(request.POST)
+
         if unit_form.is_valid() and review_form.is_valid():
+            # Save the unit first
             unit = unit_form.save(commit=False)
             unit.property = property_instance
             unit.save()
+
+            # Now save the review, linking it to the new unit and the user
             review = review_form.save(commit=False)
             review.unit = unit
             review.author = request.user
+            
+            # Set review status based on parent property's status
             if property_instance.status == PropertyStatus.APPROVED:
                 review.status = ReviewStatus.PENDING_CONTENT_REVIEW
             else:
                 review.status = ReviewStatus.PENDING_PROPERTY_APPROVAL
+            
+            # The save() method on the Review model will automatically handle
+            # setting the is_author_phone_verified flag.
             review.save()
-            messages.success(request, _("Thank you! Your review has been submitted and will be published after moderation."))
-            return redirect("reviews:property-detail", pk=property_instance.pk)
+
+            # --- THE CRITICAL CHANGE ---
+            # Instead of a generic message, we redirect to the success page.
+            # The success page will handle displaying the congratulations and the verification incentive.
+            return redirect('reviews:review_success', review_pk=review.pk)
+
     else:
         unit_form = PropertyUnitForm()
         review_form = ReviewForm()
+
     return render(request, 'reviews/add_unit_and_review.html', {
         'property': property_instance,
         'unit_form': unit_form,
@@ -287,6 +304,7 @@ def add_unit_and_review(request, property_pk):
 def add_review_to_unit(request, unit_pk):
     """
     View for Flow 3: Adding a review to an EXISTING unit.
+    Now redirects to the review success page.
     """
     unit_instance = get_object_or_404(PropertyUnit, pk=unit_pk)
     property_instance = unit_instance.property
@@ -297,11 +315,17 @@ def add_review_to_unit(request, unit_pk):
             review = review_form.save(commit=False)
             review.unit = unit_instance
             review.author = request.user
-            # The parent property must be approved to reach this view.
             review.status = ReviewStatus.PENDING_CONTENT_REVIEW
+            
+            # The save() method on the Review model will automatically handle
+            # setting the is_author_phone_verified flag.
             review.save()
-            messages.success(request, _("Thank you! Your review has been submitted and will be published after moderation."))
-            return redirect('reviews:property-detail', pk=property_instance.pk)
+
+            # --- THE CRITICAL CHANGE ---
+            # Redirect to the success page with the new review's PK.
+            # This triggers the "Get Verified" incentive flow.
+            return redirect('reviews:review_success', review_pk=review.pk)
+
     else:
         review_form = ReviewForm()
 
@@ -373,3 +397,14 @@ def vote_on_review(request, review_pk):
     }
     
     return render(request, 'reviews/partials/_vote_buttons.html', context)
+
+
+
+class ReviewSuccessView(LoginRequiredMixin, DetailView):
+    model = Review
+    template_name = 'reviews/review_success.html'
+    context_object_name = 'review' # The object will be available as 'review' in the template
+    pk_url_kwarg = 'review_pk' # Tells the DetailView to get the object using 'review_pk' from the URL
+
+
+
