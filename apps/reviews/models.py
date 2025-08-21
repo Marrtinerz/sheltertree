@@ -25,6 +25,7 @@ class ReviewStatus(models.TextChoices):
     USER_DELETED = 'USER_DELETED', _('Deleted by User')
     ADMIN_REMOVED = 'ADMIN_REMOVED', _('Removed by Admin')
     PROPERTY_REMOVED = 'PROPERTY_REMOVED', _('Associated Property Removed')
+    UNDER_REVIEW = 'UNDER_REVIEW', _('Under Review / Quarantined')
 
 # --- Other Enums ---
 
@@ -60,7 +61,7 @@ class Property(models.Model):
     google_place_id = models.CharField(max_length=255, unique=True, null=True, blank=True, help_text=_("Google Places API unique ID."))
     latitude = models.FloatField(null=True, blank=True)
     longitude = models.FloatField(null=True, blank=True)
-    city = models.CharField(max_length=100, blank=False, null=False, verbose_name=_("City"))
+    city = models.CharField(max_length=100, blank=True, null=True, verbose_name=_("City"))
     postal_code = models.CharField(max_length=20, blank=True, verbose_name=_("Postal Code / ZIP Code"))
     
     
@@ -190,3 +191,28 @@ class Vote(models.Model):
         # --- THE CRITICAL CONSTRAINT ---
         # This ensures a user can only have one vote record per review.
         unique_together = ('user', 'review')
+    
+
+# ==============================================================================
+# PROXY MODELS FOR ADMIN MODERATION QUEUES
+# These models allow us to create separate, dedicated admin interfaces for
+# filtering and managing specific subsets of our core data.
+# ==============================================================================
+
+class PendingProperty(Property):
+    class Meta:
+        proxy = True
+        verbose_name = 'Pending Property'
+        verbose_name_plural = '  Property Approval Queue' # Indent for admin sorting
+
+class PendingReview(Review):
+    class Meta:
+        proxy = True
+        verbose_name = 'Pending Review'
+        verbose_name_plural = ' Review Content Queue' # Indent for admin sorting
+
+class FlaggedReview(Review):
+    class Meta:
+        proxy = True
+        verbose_name = 'Flagged Review'
+        verbose_name_plural = ' Flagged Review Queue' # Indent for admin sorting
