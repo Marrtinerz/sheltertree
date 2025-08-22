@@ -62,7 +62,7 @@
                             </a>
                             <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarUserDropdown">
                                 <li><a class="dropdown-item" href="{% url 'account_profile' %}">{% trans "My Profile & Settings" %}</a></li>
-                                <li><a class="dropdown-item" href="#">{% trans "My Reviews" %}</a></li>
+                                <li><a class="dropdown-item" href="{% url 'my_contributions' %}">{% trans "My Contributions" %}</a></li>
                                 <li><hr class="dropdown-divider"></li>
                                 <li>
                                     <form method="post" action="{% url 'account_logout' %}" class="d-inline">
@@ -125,6 +125,17 @@
             {% endif %}
         {% block content %}{% endblock %}
     </main>
+
+    <footer class="mt-auto bg-white border-top py-3 text-center">
+        <div class="container">
+            <nav class="nav justify-content-center mb-2">
+                <a href="#" class="nav-link px-2 text-muted">{% translate "Terms" %}</a>
+                <a href="#" class="nav-link px-2 text-muted">{% translate "Privacy" %}</a>
+                <a href="#" class="nav-link px-2 text-muted">{% translate "Help Center" %}</a>
+            </nav>
+            <p class="mb-0 text-muted small">© {% now "Y" %} ShelterTree</p>
+        </div>
+    </footer>
 
     <!-- ==================================================================== -->
     <!-- Scripts                                                              -->

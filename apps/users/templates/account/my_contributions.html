@@ -1,0 +1,90 @@
+{% extends "base.html" %}
+{% load i18n %}
+{% load status_tags %} <!-- Load your custom, intelligent status_badge tag -->
+
+{% block title %}{% trans "My Contributions" %} | ShelterTree {% endblock %}
+
+{% block content %}
+<div class="container mt-4 mb-5">
+    <h1 class="mb-4">{% trans "My Contributions" %}</h1>
+
+    <!-- ==================================================================== -->
+    <!-- Tab Navigation - Dynamically sets the active tab from the view     -->
+    <!-- ==================================================================== -->
+    <ul class="nav nav-tabs mb-4" id="contributionsTab" role="tablist">
+        <li class="nav-item" role="presentation">
+            <button class="nav-link {% if active_tab == 'reviews' %}active{% endif %}" id="reviews-tab" data-bs-toggle="tab" data-bs-target="#reviews" type="button" role="tab" aria-controls="reviews" aria-selected="{% if active_tab == 'reviews' %}true{% else %}false{% endif %}">
+                {% trans "My Reviews" %} <span class="badge bg-secondary">{{ reviews.paginator.count }}</span>
+            </button>
+        </li>
+        <li class="nav-item" role="presentation">
+            <button class="nav-link {% if active_tab == 'properties' %}active{% endif %}" id="properties-tab" data-bs-toggle="tab" data-bs-target="#properties" type="button" role="tab" aria-controls="properties" aria-selected="{% if active_tab == 'properties' %}true{% else %}false{% endif %}">
+                {% trans "My Property Submissions" %} <span class="badge bg-secondary">{{ properties.paginator.count }}</span>
+            </button>
+        </li>
+    </ul>
+
+    <!-- ==================================================================== -->
+    <!-- Tab Content                                                        -->
+    <!-- ==================================================================== -->
+    <div class="tab-content" id="contributionsTabContent">
+
+        <!-- Reviews Tab Pane - Dynamically sets the active pane -->
+        <div class="tab-pane fade {% if active_tab == 'reviews' %}show active{% endif %}" id="reviews" role="tabpanel" aria-labelledby="reviews-tab">
+            {% for review in reviews %}
+                <div class="card mb-3">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between align-items-start">
+                            <div>
+                                <h5 class="card-title mb-1">
+                                    <a href="{% url 'reviews:property-detail' pk=review.unit.property.pk %}">{{ review.unit.property.name }}</a>
+                                </h5>
+                                <p class="card-subtitle text-muted">{{ review.unit.property.address }}</p>
+                            </div>
+                            <!-- THE FIX: Passing the review's own status to the badge -->
+                            {% status_badge review.status %}
+                        </div>
+                        <hr>
+                        <p class="card-text fst-italic">"{{ review.pros|truncatewords:30 }}..."</p>
+                        <small class="text-muted">Reviewed on {{ review.created_at|date:"F j, Y" }}</small>
+                    </div>
+                </div>
+            {% empty %}
+                <div class="text-center p-4 bg-light rounded">
+                    <p class="mb-0">{% trans "You have not written any reviews yet." %}</p>
+                </div>
+            {% endfor %}
+            
+            <!-- Include the stateful pagination controls for reviews -->
+            {% include 'partials/_pagination_controls.html' with page_obj=reviews page_param='review_page' tab_id='reviews' other_page_params='&property_page='|add:properties.number %}
+        </div>
+
+        <!-- Properties Tab Pane - Dynamically sets the active pane -->
+        <div class="tab-pane fade {% if active_tab == 'properties' %}show active{% endif %}" id="properties" role="tabpanel" aria-labelledby="properties-tab">
+            {% for prop in properties %}
+                <div class="card mb-3">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between align-items-start">
+                            <div>
+                                <h5 class="card-title mb-1">{{ prop.name }}</h5>
+                                <p class="card-subtitle text-muted">{{ prop.address }}</p>
+                            </div>
+                            <!-- This was already correct and works with our upgraded tag -->
+                            {% status_badge prop.status %}
+                        </div>
+                        <hr>
+                        <small class="text-muted">Submitted on {{ prop.created_at|date:"F j, Y" }}</small>
+                    </div>
+                </div>
+            {% empty %}
+                <div class="text-center p-4 bg-light rounded">
+                    <p class="mb-0">{% trans "You have not submitted any new properties yet." %}</p>
+                </div>
+            {% endfor %}
+
+            <!-- Include the stateful pagination controls for properties -->
+            {% include 'partials/_pagination_controls.html' with page_obj=properties page_param='property_page' tab_id='properties' other_page_params='&review_page='|add:reviews.number %}
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -18,8 +18,8 @@ import random
 from .services import notification_service
 from django.db.models import F
 from datetime import timedelta
-from apps.reviews.models import Review
-
+from apps.reviews.models import Review, Property
+from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 
 class ProfileView(LoginRequiredMixin, TemplateView):
     template_name = 'account/profile_hub.html'
@@ -270,3 +270,39 @@ class VerifyPhoneView(LoginRequiredMixin, FormView):
         # Redirect to the original destination or profile.
         success_url = self.request.session.pop('next_url', reverse_lazy('account_profile'))
         return redirect(success_url)
+    
+
+# Define pagination settings in one place
+ITEMS_PER_PAGE = 5
+
+class MyContributionsView(LoginRequiredMixin, TemplateView):
+    template_name = 'account/my_contributions.html'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        user = self.request.user
+
+        # --- REVIEWS PAGINATION (Unchanged) ---
+        all_reviews_list = Review.objects.filter(author=user).select_related(
+            'unit__property'
+        ).order_by('-created_at')
+        review_paginator = Paginator(all_reviews_list, ITEMS_PER_PAGE)
+        review_page_number = self.request.GET.get('review_page')
+        context['reviews'] = review_paginator.get_page(review_page_number)
+
+        # --- PROPERTIES PAGINATION (Unchanged) ---
+        all_properties_list = Property.objects.filter(added_by=user).order_by('-created_at')
+        property_paginator = Paginator(all_properties_list, ITEMS_PER_PAGE)
+        property_page_number = self.request.GET.get('property_page')
+        context['properties'] = property_paginator.get_page(property_page_number)
+            
+        # --- THE CRITICAL FIX ---
+        # Determine which tab should be active based on the URL query parameters.
+        # If 'property_page' is in the URL, the properties tab should be active.
+        # Otherwise, default to the reviews tab.
+        if 'property_page' in self.request.GET:
+            context['active_tab'] = 'properties'
+        else:
+            context['active_tab'] = 'reviews'
+
+        return context
