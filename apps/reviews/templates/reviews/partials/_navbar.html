@@ -1,0 +1,85 @@
+{% load i18n %}
+
+<nav class="navbar navbar-expand-lg bg-white border-bottom shadow-sm py-3">
+    <div class="container-fluid">
+        <!-- Brand -->
+        <a class="navbar-brand fw-bold" href="{% url 'reviews:home' %}">ShelterTree</a>
+
+        <!-- ==================================================================== -->
+        <!-- Mobile-Only Toggles                                                -->
+        <!-- ==================================================================== -->
+        <button class="btn btn-outline-secondary d-lg-none" type="button" data-bs-toggle="collapse" data-bs-target="#mobileSearchCollapse" aria-expanded="false" aria-controls="mobileSearchCollapse">
+            <i class="fas fa-search"></i>
+        </button>
+
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mainNavCollapse" aria-controls="mainNavCollapse" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+
+        <!-- ==================================================================== -->
+        <!-- Main Collapsible Content                                           -->
+        <!-- ==================================================================== -->
+        <div class="collapse navbar-collapse" id="mainNavCollapse">
+            <!-- Desktop-Only Search Form (Centered) -->
+            <div class="d-none d-lg-flex mx-auto" style="width: 50%;">
+                
+                <!-- THE FIX: Wrapped the form elements in an input-group -->
+                <form class="w-100" action="{% url 'reviews:search' %}" method="get">
+                    <div class="input-group">
+                        {{ search_form.q }}
+                        <button class="btn btn-primary" type="submit" id="desktopSearchButton">
+                            <i class="fas fa-search d-none d-xl-inline"></i> <!-- Icon for larger screens -->
+                            <span class="d-xl-none">{% trans "Search" %}</span> <!-- Text for medium screens -->
+                        </button>
+                    </div>
+                </form>
+
+            </div>
+            
+            <!-- Right-aligned User Menu -->
+            <ul class="navbar-nav ms-auto align-items-center">
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'reviews:property-list' %}">{% trans "Browse Properties" %}</a>
+                </li>
+                {% if user.is_authenticated %}
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" id="navbarUserDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            <i class="fas fa-user-circle me-1"></i>
+                            {{ user.get_short_name|default:user.username }}
+                        </a>
+                        <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarUserDropdown">
+                            <li><a class="dropdown-item" href="{% url 'account_profile' %}">{% trans "My Profile & Settings" %}</a></li>
+                            <li><a class="dropdown-item" href="{% url 'my_contributions' %}">{% trans "My Contributions" %}</a></li>
+                            <li><hr class="dropdown-divider"></li>
+                            <li>
+                                <form method="post" action="{% url 'account_logout' %}" class="d-inline">
+                                    {% csrf_token %}
+                                    <button type="submit" class="dropdown-item">{% trans "Logout" %}</button>
+                                </form>
+                            </li>
+                        </ul>
+                    </li>
+                {% else %}
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'account_login' %}">{% trans "Login" %}</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="btn btn-primary ms-lg-2" href="{% url 'account_signup' %}">{% trans "Sign Up" %}</a>
+                    </li>
+                {% endif %}
+            </ul>
+        </div>
+    </div>
+</nav>
+
+<!-- Mobile-Only Search Bar (This section is unchanged and correct) -->
+<div class="collapse d-lg-none bg-white border-bottom" id="mobileSearchCollapse">
+    <div class="container pb-3 pt-2">
+         <form action="{% url 'reviews:search' %}" method="get">
+            <div class="input-group">
+                {{ search_form.q }}
+                <button class="btn btn-primary" type="submit">{% trans "Search" %}</button>
+            </div>
+        </form>
+    </div>
+</div>

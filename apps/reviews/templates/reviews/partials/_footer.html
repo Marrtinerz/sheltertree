@@ -1,0 +1,12 @@
+{% load i18n %}
+
+<footer class="footer mt-auto py-4 bg-light border-top">
+    <div class="container text-center">
+        <nav class="nav justify-content-center mb-2">
+            <a href="#" class="nav-link px-2 text-muted">{% translate "Terms of Service" %}</a>
+            <a href="#" class="nav-link px-2 text-muted">{% translate "Privacy Policy" %}</a>
+            <a href="#" class="nav-link px-2 text-muted">{% translate "Help Center" %}</a>
+        </nav>
+        <p class="mb-0 text-muted small">© {% now "Y" %} ShelterTree. {% translate "All Rights Reserved." %}</p>
+    </div>
+</footer>

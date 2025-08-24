@@ -1,25 +1,26 @@
 // ====================================================================
 // SHELTERTREE OFFICIAL DESIGN SYSTEM - V1
+// World-Class Edition
 // ====================================================================
 
 
 // 1. COLORS
 // --------------------------------------------------------------------
-// This is the core of your brand identity.
+// The core of the brand identity. Clean, professional, and trustworthy.
 
 // Primary Action Color
-$primary:       #21b576; // The vibrant, trustworthy green you chose.
+$primary:       #21b576; // A vibrant, trustworthy green.
 
 // Neutrals
-$secondary:     #5A6D7C; // A professional, cool-toned slate gray for secondary actions.
-$dark:          #2B3F4C; // A very dark, almost-black slate blue for all text. Feels more premium.
+$secondary:     #5A6D7C; // A professional, cool-toned slate gray.
+$dark:          #2B3F4C; // A very dark, almost-black slate blue for all text.
 $light:         #f8f9fa; // A clean, bright off-white for backgrounds.
 
 // State Colors
-$success:       #28a745; // A distinct, classic green for success messages.
-$danger:        #E54D42; // A slightly desaturated red for errors. Clear but not jarring.
+$success:       #28a745; // Classic green for success messages.
+$danger:        #E54D42; // A slightly desaturated red for errors.
 $warning:       #F0AD4E; // A warm, friendly amber for warnings.
-$info:          darken($secondary, 10%); // We can base the info color on our secondary gray.
+$info:          #4A90E2; // A soft, professional blue for informational alerts.
 
 
 // Bootstrap's Theme Color Map
@@ -38,7 +39,7 @@ $theme-colors: (
 
 // 2. TYPOGRAPHY
 // --------------------------------------------------------------------
-// A premium feel comes from clean, readable text.
+// Premium feel comes from clean, readable, and responsive text.
 
 // Import a modern, clean font like Poppins from Google Fonts.
 @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
@@ -60,17 +61,39 @@ $border-radius:          0.5rem;
 $border-radius-sm:       0.3rem;
 $border-radius-lg:       0.8rem;
 
-// Define a very subtle border color for cards and inputs.
-$border-color:           #dee2e6;
+// Define a subtle, theme-aware border color.
+$border-color:           rgba($secondary, 0.25);
 
-// A subtle box-shadow gives elements a "lifted off the page" feel.
+// A subtle, theme-aware box-shadow gives elements a "lifted" feel.
 $box-shadow:             0 0.5rem 1rem rgba($dark, 0.1);
 $box-shadow-sm:          0 0.125rem 0.25rem rgba($dark, 0.075);
 $box-shadow-lg:          0 1rem 3rem rgba($dark, 0.175);
 
 
-// 4. COMPONENT-SPECIFIC TWEAKS (Optional, but powerful)
+// 4. LINKS
 // --------------------------------------------------------------------
-// Example: Make buttons slightly bolder and remove the default all-caps.
+// Ensure links have clear, consistent states.
+$link-color:                              $primary;
+$link-hover-color:                        darken($primary, 10%);
+$link-hover-decoration:                   underline;
+
+
+// 5. COMPONENTS
+// --------------------------------------------------------------------
+// Component-specific tweaks for a unified brand experience.
+
+// Buttons
 $btn-font-weight:        500;
-$btn-text-transform:     none;
+$btn-text-transform:     none; // No uppercase shouting.
+
+// Forms & Inputs - Critical for brand consistency.
+$input-focus-border-color:                tint-color($primary, 80%);
+$input-focus-box-shadow:                  0 0 0 $box-shadow-sm rgba($primary, 0.25);
+$form-select-focus-box-shadow:            0 0 0 $box-shadow-sm rgba($primary, 0.25);
+$form-check-input-focus-box-shadow:       0 0 0 $box-shadow-sm rgba($primary, 0.25);
+
+
+// 6. RESPONSIVE SETTINGS
+// --------------------------------------------------------------------
+// Enable responsive font sizes for a premium mobile experience.
+$enable-responsive-font-sizes: true;

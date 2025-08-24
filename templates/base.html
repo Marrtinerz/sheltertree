@@ -1,151 +1,95 @@
 {% load static %}
 {% load i18n %}
+{% load sass_tags %}
 
 <!DOCTYPE html>
-<html lang="{{ request.LANGUAGE_CODE|default:'en' }}">
+<html lang="{{ request.LANGUAGE_CODE|default:'en' }}" class="h-100">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{% block title %}ShelterTree{% endblock %}</title>
 
-    {% comment %} Personal CSS {% endcomment %}
-    <link rel="stylesheet" href="{% static 'css/main.css' %}">
+    <!-- Your Custom SCSS-generated CSS -->
+    <link href="{% sass_src 'scss/main.scss' %}" rel="stylesheet" type="text/css" />
+    {% comment %} <link rel="stylesheet" href="{% static 'css/main.css' %}"> {% endcomment %}
 
-    {% comment %} <!-- Bootstrap CSS -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"> {% endcomment %}
-
-    <!-- Font Awesome for Icons (Essential for the new user menu) -->
+    <!-- Font Awesome for Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     
-    <!-- HTMX for live search functionality -->
+    <!-- HTMX -->
     <script src="https://unpkg.com/htmx.org@1.9.10"></script>
 
-    <!-- 1. Mapbox CSS: The "Blueprint and Paint Job" -->
+    <!-- Mapbox CSS & JS -->
     <link href='https://api.mapbox.com/mapbox-gl-js/v2.9.1/mapbox-gl.css' rel='stylesheet' />
-    
-    <!-- 2. Mapbox JavaScript: The "Engine" -->
     <script src='https://api.mapbox.com/mapbox-gl-js/v2.9.1/mapbox-gl.js'></script>
 
     {% block extra_head %}{% endblock %}
 </head>
-<body>
+<body class="d-flex flex-column h-100">
 
     <!-- ==================================================================== -->
-    <!-- Navigation Bar - Updated with World-Class User Menu                 -->
+    <!-- Navigation (Now in its own partial file)                             -->
     <!-- ==================================================================== -->
-    <nav class="navbar navbar-expand-lg navbar-light bg-light border-bottom">
-        <div class="container-fluid">
-            <a class="navbar-brand fw-bold" href="{% url 'reviews:home' %}">ShelterTree</a>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-                <span class="navbar-toggler-icon"></span>
-            </button>
+    <header>
+        {% include 'reviews/partials/_navbar.html' %}
+    </header>
 
-            <div class="collapse navbar-collapse" id="navbarNav">
-                <!-- Search Form - Centered and powered by our global context processor -->
-                <form class="d-flex mx-auto" action="{% url 'reviews:search' %}" method="get" style="width: 50%;">
-                    {{ search_form.q }}
-                    <button class="btn btn-outline-success" type="submit">{% trans "Search" %}</button>
-                </form>
-
-                <!-- Right-aligned Menu Items -->
-                <ul class="navbar-nav ms-auto align-items-center">
-
-                    <!-- NEW: Browse Properties Link -->
-                    <li class="nav-item">
-                        <a class="nav-link" href="{% url 'reviews:property-list' %}">{% trans "Browse Properties" %}</a>
-                    </li>
-
-                    <!-- User Menu -->
-                    {% if user.is_authenticated %}
-                        <li class="nav-item dropdown">
-                            <a class="nav-link dropdown-toggle" href="#" id="navbarUserDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                <i class="fas fa-user-circle me-1"></i>
-                                {{ user.get_short_name|default:user.username }}
-                            </a>
-                            <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarUserDropdown">
-                                <li><a class="dropdown-item" href="{% url 'account_profile' %}">{% trans "My Profile & Settings" %}</a></li>
-                                <li><a class="dropdown-item" href="{% url 'my_contributions' %}">{% trans "My Contributions" %}</a></li>
-                                <li><hr class="dropdown-divider"></li>
-                                <li>
-                                    <form method="post" action="{% url 'account_logout' %}" class="d-inline">
-                                        {% csrf_token %}
-                                        <button type="submit" class="dropdown-item">{% trans "Logout" %}</button>
-                                    </form>
-                                </li>
-                            </ul>
-                        </li>
-                    {% else %}
-                        <li class="nav-item">
-                            <a class="nav-link" href="{% url 'account_login' %}">{% trans "Login" %}</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="btn btn-primary ms-lg-2" href="{% url 'account_signup' %}">{% trans "Sign Up" %}</a>
-                        </li>
-                    {% endif %}
-                </ul>
+    <!-- ==================================================================== -->
+    <!-- Main Content                                                         -->
+    <!-- ==================================================================== -->
+    <div class="flex-shrink-0">
+        <!-- Live Search Results Container -->
+        <div class="container">
+            <div class="row justify-content-center">
+                <div class="col-md-6" style="position: relative;">
+                    <div id="live-search-results"></div>
+                    <div class="htmx-indicator">Loading...</div>
+                </div>
             </div>
         </div>
-    </nav>
 
-    <!-- ==================================================================== -->
-    <!-- Container for Live Search Results (Powered by HTMX)                -->
-    <!-- ==================================================================== -->
-    <div class="container">
-        <div class="row justify-content-center">
-            <div class="col-md-6" style="position: relative;">
-                <!-- This is the target for our live search results -->
-                <div id="live-search-results"></div>
-                <!-- Optional: Add a loading spinner that HTMX can show -->
-                <div class="htmx-indicator">Loading...</div>
-            </div>
-        </div>
+        <!-- Main Content Block with Responsive Padding -->
+        <main class="container py-3 py-lg-4">
+            {% block content %}{% endblock %}
+        </main>
     </div>
 
-    <!-- Main Content Block -->
-    <main class="container py-4">
-        {% if messages %}
-                <div class="toast-container position-fixed top-0 end-0 p-3" style="z-index: 1100">
-                    {% for message in messages %}
-                        <div class="toast show" role="alert" aria-live="assertive" aria-atomic="true">
-                            <div class="toast-header">
-                                <strong class="me-auto {% if message.tags == 'success' %}text-success{% elif message.tags == 'error' %}text-danger{% elif message.tags == 'warning' %}text-warning{% else %}text-info{% endif %}">
-                                    {% if message.tags == 'success' %}<i class="fas fa-check-circle me-2"></i>{% translate "Success" %}
-                                    {% elif message.tags == 'error' %}<i class="fas fa-times-circle me-2"></i>{% translate "Error" %}
-                                    {% elif message.tags == 'warning' %}<i class="fas fa-exclamation-triangle me-2"></i>{% translate "Warning" %}
-                                    {% else %}<i class="fas fa-info-circle me-2"></i>{% translate "Notification" %}
-                                    {% endif %}
-                                </strong>
-                                <small class="text-muted">{% translate "just now" %}</small>
-                                <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
-                            </div>
-                            <div class="toast-body">
-                                {{ message }}
-                            </div>
-                        </div>
-                    {% endfor %}
-                </div>
-            {% endif %}
-        {% block content %}{% endblock %}
-    </main>
+    <!-- ==================================================================== -->
+    <!-- Footer (Now in its own partial file)                                 -->
+    <!-- ==================================================================== -->
+    {% include 'reviews/partials/_footer.html' %}
 
-    <footer class="mt-auto bg-white border-top py-3 text-center">
-        <div class="container">
-            <nav class="nav justify-content-center mb-2">
-                <a href="#" class="nav-link px-2 text-muted">{% translate "Terms" %}</a>
-                <a href="#" class="nav-link px-2 text-muted">{% translate "Privacy" %}</a>
-                <a href="#" class="nav-link px-2 text-muted">{% translate "Help Center" %}</a>
-            </nav>
-            <p class="mb-0 text-muted small">© {% now "Y" %} ShelterTree</p>
+
+    <!-- ==================================================================== -->
+    <!-- Toasts / Messages                                                    -->
+    <!-- ==================================================================== -->
+    {% if messages %}
+        <div class="toast-container position-fixed top-0 end-0 p-3" style="z-index: 1100">
+            {% for message in messages %}
+                <div class="toast show" role="alert" aria-live="assertive" aria-atomic="true">
+                    <div class="toast-header">
+                        <strong class="me-auto {% if message.tags == 'success' %}text-success{% elif message.tags == 'error' %}text-danger{% elif message.tags == 'warning' %}text-warning{% else %}text-info{% endif %}">
+                            {% if message.tags == 'success' %}<i class="fas fa-check-circle me-2"></i>{% translate "Success" %}
+                            {% elif message.tags == 'error' %}<i class="fas fa-times-circle me-2"></i>{% translate "Error" %}
+                            {% elif message.tags == 'warning' %}<i class="fas fa-exclamation-triangle me-2"></i>{% translate "Warning" %}
+                            {% else %}<i class="fas fa-info-circle me-2"></i>{% translate "Notification" %}
+                            {% endif %}
+                        </strong>
+                        <small class="text-muted">{% translate "just now" %}</small>
+                        <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
+                    </div>
+                    <div class="toast-body">
+                        {{ message }}
+                    </div>
+                </div>
+            {% endfor %}
         </div>
-    </footer>
+    {% endif %}
 
     <!-- ==================================================================== -->
     <!-- Scripts                                                              -->
     <!-- ==================================================================== -->
-    <!-- Bootstrap JS Bundle (includes Popper.js, required for dropdowns) -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-
-    <!-- Block for any page-specific extra JavaScript -->
     {% block extra_js %}{% endblock %}
 
 </body>

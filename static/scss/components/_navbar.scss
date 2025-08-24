@@ -1,0 +1,28 @@
+.navbar {
+  background-color: #ffffff !important; // A clean white background
+  border-bottom: 1px solid $border-color;
+  box-shadow: $box-shadow-sm;
+  padding-top: 1rem;
+  padding-bottom: 1rem;
+}
+
+.navbar-brand {
+  font-weight: 700;
+  color: $primary !important;
+}
+
+.navbar .nav-link {
+  font-weight: 500;
+  color: $dark;
+
+  &:hover {
+    color: $primary;
+  }
+}
+
+// Style the user dropdown menu
+.navbar .dropdown-menu {
+  border-radius: $border-radius;
+  box-shadow: $box-shadow;
+  border: 1px solid $border-color;
+}
