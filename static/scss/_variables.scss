@@ -1,0 +1,76 @@
+// ====================================================================
+// SHELTERTREE OFFICIAL DESIGN SYSTEM - V1
+// ====================================================================
+
+
+// 1. COLORS
+// --------------------------------------------------------------------
+// This is the core of your brand identity.
+
+// Primary Action Color
+$primary:       #21b576; // The vibrant, trustworthy green you chose.
+
+// Neutrals
+$secondary:     #5A6D7C; // A professional, cool-toned slate gray for secondary actions.
+$dark:          #2B3F4C; // A very dark, almost-black slate blue for all text. Feels more premium.
+$light:         #f8f9fa; // A clean, bright off-white for backgrounds.
+
+// State Colors
+$success:       #28a745; // A distinct, classic green for success messages.
+$danger:        #E54D42; // A slightly desaturated red for errors. Clear but not jarring.
+$warning:       #F0AD4E; // A warm, friendly amber for warnings.
+$info:          darken($secondary, 10%); // We can base the info color on our secondary gray.
+
+
+// Bootstrap's Theme Color Map
+// This map powers all of Bootstrap's components (buttons, alerts, etc.)
+$theme-colors: (
+  "primary":    $primary,
+  "secondary":  $secondary,
+  "success":    $success,
+  "danger":     $danger,
+  "warning":    $warning,
+  "info":       $info,
+  "dark":       $dark,
+  "light":      $light
+);
+
+
+// 2. TYPOGRAPHY
+// --------------------------------------------------------------------
+// A premium feel comes from clean, readable text.
+
+// Import a modern, clean font like Poppins from Google Fonts.
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
+
+// Override Bootstrap's default fonts.
+$font-family-sans-serif:      'Poppins', sans-serif;
+$body-color:                  $dark; // Use our new dark color for all body text.
+$headings-font-weight:        600;   // Make headings stand out a bit more.
+$h1-font-size:                2.25rem;
+$h2-font-size:                1.75rem;
+
+
+// 3. SPACING, BORDERS & SHADOWS
+// --------------------------------------------------------------------
+// These subtle details create the "premium" feel.
+
+// Soften all corners for a modern, friendly look.
+$border-radius:          0.5rem;
+$border-radius-sm:       0.3rem;
+$border-radius-lg:       0.8rem;
+
+// Define a very subtle border color for cards and inputs.
+$border-color:           #dee2e6;
+
+// A subtle box-shadow gives elements a "lifted off the page" feel.
+$box-shadow:             0 0.5rem 1rem rgba($dark, 0.1);
+$box-shadow-sm:          0 0.125rem 0.25rem rgba($dark, 0.075);
+$box-shadow-lg:          0 1rem 3rem rgba($dark, 0.175);
+
+
+// 4. COMPONENT-SPECIFIC TWEAKS (Optional, but powerful)
+// --------------------------------------------------------------------
+// Example: Make buttons slightly bolder and remove the default all-caps.
+$btn-font-weight:        500;
+$btn-text-transform:     none;

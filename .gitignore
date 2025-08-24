@@ -7,3 +7,10 @@ __pycache__/
 helper.py
 helper.md
 motivation.md
+
+# Frontend Dependencies
+/node_modules/
+
+# --- ADD THIS LINE ---
+# Manually-managed vendor libraries
+/static/vendor/

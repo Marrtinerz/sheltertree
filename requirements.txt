@@ -9,9 +9,13 @@ certifi==2025.8.3
 charset-normalizer==3.4.3
 Django==5.2.4
 django-allauth==65.10.0
+django-appconf==1.1.0
+django-compressor==4.5.1
+django-libsass==0.9
 frozenlist==1.7.0
 geoip2==5.1.0
 idna==3.10
+libsass==0.23.0
 maxminddb==2.8.2
 multidict==6.6.3
 phonenumbers==9.0.11
@@ -21,7 +25,9 @@ pycountry==24.6.1
 PyJWT==2.10.1
 python-decouple==3.8
 python-dotenv==1.1.1
+rcssmin==1.1.2
 requests==2.32.4
+rjsmin==1.2.2
 schema==0.7.7
 sqlparse==0.5.3
 twilio==9.7.0

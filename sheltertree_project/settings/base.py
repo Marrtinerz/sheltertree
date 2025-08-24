@@ -31,6 +31,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'compressor',
     # Our app - using the 'apps' prefix is a good practice for clarity.
     'apps.reviews',
     'apps.locations',
@@ -135,6 +136,21 @@ STATICFILES_DIRS = [os.path.join(BASE_DIR, 'static')] # For development assets
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media') # For user-uploaded files
 
+# This tells Django to use the libsass compiler when `runserver` looks for static files.
+STATICFILES_FINDERS = [
+    'django.contrib.staticfiles.finders.FileSystemFinder',
+    'django.contrib.staticfiles.finders.AppDirectoriesFinder',
+    'compressor.finders.CompressorFinder',
+]
+
+# (Optional but recommended) Configure Compressor for SCSS
+COMPRESS_PRECOMPILERS = (
+    ('text/x-scss', 'django_libsass.SassCompiler'),
+)
+
+# This tells libsass where to output the compiled CSS file.
+# It will compile `static/scss/main.scss` into `static/css/main.css`.
+LIBSASS_OUTPUT_DIR = 'css'
 
 # --- Default primary key field type ---
 # https://docs.djangoproject.com/en/5.2/ref/settings/#default-auto-field
