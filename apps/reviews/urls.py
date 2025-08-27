@@ -2,6 +2,7 @@
 
 from django.urls import path, include
 from . import views
+from django.views.generic import TemplateView
 
 
 app_name = 'reviews'
@@ -36,5 +37,9 @@ urlpatterns = [
     
     # --- LOCATIONS ---
     path('', include('apps.locations.urls')),
+    
+    
+    path('features/request-a-review/', views.RequestReviewComingSoonView.as_view(), name='request_review_coming_soon'),
+    path('features/request-a-review/success/', TemplateView.as_view(template_name='reviews/coming_soon_success.html'), name='coming_soon_success'),
     
 ]

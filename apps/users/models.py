@@ -115,3 +115,12 @@ class CustomUser(AbstractUser):
         self.phone_lockout_until = None
         self.save(update_fields=['is_phone_verified', 'phone_verification_code', 'phone_verification_timestamp', 'phone_verification_attempts', 'phone_lockout_until'])
 
+# apps/users/models.py
+class FeatureInterest(models.Model):
+    email = models.EmailField(blank=True, null=True)
+    phone_number = models.CharField(max_length=30, blank=True, null=True) # E.164 format
+    feature_name = models.CharField(max_length=100) # e.g., "The Taproot"
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"{self.email or self.phone_number} interested in {self.feature_name}"

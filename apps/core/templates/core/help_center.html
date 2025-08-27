@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+{% load i18n %}
+{% block title %}{% trans "Help Center" %} | ShelterTree {% endblock %}
+
+{% block content %}
+<div class="container my-5">
+    <div class="text-center">
+        <h1 class="mb-3">{% trans "Help Center" %}</h1>
+        <p class="lead text-muted">{% trans "How can we help you?" %}</p>
+    </div>
+    <div class="row mt-5">
+        <div class="col-lg-8 mx-auto">
+            <div class="accordion" id="faqAccordion">
+                <div class="accordion-item">
+                    <h2 class="accordion-header" id="headingOne">
+                        <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
+                            {% trans "How do I write a good review?" %}
+                        </button>
+                    </h2>
+                    <div id="collapseOne" class="accordion-collapse collapse show" aria-labelledby="headingOne" data-bs-parent="#faqAccordion">
+                        <div class="accordion-body">
+                            {% trans "[Placeholder for answer...]" %}
+                        </div>
+                    </div>
+                </div>
+                <!-- Add more accordion items for other FAQs -->
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,11 +1,11 @@
 # apps/users/forms.py
 from django import forms
 from allauth.account.forms import SignupForm
-from .models import CustomUser, Country
+from .models import CustomUser, Country, FeatureInterest
 from django.utils.translation import gettext_lazy as _
 import phonenumbers
 from django.core.exceptions import ValidationError
-
+from django.utils.safestring import mark_safe
 
 class MinimalSignupForm(SignupForm):
     # We only need to define the fields that are NOT already handled
@@ -147,3 +147,71 @@ class PhoneVerificationCodeForm(forms.Form):
             raise ValidationError("The code is invalid or has expired. Please try again.")
         
         return code
+
+
+class FeatureInterestForm(forms.ModelForm):
+    """
+    A form to capture user interest in a new feature.
+    Includes robust validation and a non-persistent consent checkbox.
+    """
+    
+    # This is the consent checkbox. It is part of the form's validation,
+    # but it is NOT saved to the database model.
+    agree_to_terms = forms.BooleanField(
+        required=True,
+        label=mark_safe(
+            # NOTE: You must create a page at the '/privacy-policy/' URL.
+            'I agree to receive a one-time notification and have read the <a href="/privacy-policy/" target="_blank">Privacy Policy</a>.'
+        )
+    )
+
+    class Meta:
+        model = FeatureInterest
+        # These are the only fields that will be saved to the database.
+        fields = ['email', 'phone_number']
+        # We will render the form manually in the template for better UX,
+        # so we don't need to define widgets or labels here.
+
+    def clean_phone_number(self):
+        """
+        Provides lenient but effective validation for the phone number field.
+        """
+        phone_number = self.cleaned_data.get('phone_number')
+        
+        # It's an optional field, so an empty value is perfectly valid.
+        if not phone_number:
+            return phone_number
+
+        try:
+            # We attempt to parse the number without a specific region.
+            # This requires the user to enter the number with a '+' country code.
+            parsed_number = phonenumbers.parse(phone_number, None)
+            
+            # `is_possible_number` is a good, non-aggressive check.
+            if not phonenumbers.is_possible_number(parsed_number):
+                raise ValidationError("Please enter a valid phone number, including the country code (e.g., +234...).")
+            
+            # Return the clean, standard E.164 format for consistent data storage.
+            return phonenumbers.format_number(parsed_number, phonenumbers.PhoneNumberFormat.E164)
+        
+        except phonenumbers.NumberParseException:
+            raise ValidationError("The phone number format is not recognized. Please include your country code (e.g., +234...).")
+
+    def clean(self):
+        """
+        This method performs cross-field validation after each individual
+        field's clean method has been called.
+        """
+        cleaned_data = super().clean()
+        email = cleaned_data.get('email')
+        phone_number = cleaned_data.get('phone_number')
+
+        # Enforce our business rule: the user MUST provide at least one contact method.
+        if not email and not phone_number:
+            # This raises a non_field_error, which is displayed at the top of the form.
+            raise ValidationError(
+                "Please provide either an email address or a WhatsApp number to be notified.",
+                code='no_contact_method'
+            )
+        
+        return cleaned_data

@@ -1,0 +1,86 @@
+{% extends "base.html" %}
+{% load i18n %}
+
+{% block title %}{% trans "Coming Soon: The Taproot" %} | ShelterTree {% endblock %}
+
+{% block content %}
+<div class="container my-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-7 text-center">
+
+            <span class="badge bg-primary rounded-pill px-3 py-2 fs-6 mb-3">
+                <i class="fas fa-star me-2"></i>{% trans "SNEAK PEEK" %}
+            </span>
+
+            <h1 class="display-4 fw-bold">{% trans "Get the Answers You Can't Find Anywhere Else." %}</h1>
+            <p class="lead text-muted mt-3">
+                {% trans "Soon, you'll be able to ask the ShelterTree community specific, nuanced questions about any property—and get answers from real residents." %}
+            </p>
+
+            <hr class="my-5">
+
+            <!-- The Problem / Solution Section -->
+            <div class="text-start mb-5">
+                <h4 class="fw-bold">{% trans "The Problem" %}</h4>
+                <p>{% trans "Standard reviews are great, but what if you have a very specific question? 'How is the water pressure on the top floor?' or 'Is the gym crowded at 6 AM?' These are the details that truly create peace of mind." %}</p>
+                <h4 class="fw-bold mt-4">{% trans "Our Solution: The Taproot" %}</h4>
+                <p>{% trans "We're building 'The Taproot'—a dedicated Q&A hub for every property. It's a place to dig deeper, ask anything, and get the foundational truths you need to make the right decision." %}</p>
+            </div>
+            
+            <!-- The Call to Action / Form -->
+            <div class="card shadow-sm">
+                <div class="card-body p-4 p-lg-5">
+                    <h4 class="card-title">{% trans "Be the First to Know" %}</h4>
+                    <p class="card-text">{% trans "Drop your email or WhatsApp number, and we'll notify you the moment 'The Taproot' is live." %}</p>
+                    
+                    <form method="post" class="mt-3 text-start">
+                        {% csrf_token %}
+                        
+                        <!-- Display any top-level form errors (e.g., "provide at least one contact method") -->
+                        {% if form.non_field_errors %}
+                            <div class="alert alert-danger">
+                                {% for error in form.non_field_errors %}
+                                    {{ error }}
+                                {% endfor %}
+                            </div>
+                        {% endif %}
+
+                        <!-- Email Field -->
+                        <div class="mb-3">
+                            <label for="id_email" class="form-label fw-bold">{% trans "Email Address" %}</label>
+                            <input type="email" name="email" id="id_email" class="form-control {% if form.email.errors %}is-invalid{% endif %}" placeholder="{% trans 'e.g., your@email.com' %}">
+                            {% for error in form.email.errors %}
+                                <div class="invalid-feedback d-block">{{ error }}</div>
+                            {% endfor %}
+                        </div>
+
+                        <!-- Phone Number Field -->
+                        <div class="mb-3">
+                            <label for="id_phone_number" class="form-label fw-bold">{% trans "WhatsApp Number (Optional)" %}</label>
+                            <input type="tel" name="phone_number" id="id_phone_number" class="form-control {% if form.phone_number.errors %}is-invalid{% endif %}" placeholder="{% trans 'e.g., +2348012345678' %}">
+                            {% for error in form.phone_number.errors %}
+                                <div class="invalid-feedback d-block">{{ error }}</div>
+                            {% endfor %}
+                        </div>
+
+                        <!-- Consent Checkbox Field -->
+                        <div class="form-check mb-4">
+                            <input type="checkbox" name="agree_to_terms" id="id_agree_to_terms" class="form-check-input {% if form.agree_to_terms.errors %}is-invalid{% endif %}" required>
+                            <label for="id_agree_to_terms" class="form-check-label">{{ form.agree_to_terms.label }}</label>
+                            {% for error in form.agree_to_terms.errors %}
+                                <div class="invalid-feedback d-block">{{ error }}</div>
+                            {% endfor %}
+                        </div>
+
+                        <div class="d-grid">
+                            <button type="submit" class="btn btn-primary">{% trans "Notify Me When It's Ready" %}</button>
+                        </div>
+                        <small class="d-block text-muted text-center mt-2">{% trans "No spam, we promise. Just one notification." %}</small>
+                    </form>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+{% endblock %}

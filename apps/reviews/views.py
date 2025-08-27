@@ -5,7 +5,7 @@ from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.utils.translation import gettext_lazy as _
 from django.db.models import Avg, Count, Sum, OuterRef, Subquery, Case, When, IntegerField
-from django.views.generic import TemplateView
+from django.views.generic import TemplateView, CreateView
 from django.contrib.postgres.search import SearchQuery, SearchRank, SearchVector
 from .models import Property, PropertyUnit, Review, PropertyStatus, ReviewStatus, Vote
 from .forms import PropertyForm, PropertyUnitForm, ReviewForm, PropertySearchForm
@@ -14,6 +14,8 @@ from django.template.loader import render_to_string
 from django.http import HttpResponse
 from collections import defaultdict
 from django.contrib.auth.mixins import LoginRequiredMixin
+from apps.users.forms import FeatureInterestForm
+from apps.users.models import FeatureInterest
 
 # --- READ-ONLY VIEWS (for the public) ---
 
@@ -408,3 +410,13 @@ class ReviewSuccessView(LoginRequiredMixin, DetailView):
 
 
 
+class RequestReviewComingSoonView(CreateView):
+    model = FeatureInterest
+    form_class = FeatureInterestForm
+    template_name = 'reviews/coming_soon_taproot.html'
+    success_url = reverse_lazy('reviews:coming_soon_success')
+
+    def form_valid(self, form):
+        # We explicitly set the feature name on the backend.
+        form.instance.feature_name = "The Taproot"
+        return super().form_valid(form)

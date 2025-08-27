@@ -1,0 +1,10 @@
+{% extends "base.html" %}
+{% load i18n %}
+{% block content %}
+<div class="container my-5 text-center">
+    <i class="fas fa-check-circle fa-4x text-success mb-3"></i>
+    <h1>{% trans "You're on the list!" %}</h1>
+    <p class="lead">{% trans "Thank you for your interest. We'll be in touch the moment 'The Taproot' is ready to explore." %}</p>
+    <a href="{% url 'reviews:home' %}" class="btn btn-primary mt-3">{% trans "Back to Home" %}</a>
+</div>
+{% endblock %}
