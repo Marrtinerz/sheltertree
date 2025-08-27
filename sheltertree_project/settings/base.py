@@ -37,6 +37,7 @@ INSTALLED_APPS = [
     'apps.reviews',
     'apps.locations',
     'apps.users.apps.UsersConfig',
+    'apps.core.apps.CoreConfig',
     
     #allauth apps
     'django.contrib.sites', # Required by allauth

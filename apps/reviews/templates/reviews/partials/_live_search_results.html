@@ -2,7 +2,7 @@
 {% if results %}
 <div class="list-group" style="position: absolute; z-index: 1000; width: 400px;">
     {% for property in results %}
-        <a href="{% url 'property-detail' pk=property.pk %}" class="list-group-item list-group-item-action">
+        <a href="{% url 'reviews:property-detail' pk=property.pk %}" class="list-group-item list-group-item-action">
             <h6 class="mb-1">{{ property.name }}</h6>
             <small class="text-muted">{{ property.address }}</small>
         </a>

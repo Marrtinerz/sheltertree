@@ -89,21 +89,28 @@ def find_properties(query_string):
 
 
 class SearchView(TemplateView):
-    """
-    Handles the main search page request after a form submission.
-    """
     template_name = 'reviews/search_results.html'
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         form = PropertySearchForm(self.request.GET or None)
+        query = self.request.GET.get('q')
+
+        # --- THE CRITICAL FIX ---
+        # We now explicitly track if a search has been performed.
+        # This is True if 'q' is in the URL, even if its value is empty.
+        search_performed = 'q' in self.request.GET
+        context['search_performed'] = search_performed
         
-        if form.is_valid():
-            query = form.cleaned_data.get('q')
-            context['results'] = find_properties(query)
+        # Only run the search query if a search was actually performed.
+        if search_performed and form.is_valid():
+            cleaned_query = form.cleaned_data.get('q', '')
+            context['results'] = find_properties(cleaned_query)
         
         context['form'] = form
-        context['query'] = self.request.GET.get('q', '')
+        context['query'] = query
+        context['intent'] = self.request.GET.get('intent', '')
+        
         return context
 
 # NEW view for our live search

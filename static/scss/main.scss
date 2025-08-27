@@ -5,10 +5,13 @@
 @import "../vendor/bootstrap/scss/bootstrap";
 
 // --- NEW: Import Custom Components ---
-@import "components/navbar";
+// @import "components/navbar";
 @import "components/buttons";
 @import "components/forms";
 @import "pages/home";
+@import "components/header";
+@import "pages/feature_pages";
+// @import "components/live_search";
 // @import "components/logo";
 
 /* // 3. (Optional) Add any other custom site-wide styles here later.

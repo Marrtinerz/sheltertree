@@ -9269,28 +9269,6 @@ textarea.form-control-lg {
   .d-print-none {
     display: none !important; } }
 
-.navbar {
-  background-color: #ffffff !important;
-  border-bottom: 1px solid rgba(90, 109, 124, 0.25);
-  box-shadow: 0 0.125rem 0.25rem rgba(43, 63, 76, 0.075);
-  padding-top: 1rem;
-  padding-bottom: 1rem; }
-
-.navbar-brand {
-  font-weight: 700;
-  color: #21b576 !important; }
-
-.navbar .nav-link {
-  font-weight: 500;
-  color: #2B3F4C; }
-  .navbar .nav-link:hover {
-    color: #21b576; }
-
-.navbar .dropdown-menu {
-  border-radius: 0.5rem;
-  box-shadow: 0 0.5rem 1rem rgba(43, 63, 76, 0.1);
-  border: 1px solid rgba(90, 109, 124, 0.25); }
-
 .btn {
   font-weight: 500;
   text-transform: none;
@@ -9468,6 +9446,42 @@ textarea.form-control-lg {
   .lead {
     font-size: 1.125rem;
     font-weight: 400; } }
+
+.main-header {
+  position: sticky;
+  top: 0;
+  z-index: 1030; }
+
+.navbar-top {
+  background-color: #fff; }
+
+.navbar-main {
+  background-color: #fff;
+  padding-top: 0.5rem;
+  padding-bottom: 0.5rem; }
+  .navbar-main .nav-link {
+    font-weight: 500; }
+    .navbar-main .nav-link:hover {
+      color: #21b576; }
+  .navbar-main .btn-primary {
+    padding: 0.75rem 1.5rem; }
+
+.dropdown-menu {
+  border-radius: 0.5rem;
+  box-shadow: 0 0.5rem 1rem rgba(43, 63, 76, 0.1);
+  border: 1px solid rgba(90, 109, 124, 0.25); }
+
+.feature-showcase-page {
+  padding-top: 2rem;
+  padding-bottom: 2rem; }
+  .feature-showcase-page .sneak-peek-badge {
+    font-size: 0.9rem;
+    font-weight: 600; }
+  .feature-showcase-page .card .card-body {
+    padding: 2rem; }
+  .feature-showcase-page .form-control:focus {
+    border-color: tint-color(#21b576, 80%);
+    box-shadow: 0 0 0 0 0.125rem 0.25rem rgba(43, 63, 76, 0.075) rgba(33, 181, 118, 0.25); }
 
 /* // 3. (Optional) Add any other custom site-wide styles here later.
 body {

@@ -25,6 +25,7 @@ urlpatterns = [
 urlpatterns += i18n_patterns(
     # This line tells Django to look at the `reviews/urls.py` file
     # for any URL that isn't handled above.
+    path('', include('apps.core.urls')),
     path('', include('apps.reviews.urls')),
     # The login URL is needed so Django knows where to redirect unauthenticated users
     

@@ -2,15 +2,14 @@
 {% load i18n %}
 
 <!-- ==================================================================== -->
-<!-- The New Split-Tier Navbar                                            -->
+<!-- The Split-Tier Navbar                                                -->
 <!-- ==================================================================== -->
 <header class="main-header bg-white shadow-sm">
     <!-- Tier 1: The Brand (Visible on all screen sizes) -->
     <div class="navbar-top border-bottom">
         <div class="container-fluid text-center py-3">
             <a class="navbar-brand" href="{% url 'reviews:home' %}">
-                <!-- Your logo is now the star of the show. Adjust height as needed. -->
-                <img src="{% static 'img/brand/logo.svg' %}" alt="ShelterTree Logo" style="height: 120px;">
+                <img src="{% static 'img/brand/logo.svg' %}" alt="ShelterTree Logo" style="height: 100px;">
             </a>
         </div>
     </div>
@@ -28,6 +27,17 @@
 
             <!-- Main Collapsible Content -->
             <div class="collapse navbar-collapse" id="mainNavCollapse">
+                
+                <!-- Mobile-Only Primary CTA (Shown at the top of the collapsed menu) -->
+                <div class="d-lg-none my-3 mx-2">
+                    <div class="d-grid">
+                        <a href="{% url 'reviews:search' %}?intent=review" class="btn btn-primary">
+                            <i class="fas fa-plus-circle me-2"></i>{% trans "Leave a Review" %}
+                        </a>
+                    </div>
+                    <hr>
+                </div>
+
                 <!-- Left-aligned Navigation Links -->
                 <ul class="navbar-nav me-auto">
                     <li class="nav-item">
@@ -38,24 +48,37 @@
                             {% trans "Contribute" %}
                         </a>
                         <ul class="dropdown-menu" aria-labelledby="contributeDropdown">
-                            <li><a class="dropdown-item" href="{% url 'reviews:add-property' %}">{% trans "Add a Property" %}</a></li>
-                            <!-- We can re-use the same add-property link for "Leave a Review" -->
-                            <li><a class="dropdown-item" href="{% url 'reviews:add-property' %}">{% trans "Leave a Review" %}</a></li>
+                            <li><a class="dropdown-item" href="{% url 'reviews:add-property' %}">{% trans "Add a New Property" %}</a></li>
+                            <li><a class="dropdown-item" href="{% url 'reviews:search' %}?intent=review">{% trans "Leave a Review" %}</a></li>
                             <li><hr class="dropdown-divider"></li>
                             <li><a class="dropdown-item" href="{% url 'reviews:request_review_coming_soon' %}">{% trans "Request a Review" %}</a></li>
                         </ul>
                     </li>
                 </ul>
 
-                <!-- Right-aligned Primary CTA and User Menu -->
+                <!-- Context-Aware Desktop Search Bar (Hidden on homepage) -->
+                {% if request.resolver_match.url_name != 'home' %}
+                    <div class="d-none d-lg-flex mx-auto" style="width: 50%;">
+                        <form class="w-100" action="{% url 'reviews:search' %}" method="get">
+                            <div class="input-group">
+                                {{ search_form.q }}
+                                <button class="btn btn-primary" type="submit" id="desktopSearchButton">
+                                    <i class="fas fa-search d-none d-xl-inline"></i>
+                                    <span class="d-xl-none">{% trans "Search" %}</span>
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                {% endif %}
+
+                <!-- Right-aligned User Menu -->
                 <ul class="navbar-nav ms-auto align-items-center">
-                    <!-- The Primary Call to Action -->
-                    {% comment %} <li class="nav-item d-none d-lg-block">
-                        <a href="{% url 'reviews:add-property' %}" class="btn btn-primary">
-                            <i class="fas fa-plus-circle me-2"></i>{% trans "Add Property / Review" %}
+                    <!-- Desktop-Only Primary CTA (Hidden on mobile) -->
+                    <li class="nav-item d-none d-lg-block">
+                        <a href="{% url 'reviews:search' %}?intent=review" class="btn btn-primary">
+                            <i class="fas fa-plus-circle me-2"></i>{% trans "Leave a Review" %}
                         </a>
-                    </li> {% endcomment %}
-                    <!-- User Dropdown Menu -->
+                    </li>
                     {% if user.is_authenticated %}
                         <li class="nav-item dropdown">
                             <a class="nav-link dropdown-toggle" href="#" id="navbarUserDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
@@ -79,10 +102,7 @@
                             <a class="nav-link" href="{% url 'account_login' %}">{% trans "Login" %}</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="{% url 'account_signup' %}">{% trans "Sign Up" %}</a>
-                        </li>
-                        <li class="nav-item d-none d-lg-block">
-                            <a class="btn btn-primary ms-lg-2" href="{% url 'reviews:add-property' %}">{% trans "Add Property/ Review" %}</a>
+                            <a class="btn btn-outline-primary ms-lg-2" href="{% url 'account_signup' %}">{% trans "Sign Up" %}</a>
                         </li>
                     {% endif %}
                 </ul>
@@ -91,7 +111,7 @@
     </nav>
 </header>
 
-<!-- Mobile Search Bar (This can be moved out of the header to be cleaner) -->
+<!-- Mobile-Only Search Bar (Placed outside the header for clean collapse behavior) -->
 <div class="collapse d-lg-none bg-white border-bottom" id="mobileSearchCollapse">
     <div class="container pb-3 pt-2">
          <form action="{% url 'reviews:search' %}" method="get">
