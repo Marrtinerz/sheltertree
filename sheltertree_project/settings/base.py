@@ -144,11 +144,6 @@ STATICFILES_FINDERS = [
     'sass_processor.finders.CssFinder',
 ]
 
-# # (Optional but recommended) Configure Compressor for SCSS
-# COMPRESS_PRECOMPILERS = (
-#     ('text/x-scss', 'django_libsass.SassCompiler'),
-# )
-
 
 SASS_PRECISION = 8
 

@@ -1,49 +1,344 @@
-{% extends "base.html" %}
+{% extends "base_homepage.html" %}
 {% load i18n %}
+{% load static %}
 
-{% block title %}{% trans "Home"%} | ShelterTree{% endblock %}
+{% block title %}{% trans "Find Your Home's Story" %} | ShelterTree{% endblock %}
 
 {% block content %}
-<div class="container text-center my-5">
-    <div class="row">
+<!-- ==================================================================== -->
+<!-- SECTION 1: THE HERO                                                  -->
+<!-- ==================================================================== -->
+<div class="hero-section">
+    <!-- This overlay is crucial for text readability on any image -->
+    <div class="hero-overlay"></div>
+    
+    <div class="container text-center text-white">
+        <div class="row justify-content-center">
+            <div class="col-lg-8">
+                <!-- Main Headline and Sub-headline -->
+                <h1 class="display-2 fw-bold">{% trans "Find a Home You'll Love." %}</h1>
+                <p class="lead mt-3 mb-4">
+                    {% trans "Honest, detailed reviews of homes and living conditions across Africa, given by real residents. Search for a property to find your home's story." %}
+                </p>
+
+                <!-- Prominent Search Bar -->
+                <div class="main-search-bar mt-5">
+                    <form class="position-relative" action="{% url 'reviews:search' %}" method="get">
+                        <!-- We use an input-group for better styling -->
+                        <div class="input-group input-group-lg">
+                            {{ search_form.q }}
+                            <button class="btn btn-primary" type="submit" id="heroSearchButton">
+                                <i class="fas fa-search d-none d-md-inline"></i> <!-- Icon for desktop -->
+                                <span class="d-md-none">{% trans "Search" %}</span> <!-- Text for mobile -->
+                            </button>
+                        </div>
+                    </form>
+                </div>
+                
+                <!-- Live Search Results Target for HTMX -->
+                <div id="live-search-results-container" class="position-relative">
+                    <div id="live-search-results" class="text-start"></div>
+                    <div class="htmx-indicator">{% trans "Searching..." %}</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- ==================================================================== -->
+<!-- SECTION 2: THE TRUST BUILDER (Immersive Edition)                     -->
+<!-- ==================================================================== -->
+<div class="container py-5">
+    <div class="row text-center">
         <div class="col-lg-8 mx-auto">
+            <h2 class="display-5 fw-bold">{% trans "Hear From Your Future Neighbors or Past Residents" %}</h2>
+            <p class="lead text-muted">{% trans "An honest, in-depth look at life in living spaces across Africa." %}</p>
+        </div>
+    </div>
+
+    <div class="row mt-4 g-4 justify-content-center">
+        <!-- Curated Immersive Card 1: Lagos -->
+        <div class="col-lg-4 d-flex align-items-stretch">
+            <div class="card review-card-home">
+                <div class="card-body d-flex flex-column">
+                    <!-- Card Header: User Info -->
+                    <div class="d-flex align-items-center mb-3">
+                        <img src="{% static 'img/avatars/avatar_lagos.jpg' %}" class="rounded-circle" alt="Reviewer from Lagos" width="50" height="50">
+                        <div class="ms-3">
+                            <h6 class="card-title mb-0">Tunde L.</h6>
+                            <span class="badge bg-primary rounded-pill"><i class="fas fa-check-circle me-1"></i> Verified Reviewer</span>
+                        </div>
+                    </div>
+                    <hr>
+                    <!-- Pros & Cons -->
+                    <div class="row g-3 mb-3">
+                        <div class="col-12">
+                            <h6 class="text-success"><i class="fas fa-plus-circle me-2"></i>Pros</h6>
+                            <p class="card-text small">"The estate's security is fantastic, and the community is incredibly welcoming. It's a peaceful oasis in the heart of the city."</p>
+                        </div>
+                        <div class="col-12">
+                            <h6 class="text-danger"><i class="fas fa-minus-circle me-2"></i>Cons</h6>
+                            <p class="card-text small">"Weekend traffic getting in and out can be a real challenge, which is something to be aware of if you have guests."</p>
+                        </div>
+                    </div>
+                    <hr>
+                    <!-- Detailed Ratings -->
+                    <div class="review-ratings">
+                        <div class="d-flex justify-content-between align-items-center mb-2">
+                            <span class="text-muted"><i class="fas fa-bolt me-2"></i>Electricity</span>
+                            <div class="star-rating">
+                                <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="far fa-star"></i>
+                            </div>
+                        </div>
+                        <div class="d-flex justify-content-between align-items-center mb-2">
+                            <span class="text-muted"><i class="fas fa-tint me-2"></i>Water Supply</span>
+                            <div class="star-rating">
+                                <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i>
+                            </div>
+                        </div>
+                        <div class="d-flex justify-content-between align-items-center">
+                            <span class="text-muted"><i class="fas fa-road me-2"></i>Road Network</span>
+                            <div class="star-rating">
+                                <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="far fa-star"></i><i class="far fa-star"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-footer bg-light">
+                    <small class="text-muted">Reviewed: <strong>Lekki Gardens Estate | Lagos, Nigeria.</strong></small>
+                </div>
+            </div>
+        </div>
+
+        <!-- Curated Immersive Card 2: Nairobi (You would duplicate and edit the content) -->
+        <div class="col-lg-4 d-flex align-items-stretch">
+            <div class="card review-card-home">
+                <div class="card-body d-flex flex-column">
+                    <!-- Card Header: User Info -->
+                    <div class="d-flex align-items-center mb-3">
+                        <img src="{% static 'img/avatars/avatar_nairobi.jpg' %}" class="rounded-circle" alt="Reviewer from Nairobi" width="50" height="50">
+                        <div class="ms-3">
+                            <h6 class="card-title mb-0">Wanjiru K.</h6>
+                            <span class="badge bg-primary rounded-pill"><i class="fas fa-check-circle me-1"></i> Verified Reviewer</span>
+                        </div>
+                    </div>
+                    <hr>
+                    <!-- Pros & Cons -->
+                    <div class="row g-3 mb-3">
+                        <div class="col-12">
+                            <h6 class="text-success"><i class="fas fa-plus-circle me-2"></i>Pros</h6>
+                            <p class="card-text small">"The backup generator is a lifesaver, and we've never had a water shortage. Management is professional and the compound is always clean and well-kept."</p>
+                        </div>
+                        <div class="col-12">
+                            <h6 class="text-danger"><i class="fas fa-minus-circle me-2"></i>Cons</h6>
+                            <p class="card-text small">"The road leading to the estate is unpaved and can get quite messy during the rainy season. A 4x4 is definitely recommended."</p>
+                        </div>
+                    </div>
+                    <hr>
+                    <!-- Detailed Ratings -->
+                    <div class="review-ratings">
+                        <div class="d-flex justify-content-between align-items-center mb-2">
+                            <span class="text-muted"><i class="fas fa-bolt me-2"></i>Electricity</span>
+                            <div class="star-rating">
+                                <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i>
+                            </div>
+                        </div>
+                        <div class="d-flex justify-content-between align-items-center mb-2">
+                            <span class="text-muted"><i class="fas fa-tint me-2"></i>Water Supply</span>
+                            <div class="star-rating">
+                                <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i>
+                            </div>
+                        </div>
+                        <div class="d-flex justify-content-between align-items-center">
+                            <span class="text-muted"><i class="fas fa-road me-2"></i>Road Network</span>
+                            <div class="star-rating">
+                                <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="far fa-star"></i><i class="far fa-star"></i><i class="far fa-star"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-footer bg-light">
+                    <small class="text-muted">Reviewed: <strong>Riverside Park | Nairobi, Kenya.</strong></small>
+                </div>
+            </div>
+        </div>
+
+        <!-- Curated Immersive Card 3: Cape Town (You would duplicate and edit the content) -->
+        <div class="col-lg-4 d-flex align-items-stretch">
+            <div class="card review-card-home">
+                <div class="card-body d-flex flex-column">
+                    <!-- Card Header: User Info -->
+                    <div class="d-flex align-items-center mb-3">
+                        <img src="{% static 'img/avatars/avatar_capetown.jpg' %}" class="rounded-circle" alt="Reviewer from Cape Town" width="50" height="50">
+                        <div class="ms-3">
+                            <h6 class="card-title mb-0">Johan V.</h6>
+                            <span class="badge bg-primary rounded-pill"><i class="fas fa-check-circle me-1"></i> Verified Reviewer</span>
+                        </div>
+                    </div>
+                    <hr>
+                    <!-- Pros & Cons -->
+                    <div class="row g-3 mb-3">
+                        <div class="col-12">
+                            <h6 class="text-success"><i class="fas fa-plus-circle me-2"></i>Pros</h6>
+                            <p class="card-text small">"Waking up to the mountain view is unbeatable. The building is incredibly quiet, secure, and the fibre internet is extremely fast and reliable."</p>
+                        </div>
+                        <div class="col-12">
+                            <h6 class="text-danger"><i class="fas fa-minus-circle me-2"></i>Cons</h6>
+                            <p class="card-text small">"The afternoon sun can make the apartment very warm, so good blinds are a must. Guest parking is also quite limited."</p>
+                        </div>
+                    </div>
+                    <hr>
+                    <!-- Detailed Ratings -->
+                    <div class="review-ratings">
+                        <div class="d-flex justify-content-between align-items-center mb-2">
+                            <span class="text-muted"><i class="fas fa-bolt me-2"></i>Electricity</span>
+                            <div class="star-rating">
+                                <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i>
+                            </div>
+                        </div>
+                        <div class="d-flex justify-content-between align-items-center mb-2">
+                            <span class="text-muted"><i class="fas fa-tint me-2"></i>Water Supply</span>
+                            <div class="star-rating">
+                                <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i>
+                            </div>
+                        </div>
+                        <div class="d-flex justify-content-between align-items-center">
+                            <span class="text-muted"><i class="fas fa-road me-2"></i>Road Network</span>
+                            <div class="star-rating">
+                                <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="far fa-star"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-footer bg-light">
+                    <small class="text-muted">Reviewed: <strong>The Sentinel | Cape Town, South Africa.</strong></small>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- ==================================================================== -->
+<!-- SECTION 3: THE SERVICE MENU                                          -->
+<!-- ==================================================================== -->
+<div class="service-menu-section bg-light py-5">
+    <div class="container">
+        <div class="row text-center">
+            <div class="col-lg-8 mx-auto">
+                <h2 class="display-5 fw-bold text-primary">{% trans "Your Toolkit for a Better Home" %}</h2>
+                <p class="lead text-muted">{% trans "Whether you're searching, sharing, or investigating, we're here to help." %}</p>
+            </div>
+        </div>
+
+        <div class="row mt-5 g-4">
+            <!-- Service Card 1: Read Reviews -->
+            <div class="col-lg-4 d-flex align-items-stretch">
+                <div class="card service-card text-center h-100">
+                    <div class="card-body">
+                        <div class="icon-circle bg-dark text-white mb-3">
+                            <i class="fas fa-search-location fa-2x"></i>
+                        </div>
+                        <h4 class="card-title">{% trans "Read Verified Reviews" %}</h4>
+                        <p class="card-text">Access our growing database of in-depth reviews to learn the truth about a property before you commit.</p>
+                        <a href="{% url 'reviews:property-list' %}" class="btn btn-outline-dark stretched-link">{% trans "Browse Properties" %}</a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Service Card 2: Share Your Experience -->
+            <div class="col-lg-4 d-flex align-items-stretch">
+                <div class="card service-card text-center h-100">
+                    <div class="card-body">
+                        <div class="icon-circle bg-dark text-white mb-3">
+                            <i class="fas fa-pencil-alt fa-2x"></i>
+                        </div>
+                        <h4 class="card-title">{% trans "Share Your Experience" %}</h4>
+                        <p class="card-text">Help your community by adding a review of your current or former home. Your honest insights will make a difference.</p>
+                        <a href="{% url 'reviews:add-property' %}" class="btn btn-outline-dark stretched-link">{% trans "Add a New Property" %}</a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Service Card 3: Request a Review (Placeholder) -->
+            <div class="col-lg-4 d-flex align-items-stretch">
+                <div class="card service-card text-center h-100">
+                    <div class="card-body">
+                        <div class="icon-circle bg-dark text-white mb-3">
+                            <i class="fas fa-map-marked-alt fa-2x"></i>
+                        </div>
+                        <h4 class="card-title">{% trans "Request a Review" %}</h4>
+                        <p class="card-text">Interested in a property not yet on our platform? Let us know, and we'll mobilize our community to investigate.</p>
+                        <!-- This link is a placeholder for now -->
+                        <a href="#" class="btn btn-outline-dark stretched-link">{% trans "Tell Us What to Find" %}</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- ==================================================================== -->
+<!-- SECTION 4: THE MISSION - "OUR PROMISE" (Redesigned)                  -->
+<!-- ==================================================================== -->
+<div class="mission-section bg-white py-5">
+    <div class="container">
+        <!-- Use align-items-center to vertically center the content in the columns -->
+        <div class="row align-items-center g-5">
             
-            <!-- Main Hero Section -->
-            <h1 class="display-4 fw-bold">{% trans "Find Your Next Home's Story." %}</h1>
-            <p class="lead text-muted mt-3 mb-4">
-                {% trans "Honest, detailed reviews of apartments and estates across Africa. Search for a property to get started." %}
-            </p>
-
-            <!-- Prominent Search Bar -->
-            <div class="main-search-bar my-5">
-                <form class="d-flex" action="{% url 'reviews:search' %}" method="get">
-                    <!-- 
-                        The 'search_form' variable is globally available thanks to our context processor.
-                        We are rendering the 'q' field from that form.
-                    -->
-                    {{ search_form.q }}
-                    <button class="btn btn-primary btn-lg" type="submit" style="margin-left: -1px;">{% trans "Search" %}</button>
-                </form>
+            <!-- Image Column -->
+            <div class="col-lg-6">
+                <img src="{% static 'img/mission_image.jpg' %}" class="img-fluid rounded-3 shadow-lg" alt="A peaceful and serene home interior">
             </div>
 
-            <!-- Live Search Results Target -->
-            <!-- This div is where the live results from HTMX will be injected. -->
-            <div id="live-search-results-container" style="position: relative;">
-                <div id="live-search-results"></div>
-                <div class="htmx-indicator">Loading...</div>
-            </div>
+            <!-- Text Column -->
+            <div class="col-lg-6">
+                <!-- Add a wrapper for padding, which is better for alignment -->
+                <div class="ps-lg-5">
+                    <h2 class="display-5 fw-bold">{% trans "Our Promise" %}</h2>
+                    
+                    <!-- Main Mission Statement (The "Why") -->
+                    <p class="mission-text lead mt-4">
+                        {% blocktrans %}
+                        "At ShelterTree, we believe that everyone deserves to live in peaceful dwelling places, in secure homes, in undisturbed places of rest."
+                        {% endblocktrans %}
+                    </p>
 
-            <hr class="my-5">
-
-            <!-- Secondary Call to Action -->
-            <div class="secondary-actions">
-                <p class="fs-5">{% trans "Can't find a property?" %}</p>
-                <a href="{% url 'reviews:add-property' %}" class="btn btn-outline-secondary">
-                    {% trans "Be the first to add and review it!" %}
-                </a>
+                    <!-- The Commitment Statement (The "How") -->
+                    <p class="commitment-text text-muted mt-3">
+                        {% blocktrans %}
+                        This belief drives our commitment to building a transparent community, powered by honest, verified reviews, to help you find the peace of mind you deserve.
+                        {% endblocktrans %}
+                    </p>
+                </div>
             </div>
 
         </div>
     </div>
 </div>
+
+<!-- ==================================================================== -->
+<!-- SECTION 5: THE FINAL INVITATION                                      -->
+<!-- ==================================================================== -->
+<div class="final-cta-section py-5">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 mx-auto text-center">
+                <h2 class="display-5 fw-bold">{% trans "Join a Community Building Trust in Real Estate" %}</h2>
+                <p class="lead text-muted mt-3">
+                    {% blocktrans %}
+                    Become a member to share your experience, get the full story on any property, and help create a more transparent world for renters and homeowners.
+                    {% endblocktrans %}
+                </p>
+                <div class="mt-4">
+                    <!-- The primary call to action for a new, unauthenticated user -->
+                    <a href="{% url 'account_signup' %}" class="btn btn-primary btn-lg rounded-pill px-5 py-3">
+                        {% trans "Sign Up for Free" %}
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- (The rest of the sections will be added here later) -->
+
 {% endblock %}
