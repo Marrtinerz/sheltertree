@@ -32,7 +32,9 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     # 'compressor',
+    'widget_tweaks',
     'sass_processor',
+    
     # Our app - using the 'apps' prefix is a good practice for clarity.
     'apps.reviews',
     'apps.locations',
@@ -184,7 +186,10 @@ ACCOUNT_AUTHENTICATED_LOGIN_REDIRECTS = False
 # --- OTHER SETTINGS ---
 ACCOUNT_SESSION_REMEMBER = True
 # This still correctly points to our minimal form for Stage 1.
-ACCOUNT_FORMS = {'signup': 'apps.users.forms.MinimalSignupForm'}
+ACCOUNT_FORMS = {
+    'login': 'apps.users.forms.CustomLoginForm', # Use our new custom login form
+    # 'signup': 'apps.users.forms.MinimalSignupForm',
+    }
 
 ACCOUNT_LOGIN_ON_EMAIL_CONFIRMATION = True
 # ACCOUNT_CONFIRM_EMAIL_ON_GET = True

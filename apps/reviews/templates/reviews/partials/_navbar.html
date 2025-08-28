@@ -1,23 +1,24 @@
 {% load static %}
 {% load i18n %}
 
-<!-- ==================================================================== -->
-<!-- The Split-Tier Navbar                                                -->
-<!-- ==================================================================== -->
 <header class="main-header bg-white shadow-sm">
-    <!-- Tier 1: The Brand (Visible on all screen sizes) -->
+    <!-- ==================================================================== -->
+    <!-- Tier 1: The Brand                                                    -->
+    <!-- ==================================================================== -->
     <div class="navbar-top border-bottom">
         <div class="container-fluid text-center py-3">
             <a class="navbar-brand" href="{% url 'reviews:home' %}">
-                <img src="{% static 'img/brand/logo.svg' %}" alt="ShelterTree Logo" style="height: 120px;">
+                <img src="{% static 'img/brand/logo.svg' %}" alt="ShelterTree Logo" style="height: 130px;">
             </a>
         </div>
     </div>
 
-    <!-- Tier 2: The Actions -->
+    <!-- ==================================================================== -->
+    <!-- Tier 2: The Actions                                                  -->
+    <!-- ==================================================================== -->
     <nav class="navbar navbar-expand-lg navbar-main">
         <div class="container-fluid">
-            <!-- Mobile-Only Toggles -->
+            <!-- Mobile Toggles -->
             <button class="btn btn-outline-secondary d-lg-none" type="button" data-bs-toggle="collapse" data-bs-target="#mobileSearchCollapse" aria-expanded="false" aria-controls="mobileSearchCollapse">
                 <i class="fas fa-search"></i>
             </button>
@@ -27,8 +28,8 @@
 
             <!-- Main Collapsible Content -->
             <div class="collapse navbar-collapse" id="mainNavCollapse">
-                
-                <!-- Mobile-Only Primary CTA (Shown at the top of the collapsed menu) -->
+
+                <!-- Mobile-Only Primary CTA (Shown at the top of the collapsed menu for easy access) -->
                 <div class="d-lg-none my-3 mx-2">
                     <div class="d-grid">
                         <a href="{% url 'reviews:search' %}?intent=review" class="btn btn-primary">
@@ -37,7 +38,7 @@
                     </div>
                     <hr>
                 </div>
-
+                
                 <!-- Left-aligned Navigation Links -->
                 <ul class="navbar-nav me-auto">
                     <li class="nav-item">
@@ -56,26 +57,32 @@
                     </li>
                 </ul>
 
-                <!-- Context-Aware Desktop Search Bar (Hidden on homepage) -->
-                {% if request.resolver_match.url_name != 'home' %}
-                    <div class="d-none d-lg-flex mx-auto" style="width: 50%;">
+                <!-- Context-Aware Desktop Search Bar (Flexible Width) -->
+                {% if request.resolver_match.url_name != 'reviews:home' %}
+                    <div class="d-none d-lg-flex col mx-lg-4">
                         <form class="w-100" action="{% url 'reviews:search' %}" method="get">
                             <div class="input-group">
-                                {{ search_form.q }}
-                                <button class="btn btn-primary" type="submit" id="desktopSearchButton">
-                                    <i class="fas fa-search d-none d-xl-inline"></i>
-                                    <span class="d-xl-none">{% trans "Search" %}</span>
+                                <input type="search" name="q" class="form-control me-2" 
+                                       placeholder="{% trans 'Search for an Estate or Apartment...' %}" 
+                                       aria-label="Search" 
+                                       hx-get="{% url 'reviews:live-search' %}" 
+                                       hx-trigger="keyup changed delay:300ms" 
+                                       hx-target="#live-search-results" 
+                                       hx-indicator=".htmx-indicator" 
+                                       minlength="3" 
+                                       id="desktop_search_q">
+                                <button class="btn btn-primary" type="submit" id="desktopSearchButton" aria-label="Search">
+                                    <i class="fas fa-search"></i>
                                 </button>
                             </div>
                         </form>
                     </div>
                 {% endif %}
 
-                <!-- Right-aligned User Menu -->
+                <!-- Right-aligned Primary CTA and User Menu -->
                 <ul class="navbar-nav ms-auto align-items-center">
-                    <!-- Desktop-Only Primary CTA (Hidden on mobile) -->
                     <li class="nav-item d-none d-lg-block">
-                        <a href="{% url 'reviews:search' %}?intent=review" class="btn btn-primary">
+                        <a href="{% url 'reviews:search' %}?intent=review" class="btn btn-primary rounded-pill">
                             <i class="fas fa-plus-circle me-2"></i>{% trans "Leave a Review" %}
                         </a>
                     </li>
@@ -102,7 +109,7 @@
                             <a class="nav-link" href="{% url 'account_login' %}">{% trans "Login" %}</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="{% url 'account_signup' %}">{% trans "Sign Up" %}</a>
+                            <a class="btn btn-outline-primary ms-lg-2" href="{% url 'account_signup' %}">{% trans "Sign Up" %}</a>
                         </li>
                     {% endif %}
                 </ul>
@@ -111,12 +118,16 @@
     </nav>
 </header>
 
-<!-- Mobile-Only Search Bar (Placed outside the header for clean collapse behavior) -->
+<!-- Mobile Search Bar (Collapses below the main navbar) -->
 <div class="collapse d-lg-none bg-white border-bottom" id="mobileSearchCollapse">
     <div class="container pb-3 pt-2">
          <form action="{% url 'reviews:search' %}" method="get">
             <div class="input-group">
-                {{ search_form.q }}
+                <input type="search" name="q" class="form-control" 
+                       placeholder="{% trans 'Search...' %}" 
+                       aria-label="Search" 
+                       minlength="3" 
+                       id="mobile_search_q">
                 <button class="btn btn-primary" type="submit">{% trans "Search" %}</button>
             </div>
         </form>

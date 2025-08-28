@@ -1,0 +1,37 @@
+{% extends "base.html" %}
+{% load i18n %}
+{% load static %}
+
+{# We are completely overriding the default content block to create our own layout #}
+{% block main_content_wrapper %}
+    {# By placing our layout in this block, we prevent the default container from rendering #}
+    <main>
+        {# The 'g-0' on container-fluid and row removes all gutters for a true edge-to-edge layout #}
+        <div class="container-fluid g-0">
+            <div class="row g-0 auth-layout">
+
+                <!-- 1. The Branding Side -->
+                <div class="col-lg-6 d-none d-lg-flex auth-branding-side">
+                    <div class="branding-content">
+                        {% block auth_branding %}{% endblock %}
+                    </div>
+                </div>
+
+                <!-- 2. The Form Side -->
+                <div class="col-lg-6 auth-form-side">
+                    <div class="form-container">
+                        <div class="text-center mb-4">
+                            <a href="{% url 'reviews:home' %}">
+                                <img src="{% static 'img/brand/logo.svg' %}" alt="ShelterTree Logo" height="80">
+                            </a>
+                        </div>
+                        {% block auth_form %}{% endblock %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+{% endblock %}
+
+{# We no longer need a block content, as we've replaced the wrapper that contains it #}
+{% block content %}{% endblock %}

@@ -1,6 +1,6 @@
 # apps/users/forms.py
 from django import forms
-from allauth.account.forms import SignupForm
+from allauth.account.forms import SignupForm, LoginForm
 from .models import CustomUser, Country, FeatureInterest
 from django.utils.translation import gettext_lazy as _
 import phonenumbers
@@ -14,6 +14,20 @@ class MinimalSignupForm(SignupForm):
     # This file is a placeholder for now, but is still necessary to tell allauth to use the default.
     # In Day 7(b), we will create a DIFFERENT form for the Stage 2 profile completion.
     pass
+
+class CustomLoginForm(LoginForm):
+    """
+    This form inherits from allauth's base LoginForm to override the label
+    of the 'login' field for a better user experience.
+    """
+    def __init__(self, *args, **kwargs):
+        # First, run the original __init__ method from the parent class
+        super().__init__(*args, **kwargs)
+        
+        # Now, override the label for the 'login' field
+        self.fields['login'].label = "Username or Email"
+        
+        
 
 class ProfileEditForm(forms.ModelForm):
     class Meta:

@@ -68,9 +68,12 @@
         </div>
 
         <!-- Main Content Block -->
-        <main class="container py-3 py-lg-4">
-            {% block content %}{% endblock %}
-        </main>
+        {% block main_content_wrapper %}
+            <!-- By default, all standard pages will be wrapped in a container -->
+            <main class="container py-3 py-lg-4">
+                {% block content %}{% endblock %}
+            </main>
+        {% endblock %}
     </div>
 
     <footer>

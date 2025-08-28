@@ -9269,6 +9269,60 @@ textarea.form-control-lg {
   .d-print-none {
     display: none !important; } }
 
+.auth-layout {
+  min-height: calc(100vh - 160px); }
+
+.auth-branding-side {
+  background-image: url("/static/img/auth_background.jpg");
+  background-size: cover;
+  background-position: center;
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center; }
+  .auth-branding-side .branding-content {
+    max-width: 450px;
+    text-align: center; }
+
+.branding-quote {
+  font-style: italic;
+  font-weight: 300;
+  line-height: 1.8;
+  border-left: 3px solid rgba(255, 255, 255, 0.5);
+  padding-left: 2rem;
+  margin-top: 2rem; }
+
+.auth-form-side {
+  background-color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem; }
+  .auth-form-side .form-container {
+    width: 100%;
+    max-width: 400px; }
+
+.form-floating .form-control {
+  height: 3.5rem;
+  padding: 1rem; }
+
+.form-floating label {
+  padding: 1rem; }
+
+.separator {
+  display: flex;
+  align-items: center;
+  text-align: center;
+  color: #5A6D7C; }
+  .separator::before, .separator::after {
+    content: '';
+    flex: 1;
+    border-bottom: 1px solid rgba(90, 109, 124, 0.25); }
+  .separator:not(:empty)::before {
+    margin-right: .25em; }
+  .separator:not(:empty)::after {
+    margin-left: .25em; }
+
 .btn {
   font-weight: 500;
   text-transform: none;
@@ -9482,24 +9536,6 @@ textarea.form-control-lg {
   .feature-showcase-page .form-control:focus {
     border-color: tint-color(#21b576, 80%);
     box-shadow: 0 0 0 0 0.125rem 0.25rem rgba(43, 63, 76, 0.075) rgba(33, 181, 118, 0.25); }
-
-.auth-layout {
-  min-height: 80vh; }
-
-.auth--branding-side {
-  background-image: linear-gradient(rgba(33, 181, 118, 0.3), rgba(43, 63, 76, 0.7)), url("/static/img/auth_background.jpg");
-  background-size: cover;
-  background-position: center;
-  color: #fff;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  padding: 3rem; }
-
-.auth-form-side {
-  display: flex;
-  align-items: center;
-  padding: 3rem; }
 
 /* // 3. (Optional) Add any other custom site-wide styles here later.
 body {

@@ -1,88 +1,97 @@
-{% extends "base.html" %}
+{% extends "base_auth.html" %}
 {% load i18n %}
-{% load allauth %}
-{% load static %}
+{% load allauth %} <!-- Required for social account and other allauth links -->
+{% load widget_tweaks %} <!-- The library for premium form rendering -->
 {% load socialaccount %}
 
-{% block title %}{% trans "Join Our Community" %} | ShelterTree {% endblock %}
+{% block title %}{% trans "Sign Up" %} | ShelterTree{% endblock %}
 
-{% block content %}
-<div class="container my-5">
-    <div class="card shadow-lg">
-        <div class="row g-0 auth-layout">
+{% comment %}
+<!-- ==================================================================== -->
+<!-- BLOCK 1: THE BRANDING SIDE (LEFT COLUMN ON DESKTOP)                  -->
+<!-- This block fills the 'auth_branding' section in base_auth.html.      -->
+<!-- The copy is aspirational, using your "why" to connect emotionally.   -->
+<!-- ==================================================================== -->
+{% endcomment %}
+{% block auth_branding %}
+    <h3 class="fw-light">{% trans "Welcome to ShelterTree," %}</h3>
+    <blockquote class="branding-quote fs-4 mt-4">
+        {% blocktrans %}
+        where we believe that everyone deserves to live in peaceful dwelling places, in secure homes, in undisturbed places of rest.
+        {% endblocktrans %}
+    </blockquote>
+{% endblock %}
 
-            <!-- ==================================================================== -->
-            <!-- Branding Column (Visible on large screens and up)                  -->
-            <!-- ==================================================================== -->
-            <div class="col-lg-6 d-none d-lg-flex auth-branding-side rounded-start">
-                <div>
-                    <h1 class="display-5 fw-bold">{% trans "Join a Community Built on Trust." %}</h1>
-                    <p class="lead mt-3">{% trans "Share your experience. Find your peace. Help create a more transparent world for everyone." %}</p>
-                </div>
+
+{% comment %}
+<!-- ==================================================================== -->
+<!-- BLOCK 2: THE FORM SIDE (RIGHT COLUMN ON DESKTOP)                     -->
+<!-- This block fills the 'auth_form' section in base_auth.html.          -->
+<!-- It uses a robust widget_tweaks loop to render the form, ensuring     -->
+<!-- all of allauth's backend logic remains intact.                       -->
+<!-- ==================================================================== -->
+{% endcomment %}
+{% block auth_form %}
+    <h2 class="fw-bold mb-4">{% trans "Create Your Account" %}</h2>
+
+    <form class="signup" id="signup_form" method="post" action="{% url 'account_signup' %}">
+        {% csrf_token %}
+
+        <!-- 
+            This loop is the world-class way to render this form. It correctly
+            handles all fields from the allauth SignupForm (username, email,
+            password, and password2) without hardcoding their names.
+        -->
+        {% for field in form %}
+            <div class="form-floating mb-3">
+                <!-- 
+                    The `attr` filter from widget_tweaks applies our custom classes
+                    and an empty placeholder to the field, making it compatible
+                    with Bootstrap's floating labels.
+                -->
+                {{ field|attr:"class: form-control"|attr:"placeholder: " }}
+                <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+                
+                <!-- Display any validation errors for this specific field -->
+                {% for error in field.errors %}
+                    <div class="invalid-feedback d-block">{{ error }}</div>
+                {% endfor %}
             </div>
-
-            <!-- ==================================================================== -->
-            <!-- Form Column                                                          -->
-            <!-- ==================================================================== -->
-            <div class="col-lg-6 auth-form-side">
-                <div class="w-100">
-                    <div class="text-center mb-4 d-lg-none">
-                        <img src="{% static 'img/brand/logo.svg' %}" alt="ShelterTree Logo" height="80">
-                    </div>
-                    <h2 class="fw-bold mb-4">{% trans "Create Your Account" %}</h2>
-
-                    <form class="signup" id="signup_form" method="post" action="{% url 'account_signup' %}">
-                        {% csrf_token %}
-                        
-                        <!-- Manual loop for better control over form fields -->
-                        {% for field in form %}
-                            <div class="mb-3">
-                                <label for="{{ field.id_for_label }}" class="form-label">{{ field.label }}</label>
-                                {{ field }}
-                                {% for error in field.errors %}
-                                    <div class="invalid-feedback d-block">{{ error }}</div>
-                                {% endfor %}
-                            </div>
-                        {% endfor %}
-
-                        {% if form.non_field_errors %}
-                            <div class="alert alert-danger mt-3">
-                                {% for error in form.non_field_errors %}
-                                    {{ error }}
-                                {% endfor %}
-                            </div>
-                        {% endif %}
-
-                        <div class="d-grid mt-4">
-                            <button type="submit" class="btn btn-primary btn-lg">{% trans "Create Account" %}</button>
-                        </div>
-                        
-                        <small class="d-block text-center text-muted mt-3">
-                            {% blocktrans %}By signing up, you agree to our <a href="#">Terms of Service</a>.{% endblocktrans %}
-                        </small>
-                    </form>
-
-                    <!-- Social Accounts (Optional, can be added to signup too) -->
-                    {% get_providers as socialaccount_providers %}
-                    {% if socialaccount_providers %}
-                        <div class="d-flex align-items-center my-4">
-                            <hr class="flex-grow-1">
-                            <span class="mx-3 text-muted">{% trans "or" %}</span>
-                            <hr class="flex-grow-1">
-                        </div>
-                        <div class="d-grid">
-                            <a href="{% provider_login_url 'google' %}" class="btn btn-outline-secondary">
-                                <i class="fab fa-google me-2"></i> {% trans "Sign Up with Google" %}
-                            </a>
-                        </div>
-                    {% endif %}
-                    
-                    <p class="text-center mt-4 text-muted">
-                        {% blocktrans %}Already have an account? <a href="{{ login_url }}">Log In</a>.{% endblocktrans %}
-                    </p>
-                </div>
+        {% endfor %}
+        
+        <!-- Display any general form errors (e.g., "Password too common") -->
+        {% if form.non_field_errors %}
+            <div class="alert alert-danger mt-3">
+                {% for error in form.non_field_errors %}{{ error }}{% endfor %}
             </div>
+        {% endif %}
+
+        {% url 'core:terms_of_service' as terms_url %}
+        {% url 'core:privacy_policy' as privacy_url %}
+        <small class="d-block text-center text-muted mt-3">
+            {% blocktrans %}
+            By signing up, you agree to our <a href="{{ terms_url }}"  target="_blank">Terms of Service</a> and <a href="{{ privacy_url }}"  target="_blank">Privacy Policy</a>.
+            {% endblocktrans %}
+        </small>
+        <!-- Submit Button -->
+        <div class="d-grid mt-4">
+            <button type="submit" class="btn btn-primary">{% trans "Create Account & Verify Email" %}</button>
         </div>
-    </div>
-</div>
+    </form>
+
+    <!-- Social Accounts Section -->
+    {% get_providers as socialaccount_providers %}
+    {% if socialaccount_providers %}
+        <div class="separator my-4">{% trans "or" %}</div>
+        <div class="d-grid">
+            <a href="{% provider_login_url 'google' %}" class="btn btn-outline-secondary">
+                <i class="fab fa-google me-2"></i> {% trans "Sign Up with Google" %}
+            </a>
+        </div>
+    {% endif %}
+    
+    <!-- Link to Log In Page -->
+    <p class="text-center mt-4 text-muted">
+        {% blocktrans %}Already have an account? <a href="{{ login_url }}">Log In</a>.{% endblocktrans %}
+    </p>
 {% endblock %}

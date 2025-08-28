@@ -1,94 +1,90 @@
-{% extends "base.html" %}
+{% extends "base_auth.html" %}
 {% load i18n %}
-{% load allauth %} <!-- Required for social account links -->
-{% load static %} <!-- Required for the background image -->
-{% load socialaccount %}
+{% load allauth %} <!-- Required for social account and other allauth links -->
+{% load widget_tweaks %}
+{% load socialaccount %} <!-- The library for premium form rendering -->
 
 {% block title %}{% trans "Log In" %} | ShelterTree{% endblock %}
 
-{% block content %}
-<div class="container my-5">
-    <div class="card shadow-lg">
-        <div class="row g-0 auth-layout">
+{% comment %}
+<!-- ==================================================================== -->
+<!-- BLOCK 1: THE BRANDING SIDE (LEFT COLUMN ON DESKTOP)                  -->
+<!-- This block fills the 'auth_branding' section in base_auth.html.      -->
+<!-- The copy is specifically designed to welcome a returning user.         -->
+<!-- ==================================================================== -->
+{% endcomment %}
+{% block auth_branding %}
+    <h1 class="display-4 fw-bold">{% trans "Welcome Back." %}</h1>
+    <p class="lead mt-3 fs-4">{% trans "Continue your journey to finding peace of mind." %}</p>
+{% endblock %}
 
-            <!-- ==================================================================== -->
-            <!-- Branding Column (Visible on large screens and up)                  -->
-            <!-- ==================================================================== -->
-            <div class="col-lg-6 d-none d-lg-flex auth-branding-side rounded-start">
-                <div>
-                    <h1 class="display-5 fw-bold">{% trans "Welcome Back." %}</h1>
-                    <p class="lead mt-3">{% trans "Continue your journey to finding peace of mind." %}</p>
-                </div>
-            </div>
 
-            <!-- ==================================================================== -->
-            <!-- Form Column                                                          -->
-            <!-- ==================================================================== -->
-            <div class="col-lg-6 auth-form-side">
-                <div class="w-100">
-                    <div class="text-center mb-4 d-lg-none">
-                        <img src="{% static 'img/brand/logo.svg' %}" alt="ShelterTree Logo" height="80">
-                    </div>
-                    <h2 class="fw-bold mb-4">{% trans "Log In" %}</h2>
+{% comment %}
+<!-- ==================================================================== -->
+<!-- BLOCK 2: THE FORM SIDE (RIGHT COLUMN ON DESKTOP)                     -->
+<!-- This block fills the 'auth_form' section in base_auth.html.          -->
+<!-- It uses the correct `attr` filter from widget_tweaks.                -->
+<!-- ==================================================================== -->
+{% endcomment %}
+{% block auth_form %}
+    <h2 class="fw-bold mb-4">{% trans "Log In" %}</h2>
 
-                    <form method="post" action="{% url 'account_login' %}">
-                        {% csrf_token %}
-                        
-                        <!-- Loop through form fields for custom rendering -->
-                        {% for field in form %}
-                            <div class="mb-3">
-                                <label for="{{ field.id_for_label }}" class="form-label">{{ field.label }}</label>
-                                {{ field }}
-                                {% for error in field.errors %}
-                                    <div class="invalid-feedback d-block">{{ error }}</div>
-                                {% endfor %}
-                            </div>
-                        {% endfor %}
+    <form class="login" method="post" action="{% url 'account_login' %}">
+        {% csrf_token %}
 
-                        {% if form.non_field_errors %}
-                            <div class="alert alert-danger mt-3">
-                                {% for error in form.non_field_errors %}
-                                    {{ error }}
-                                {% endfor %}
-                            </div>
-                        {% endif %}
-                        
-                        <div class="d-flex justify-content-between align-items-center mb-4">
-                            <div class="form-check">
-                                <input class="form-check-input" type="checkbox" name="remember" id="remember">
-                                <label class="form-check-label" for="remember">{% trans "Remember me" %}</label>
-                            </div>
-                            <a href="{% url 'account_reset_password' %}">{% trans "Forgot Password?" %}</a>
-                        </div>
-
-                        <div class="d-grid">
-                            <button type="submit" class="btn btn-primary btn-lg">{% trans "Log In" %}</button>
-                        </div>
-                    </form>
-
-                    <!-- Social Accounts Separator -->
-                    {% get_providers as socialaccount_providers %}
-                    {% if socialaccount_providers %}
-                        <div class="d-flex align-items-center my-4">
-                            <hr class="flex-grow-1">
-                            <span class="mx-3 text-muted">{% trans "or" %}</span>
-                            <hr class="flex-grow-1">
-                        </div>
-
-                        <!-- Social Login Buttons -->
-                        <div class="d-grid">
-                            <a href="{% provider_login_url 'google' %}" class="btn btn-outline-secondary">
-                                <i class="fab fa-google me-2"></i> {% trans "Continue with Google" %}
-                            </a>
-                        </div>
-                    {% endif %}
-                    
-                    <p class="text-center mt-4 text-muted">
-                        {% blocktrans %}Don't have an account? <a href="{{ signup_url }}">Sign up for free</a>.{% endblocktrans %}
-                    </p>
-                </div>
-            </div>
+        <!-- Username or Email Field -->
+        <div class="form-floating mb-3">
+            <!-- 
+                THE CORRECT SYNTAX: Using the `attr` filter to add classes and placeholders.
+                This renders the Django form field correctly while allowing for custom styling.
+            -->
+            {{ form.login|attr:"class: form-control"|attr:"placeholder: Email" }}
+            <label for="{{ form.login.id_for_label }}">{{ form.login.label }}</label>
         </div>
-    </div>
-</div>
+        
+        <!-- Password Field -->
+        <div class="form-floating mb-3">
+            {{ form.password|attr:"class: form-control"|attr:"placeholder: " }}
+            <label for="{{ form.password.id_for_label }}">{{ form.password.label }}</label>
+        </div>
+        
+        <!-- Display general form errors, like "Invalid credentials" -->
+        {% if form.non_field_errors %}
+            <div class="alert alert-danger mt-3">
+                {% for error in form.non_field_errors %}
+                    {{ error }}
+                {% endfor %}
+            </div>
+        {% endif %}
+        
+        <!-- Helper links: Remember Me & Forgot Password -->
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <div class="form-check">
+                <input class="form-check-input" type="checkbox" name="remember" id="id_remember">
+                <label class="form-check-label" for="id_remember">{% trans "Remember me" %}</label>
+            </div>
+            <a href="{% url 'account_reset_password' %}">{% trans "Forgot Password?" %}</a>
+        </div>
+
+        <!-- Submit Button -->
+        <div class="d-grid">
+            <button type="submit" class="btn btn-primary">{% trans "Log In" %}</button>
+        </div>
+    </form>
+
+    <!-- Social Accounts Section -->
+    {% get_providers as socialaccount_providers %}
+    {% if socialaccount_providers %}
+        <div class="separator my-4">{% trans "or" %}</div>
+        <div class="d-grid">
+            <a href="{% provider_login_url 'google' %}" class="btn btn-outline-secondary">
+                <i class="fab fa-google me-2"></i> {% trans "Continue with Google" %}
+            </a>
+        </div>
+    {% endif %}
+    
+    <!-- Link to Sign Up Page -->
+    <p class="text-center mt-4 text-muted">
+        {% blocktrans %}Don't have an account? <a href="{{ signup_url }}">Sign up for free</a>.{% endblocktrans %}
+    </p>
 {% endblock %}
