@@ -21,61 +21,41 @@
                 {% if results %}
                     <p class="text-muted">
                         {% blocktrans count counter=results|length %}
-                        Found {{ counter }} matching property.
+                        Found {{ counter }} matching property. Click on a property to read reviews or add your own.
                         {% plural %}
-                        Found {{ counter }} matching properties.
+                        Found {{ counter }} matching properties. Click on a property to read reviews or add your own.
                         {% endblocktrans %}
                     </p>
 
+                    <!-- THE NEW, SIMPLIFIED, WORLD-CLASS RESULT LIST -->
                     <div class="list-group">
                         {% for property in results %}
-                            <div class="list-group-item list-group-item-action p-3">
+                            <!-- The entire item is now one single, clickable link -->
+                            <a href="{% url 'reviews:property-detail' pk=property.pk %}" class="list-group-item list-group-item-action p-3">
                                 <div class="d-flex w-100 justify-content-between align-items-center">
                                     <div>
                                         <h5 class="mb-1">{{ property.name }}</h5>
-                                        <p class="mb-1 text-muted">{{ property.address }}</p>
+                                        <p class="mb-0 text-muted">{{ property.address }}</p>
                                     </div>
-                                    
-                                    <!-- The Intelligent CTA -->
-                                    {% if intent == 'review' %}
-                                        <!-- If the user's goal is to review, give them a direct action button -->
-                                        <a href="{% url 'reviews:add-unit-and-review' property_pk=property.pk %}" class="btn btn-primary">
-                                            {% trans "Write a Review" %}
-                                        </a>
-                                    {% else %}
-                                        <!-- Otherwise, the default action is to view the property's details -->
-                                        <a href="{% url 'reviews:property-detail' pk=property.pk %}" class="btn btn-outline-secondary">
-                                            {% trans "View Details" %}
-                                        </a>
-                                    {% endif %}
+                                    <!-- A subtle visual cue that this is a clickable link -->
+                                    <i class="fas fa-chevron-right text-muted"></i>
                                 </div>
-                            </div>
+                            </a>
                         {% endfor %}
                     </div>
 
                 {% else %}
-                    <!-- No Results Were Found Card -->
+                    <!-- The "No Results Found" card is now cleaner and more focused -->
                     <div class="card text-center border-0 bg-light p-4 mt-5">
                         <div class="card-body">
                             <h4 class="card-title">{% trans "No Properties Found" %}</h4>
-                            
-                            <!-- The Intelligent CTA -->
-                            {% if intent == 'review' %}
-                                <p class="card-text fs-5">{% trans "We couldn't find this property on ShelterTree yet." %}</p>
-                                <p class="text-muted">{% trans "To leave a review, you'll need to add it to our platform first. It only takes a moment." %}</p>
-                                <div class="mt-4">
-                                    <a href="{% url 'reviews:add-property' %}" class="btn btn-primary btn-lg">
-                                        <i class="fas fa-plus-circle me-2"></i>{% trans "Add the Property Now" %}
-                                    </a>
-                                </div>
-                            {% else %}
-                                <p class="card-text fs-5">{% trans "Be the first to add this property to ShelterTree and help our community grow!" %}</p>
-                                <div class="mt-4">
-                                    <a href="{% url 'reviews:add-property' %}" class="btn btn-primary btn-lg">
-                                        <i class="fas fa-plus-circle me-2"></i>{% trans "Add a New Property" %}
-                                    </a>
-                                </div>
-                            {% endif %}
+                            <p class="card-text fs-5">{% trans "We couldn't find a property matching your search for" %} <strong>"{{ query }}"</strong>.</p>
+                            <p class="text-muted">{% trans "Help our community grow by adding it to our platform." %}</p>
+                            <div class="mt-4">
+                                <a href="{% url 'reviews:add-property' %}" class="btn btn-primary btn-lg">
+                                    <i class="fas fa-plus-circle me-2"></i>{% trans "Add This Property" %}
+                                </a>
+                            </div>
                         </div>
                     </div>
                 {% endif %}
@@ -98,9 +78,7 @@
                     <!-- The Prominent, In-Page Search Form -->
                     <div class="main-search-bar my-4">
                         <form class="d-flex" action="{% url 'reviews:search' %}" method="get">
-                            <!-- This hidden input preserves the user's original intent during the search -->
                             <input type="hidden" name="intent" value="{{ intent }}">
-                            
                             <div class="input-group input-group-lg">
                                 {{ form.q }}
                                 <button class="btn btn-primary" type="submit">{% trans "Search" %}</button>
@@ -108,10 +86,10 @@
                         </form>
                     </div>
 
-                    <!-- Live Search Results Target (for HTMX) -->
+                    <!-- Live Search Results Target -->
                     <div id="live-search-results-container" class="position-relative">
                         <div id="live-search-results" class="text-start"></div>
-                        <div class="htmx-indicator text-muted">{% trans "Searching..." %}</div>
+                        <div class="htmx-indicator">{% trans "Searching..." %}</div>
                     </div>
                 </div>
             {% endif %}

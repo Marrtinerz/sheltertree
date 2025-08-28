@@ -1,25 +1,87 @@
 {% extends "base.html" %}
 {% load i18n %}
-{% block title %}{% trans "Create Your Account" %} | ShelterTree{% endblock %}
+{% load allauth %}
+{% load static %}
+{% load socialaccount %}
+
+{% block title %}{% trans "Join Our Community" %} | ShelterTree {% endblock %}
+
 {% block content %}
-<div class="container mt-4 mb-5">
-    <div class="row justify-content-center">
-        <div class="col-md-6">
-            <div class="card">
-                <div class="card-body">
-                    <h2 class="card-title text-center mb-4">{% trans "Sign Up" %}</h2>
-                    <form class="signup" method="post" action="{% url 'account_signup' %}">
-                        {% csrf_token %}
-                        {{ form.as_p }}
-                        <div class="d-grid">
-                            <button type="submit" class="btn btn-primary btn-lg">{% trans "Create Account" %}</button>
-                        </div>
-                    </form>
+<div class="container my-5">
+    <div class="card shadow-lg">
+        <div class="row g-0 auth-layout">
+
+            <!-- ==================================================================== -->
+            <!-- Branding Column (Visible on large screens and up)                  -->
+            <!-- ==================================================================== -->
+            <div class="col-lg-6 d-none d-lg-flex auth-branding-side rounded-start">
+                <div>
+                    <h1 class="display-5 fw-bold">{% trans "Join a Community Built on Trust." %}</h1>
+                    <p class="lead mt-3">{% trans "Share your experience. Find your peace. Help create a more transparent world for everyone." %}</p>
                 </div>
             </div>
-            <p class="text-center mt-3">
-                {% blocktrans %}Already have an account? Then please <a href="{{ login_url }}">sign in</a>.{% endblocktrans %}
-            </p>
+
+            <!-- ==================================================================== -->
+            <!-- Form Column                                                          -->
+            <!-- ==================================================================== -->
+            <div class="col-lg-6 auth-form-side">
+                <div class="w-100">
+                    <div class="text-center mb-4 d-lg-none">
+                        <img src="{% static 'img/brand/logo.svg' %}" alt="ShelterTree Logo" height="80">
+                    </div>
+                    <h2 class="fw-bold mb-4">{% trans "Create Your Account" %}</h2>
+
+                    <form class="signup" id="signup_form" method="post" action="{% url 'account_signup' %}">
+                        {% csrf_token %}
+                        
+                        <!-- Manual loop for better control over form fields -->
+                        {% for field in form %}
+                            <div class="mb-3">
+                                <label for="{{ field.id_for_label }}" class="form-label">{{ field.label }}</label>
+                                {{ field }}
+                                {% for error in field.errors %}
+                                    <div class="invalid-feedback d-block">{{ error }}</div>
+                                {% endfor %}
+                            </div>
+                        {% endfor %}
+
+                        {% if form.non_field_errors %}
+                            <div class="alert alert-danger mt-3">
+                                {% for error in form.non_field_errors %}
+                                    {{ error }}
+                                {% endfor %}
+                            </div>
+                        {% endif %}
+
+                        <div class="d-grid mt-4">
+                            <button type="submit" class="btn btn-primary btn-lg">{% trans "Create Account" %}</button>
+                        </div>
+                        
+                        <small class="d-block text-center text-muted mt-3">
+                            {% blocktrans %}By signing up, you agree to our <a href="#">Terms of Service</a>.{% endblocktrans %}
+                        </small>
+                    </form>
+
+                    <!-- Social Accounts (Optional, can be added to signup too) -->
+                    {% get_providers as socialaccount_providers %}
+                    {% if socialaccount_providers %}
+                        <div class="d-flex align-items-center my-4">
+                            <hr class="flex-grow-1">
+                            <span class="mx-3 text-muted">{% trans "or" %}</span>
+                            <hr class="flex-grow-1">
+                        </div>
+                        <div class="d-grid">
+                            <a href="{% provider_login_url 'google' %}" class="btn btn-outline-secondary">
+                                <i class="fab fa-google me-2"></i> {% trans "Sign Up with Google" %}
+                            </a>
+                        </div>
+                    {% endif %}
+                    
+                    <p class="text-center mt-4 text-muted">
+                        {% blocktrans %}Already have an account? <a href="{{ login_url }}">Log In</a>.{% endblocktrans %}
+                    </p>
+                </div>
+            </div>
         </div>
     </div>
 </div>

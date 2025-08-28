@@ -9457,8 +9457,8 @@ textarea.form-control-lg {
 
 .navbar-main {
   background-color: #fff;
-  padding-top: 0.5rem;
-  padding-bottom: 0.5rem; }
+  padding-top: 0.8rem;
+  padding-bottom: 0.8rem; }
   .navbar-main .nav-link {
     font-weight: 500; }
     .navbar-main .nav-link:hover {
@@ -9482,6 +9482,24 @@ textarea.form-control-lg {
   .feature-showcase-page .form-control:focus {
     border-color: tint-color(#21b576, 80%);
     box-shadow: 0 0 0 0 0.125rem 0.25rem rgba(43, 63, 76, 0.075) rgba(33, 181, 118, 0.25); }
+
+.auth-layout {
+  min-height: 80vh; }
+
+.auth--branding-side {
+  background-image: linear-gradient(rgba(33, 181, 118, 0.3), rgba(43, 63, 76, 0.7)), url("/static/img/auth_background.jpg");
+  background-size: cover;
+  background-position: center;
+  color: #fff;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 3rem; }
+
+.auth-form-side {
+  display: flex;
+  align-items: center;
+  padding: 3rem; }
 
 /* // 3. (Optional) Add any other custom site-wide styles here later.
 body {
