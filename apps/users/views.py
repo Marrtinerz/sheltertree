@@ -86,6 +86,18 @@ class OnboardingView(LoginRequiredMixin, UpdateView):
                 pass
                 
         return initial
+    
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        
+        # This is now the single source of truth for which sprites are available.
+        context['sprite_options'] = [
+            "Bee", "Bloom", "Dog", "Cat", "Dove", "Butterfly", 
+            "Yellow_flower", "Rabbit", "Gardenia", "Small_kitten", 
+            "Bull_dog", "Yellow_flower2"
+        ]
+        
+        return context
 
     def form_valid(self, form):
         """

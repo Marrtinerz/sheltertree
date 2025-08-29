@@ -25,9 +25,31 @@ class CustomUser(AbstractUser):
         blank=True,
         verbose_name=_("Country")
     )
+    
+    # --- NEW: The Display Name Preference Field ---
+    class DisplayNameChoice(models.TextChoices):
+        USERNAME = 'USERNAME', _('Username Only')
+        FIRST_NAME_INITIAL = 'FIRST_NAME_INITIAL', _('First Name & Last Initial')
+
+    display_name_preference = models.CharField(
+        max_length=20,
+        choices=DisplayNameChoice.choices,
+        default=DisplayNameChoice.USERNAME,
+        verbose_name=_("Review Display Name")
+    )
+    
     onboarding_complete = models.BooleanField(
         default=False,
         help_text=_("Indicates if the user has completed the second stage of onboarding.")
+    )
+    
+    # --- NEW, SIMPLER AVATAR FIELD ---
+    # We only need to store the path to the chosen static SVG file.
+    avatar = models.CharField(
+        max_length=255, 
+        blank=True, 
+        null=True,
+        verbose_name=_("Avatar Path")
     )
 
     # --- Fields for Phone Number & Verification (Stage 3) ---
@@ -115,6 +137,29 @@ class CustomUser(AbstractUser):
         self.phone_lockout_until = None
         self.save(update_fields=['is_phone_verified', 'phone_verification_code', 'phone_verification_timestamp', 'phone_verification_attempts', 'phone_lockout_until'])
 
+
+    # --- NEW: A Helper Method for the templates ---
+    def get_review_author_name(self):
+        """
+        Returns the name to be displayed on reviews based on user preference.
+        """
+        if self.display_name_preference == self.DisplayNameChoice.FIRST_NAME_INITIAL and self.first_name and self.last_name:
+            return f"{self.first_name} {self.last_name[0]}."
+        return self.username
+    
+    def get_avatar_url(self):
+        """
+        The single source of truth for displaying an avatar.
+        It's now much simpler: if a user has chosen an avatar, show it.
+        Otherwise, show the default.
+        """
+        from django.templatetags.static import static
+        if self.avatar:
+            return static(self.avatar)
+        return static('img/avatars/default_sprite.svg')
+    
+    
+    
 # apps/users/models.py
 class FeatureInterest(models.Model):
     email = models.EmailField(blank=True, null=True)

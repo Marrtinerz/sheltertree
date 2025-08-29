@@ -12,9 +12,9 @@
     // This creates a dark, on-brand gradient overlay
     // linear-gradient(rgba($dark, 0.6), rgba($dark, 0.8)),
     // Your background image
-    url('/static/img/auth_background.jpg');
+    url('/static/img/auth_background1.jpg');
   
-  background-size: cover;
+  background-size: contain;
   background-position: center;
   color: #fff;
 

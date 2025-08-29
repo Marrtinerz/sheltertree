@@ -44,7 +44,15 @@ class ProfileEditForm(forms.ModelForm):
 class OnboardingForm(forms.ModelForm):
     class Meta:
         model = CustomUser
-        fields = ['first_name', 'last_name', 'user_type', 'country']
+        fields = [
+            'avatar', 'first_name', 'last_name', 
+            'display_name_preference', 'user_type', 'country'
+        ]
+        widgets = {
+            'display_name_preference': forms.RadioSelect,
+            # --- The avatar field is now hidden ---
+            'avatar': forms.HiddenInput(),
+        }
 
     def __init__(self, *args, **kwargs):
         # Run the standard __init__ to bind the instance

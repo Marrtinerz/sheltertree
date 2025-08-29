@@ -1,29 +1,181 @@
 {% extends "base.html" %}
 {% load i18n %}
-{% block title %}{% trans "Welcome, " %} {{ user.username }}! | ShelterTree{% endblock %}
+{% load static %}
+{% load widget_tweaks %}
+
+{% block title %}{% trans "Welcome to ShelterTree" %}{% endblock %}
+
 {% block content %}
-<div class="container mt-4 mb-5">
+<div class="container my-5">
     <div class="row justify-content-center">
-        <div class="col-md-8">
-            <div class="card text-center">
-                <div class="card-body p-5">
-                    <h1 class="card-title">{% trans "Welcome, " %} {{ user.username }}!</h1>
-                    <p class="fs-5 text-muted">{% trans "Let's complete your profile to personalize your experience. It'll only take a moment." %}</p>
+        <div class="col-lg-8">
+
+            <!-- ==================================================================== -->
+            <!-- The Welcome & Mission Statement                                    -->
+            <!-- ==================================================================== -->
+            <div class="text-center mb-5">
+                <img src="{% static 'img/brand/logo.svg' %}" alt="ShelterTree Logo" height="80" class="mb-3">
+                <h1 class="display-5 fw-bold">{% trans "Welcome" %}, {{ user.username }}!</h1>
+                <p class="lead text-muted">{% trans "Let's set up your profile. This is your space, and you are in control." %}</p>
+            </div>
+            
+            <div class="card shadow-sm">
+                <div class="card-body p-4 p-md-5">
                     
-                    <form method="post" class="text-start mt-4">
+                    <form method="post">
                         {% csrf_token %}
-                        {{ form.as_p }}
+                        
+                        <!-- The hidden input for the avatar form that our JavaScript will populate -->
+                        {{ form.avatar }}
+
+                        <!-- ==================================================================== -->
+                        <!-- 1. PUBLIC IDENTITY SECTION                                         -->
+                        <!-- ==================================================================== -->
+                        <fieldset class="border rounded-3 p-3 mb-4">
+                            <legend class="float-none w-auto px-2 h6">
+                                <i class="fas fa-user-shield me-2 text-primary"></i>{% trans "Your Public Identity" %}
+                            </legend>
+                            
+                            <div class="alert alert-info small">
+                                <h6 class="alert-heading fw-bold"><i class="fas fa-lock me-2"></i>{% trans "You're in Control" %}</h6>
+                                <p class="mb-1">{% trans "Your chosen 'Shelter Sprite' and display name will be visible on your reviews. You can change these settings at any time from your profile." %}</p>
+                            </div>
+
+                            <div class="row align-items-center g-4">
+                                <!-- The Interactive Avatar Picker UI -->
+                                <div class="col-md-4 text-center">
+                                    <div class="profile-avatar-uploader">
+                                        <img src="{{ user.get_avatar_url }}" alt="Your selected avatar" class="avatar-preview" id="avatarPreview">
+                                        <button type="button" class="upload-button" id="avatar-picker-button" data-bs-toggle="modal" data-bs-target="#avatarPickerModal" title="{% trans 'Choose your avatar' %}">
+                                            <i class="fas fa-pencil-alt"></i>
+                                        </button>
+                                    </div>
+                                    <small class="text-muted mt-2 d-block">{% trans "Choose your Sprite" %}</small>
+                                </div>
+                                
+                                <!-- Name & Display Preference -->
+                                <div class="col-md-8">
+                                    <div class="mb-3">
+                                        <label for="{{ form.first_name.id_for_label }}" class="form-label">{{ form.first_name.label }}</label>
+                                        {{ form.first_name|attr:"class:form-control" }}
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="{{ form.last_name.id_for_label }}" class="form-label">{{ form.last_name.label }}</label>
+                                        {{ form.last_name|attr:"class:form-control" }}
+                                    </div>
+                                    
+                                    <div class="mb-3">
+                                        <label class="form-label d-block">{{ form.display_name_preference.label }}</label>
+                                        <div class="btn-group w-100" role="group">
+                                            {% for radio in form.display_name_preference %}
+                                                <input type="radio" class="btn-check" name="{{ form.display_name_preference.name }}" id="{{ radio.id_for_label }}" value="{{ radio.choice_value }}" autocomplete="off" {% if form.display_name_preference.value|default:'USERNAME' == radio.choice_value %}checked{% endif %}>
+                                                <label class="btn btn-outline-primary" for="{{ radio.id_for_label }}">{{ radio.choice_label }}</label>
+                                            {% endfor %}
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </fieldset>
+                        
+                        <!-- ==================================================================== -->
+                        <!-- 2. PRIVATE INFORMATION SECTION                                     -->
+                        <!-- ==================================================================== -->
+                        <fieldset class="border rounded-3 p-3">
+                            <legend class="float-none w-auto px-2 h6">
+                                <i class="fas fa-user-cog me-2 text-primary"></i>{% trans "Your Details" %}
+                            </legend>
+                            <p class="text-muted small">{% trans "This information is private and helps us personalize your experience." %}</p>
+                            <div class="mb-3">
+                                <label for="{{ form.user_type.id_for_label }}" class="form-label">{{ form.user_type.label }}</label>
+                                {{ form.user_type|attr:"class:form-select" }}
+                            </div>
+                            <div class="mb-3">
+                                <label for="{{ form.country.id_for_label }}" class="form-label">{{ form.country.label }}</label>
+                                {{ form.country|attr:"class:form-select" }}
+                            </div>
+                        </fieldset>
+
+                        <!-- Final Actions -->
                         <div class="d-grid mt-4">
-                            <button type="submit" class="btn btn-primary btn-lg">{% trans "Save and Continue" %}</button>
+                            <button type="submit" class="btn btn-primary btn-lg">{% trans "Save and Continue to ShelterTree" %}</button>
                         </div>
                     </form>
-
-                    <div class="mt-3">
-                        <a href="{% url 'onboarding-skip' %}" class="text-muted">{% trans "Skip for now" %}</a>
+                    
+                    <div class="text-center mt-3">
+                        <a href="{% url 'onboarding-skip' %}" class="text-muted small">{% trans "I'll do this later" %}</a>
                     </div>
                 </div>
             </div>
         </div>
     </div>
 </div>
+
+<!-- ==================================================================== -->
+<!-- The Avatar Picker Modal                                              -->
+<!-- ==================================================================== -->
+<div class="modal fade" id="avatarPickerModal" tabindex="-1" aria-labelledby="avatarPickerModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable modal-lg">
+        <div class="modal-content">
+            <div class="modal-header border-0">
+                <h5 class="modal-title" id="avatarPickerModalLabel">{% trans "Choose Your Shelter Sprite" %}</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="row g-3 g-lg-4 justify-content-center">
+                    
+                    <!-- The correct, clean loop provided by the view -->
+                    {% for sprite_name in sprite_options %}
+                    <div class="col-4 col-md-2">
+                        <a href="#" class="avatar-option-container" data-avatar-path="img/avatars/sprites/{{ sprite_name }}.svg" role="button">
+                            <img src="{% static 'img/avatars/sprites/'|add:sprite_name|add:'.svg' %}" alt="{{ sprite_name }} Avatar">
+                        </a>
+                    </div>
+                    {% endfor %}
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    // Get references to all the key elements
+    const avatarPreview = document.getElementById('avatarPreview');
+    const avatarPathInput = document.getElementById('id_avatar');
+    const avatarOptionContainers = document.querySelectorAll('.avatar-option-container');
+    const modalElement = document.getElementById('avatarPickerModal');
+    const avatarPickerButton = document.getElementById('avatar-picker-button');
+
+    if (modalElement && avatarPickerButton) {
+        const avatarModal = new bootstrap.Modal(modalElement);
+
+        // --- THE DEFINITIVE, WORLD-CLASS FIX ---
+
+        // 1. The Click Handler: This function's ONLY job is to update the data and request the modal to close.
+        avatarOptionContainers.forEach(container => {
+            container.addEventListener('click', function(event) {
+                event.preventDefault();
+
+                // Update the form and the preview image
+                const selectedPath = this.getAttribute('data-avatar-path');
+                const selectedSrc = this.querySelector('img').src;
+                avatarPathInput.value = selectedPath;
+                avatarPreview.src = selectedSrc;
+                
+                // Tell the modal to start its closing process. This will trigger our event listener below.
+                avatarModal.hide();
+            });
+        });
+
+        // 2. The Event Listener: This function's ONLY job is to manage focus at the correct time.
+        // It listens for Bootstrap's 'hide.bs.modal' event.
+        modalElement.addEventListener('hide.bs.modal', function (event) {
+            // This event fires *immediately* when `.hide()` is called, BEFORE the closing animation.
+            // This is the perfect, safe moment to move the focus.
+            avatarPickerButton.focus();
+        });
+    }
+</script>
 {% endblock %}

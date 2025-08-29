@@ -201,3 +201,11 @@ ACCOUNT_LOGIN_ON_EMAIL_CONFIRMATION = True
 # marked as "verified" if the user verifies their phone number.
 REVIEW_VERIFICATION_GRACE_PERIOD_HOURS = 48
 
+
+# --- Media Files Configuration (User-uploaded content) ---
+# The absolute filesystem path to the directory that will hold user-uploaded files.
+MEDIA_ROOT = BASE_DIR / 'media'
+
+# URL that handles the media served from MEDIA_ROOT.
+MEDIA_URL = '/media/'
+

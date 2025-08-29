@@ -9,13 +9,10 @@ This is the main entry point for all URLs. It does two things:
 2.  Includes all other URLs from our 'reviews' application, and prefixes them
     with a language code (e.g., /en/, /fr/) to enable internationalization.
 """
-from django.conf import settings
 from django.contrib import admin
 from django.urls import path, include
 from django.conf.urls.i18n import i18n_patterns
 from django.contrib.auth import views as auth_views
-from django.conf.urls.static import static
-
 
 # URLs that should NOT be translated or prefixed with a language code.
 # The admin interface is a primary example.
@@ -36,12 +33,3 @@ urlpatterns += i18n_patterns(
     # If you add more apps in the future, you would include their URLs here too.
     # path('another-app/', include('another_app.urls')),
 )
-
-
-
-
-
-
-# --- Add this to the end of the file ---
-if settings.DEBUG:
-    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
