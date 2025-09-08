@@ -194,6 +194,7 @@ ACCOUNT_FORMS = {
 ACCOUNT_LOGIN_ON_EMAIL_CONFIRMATION = True
 # ACCOUNT_CONFIRM_EMAIL_ON_GET = True
 
+ACCOUNT_ADAPTER = 'apps.users.adapter.MyAccountAdapter'
 
 # --- ShelterTree Business Logic Settings ---
 
