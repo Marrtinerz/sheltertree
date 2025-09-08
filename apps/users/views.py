@@ -20,6 +20,9 @@ from django.db.models import F
 from datetime import timedelta
 from apps.reviews.models import Review, Property
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
+from django.utils.translation import gettext_lazy as _
+from django.utils.decorators import method_decorator
+from django.views.decorators.cache import never_cache
 
 class ProfileView(LoginRequiredMixin, TemplateView):
     template_name = 'account/profile_hub.html'
@@ -35,12 +38,25 @@ class ProfileEditView(LoginRequiredMixin, SuccessMessageMixin, UpdateView):
         # Ensure the view operates on the currently logged-in user.
         return self.request.user
 
+@method_decorator(never_cache, name='dispatch')
 class OnboardingView(LoginRequiredMixin, UpdateView):
     model = CustomUser
     form_class = OnboardingForm
     template_name = 'account/onboarding.html'
     success_url = reverse_lazy('reviews:property-list')
 
+    def dispatch(self, request, *args, **kwargs):
+        """
+        This method runs before any other view logic. It's the perfect
+        place for our defensive check.
+        """
+        # If the user has already completed onboarding, redirect them away immediately.
+        if request.user.onboarding_complete:
+            messages.info(request, "Your profile is already set up!")
+            return redirect('account_profile') # Redirect to their profile hub
+        
+        return super().dispatch(request, *args, **kwargs)
+    
     def get_object(self):
         """
         --- THIS IS THE DEFINITIVE FIX ---
@@ -113,13 +129,24 @@ class OnboardingView(LoginRequiredMixin, UpdateView):
 
 class SkipOnboardingView(LoginRequiredMixin, View):
     """
-    Sets a session flag to indicate the user has chosen to skip the
-    onboarding process for their current session.
+    Handles the user's choice to skip the detailed onboarding process.
+    This view marks the user's onboarding as 'complete' in the database
+    to ensure they are not prompted again.
     """
     def get(self, request, *args, **kwargs):
-        # Set a key in the user's session
-        request.session['onboarding_skipped'] = True
-        # Redirect them to the homepage (or wherever you want them to go)
+        user = self.request.user
+        
+        # --- THE CRITICAL FIX ---
+        # We are setting the permanent flag in the database, not a temporary session key.
+        if not user.onboarding_complete:
+            user.onboarding_complete = True
+            # Use update_fields for a clean, efficient database query.
+            user.save(update_fields=['onboarding_complete'])
+
+        # Add a helpful message for the user.
+        messages.info(request, _("You can always complete your details from your Profile Hub later."))
+        
+        # Redirect them to the homepage.
         return redirect('reviews:property-list')
 
 

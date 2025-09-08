@@ -67,6 +67,9 @@ class OnboardingForm(forms.ModelForm):
             # This becomes the new source data for the form renderer.
             self.instance.user_type = CustomUser.UserType.RENTER
 
+        #set the value for display_name_preference
+        self.fields['display_name_preference'].initial = 'USERNAME'
+        
         # Configure the required fields as before
         self.fields['first_name'].required = True
         self.fields['last_name'].required = True

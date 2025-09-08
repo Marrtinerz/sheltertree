@@ -147,7 +147,7 @@ class PropertyListView(ListView):
         return Property.objects.filter(status=PropertyStatus.APPROVED).order_by('-created_at')
 
 
-class PropertyDetailView(DetailView):
+class PropertyDetailView(LoginRequiredMixin, DetailView):
     """
     Displays the details of a single property and its reviews.
     KEY CHANGE: This view now calculates an "At a Glance" summary for the property.

@@ -3,7 +3,7 @@
 {% load static %}
 {% load widget_tweaks %}
 
-{% block title %}{% trans "Welcome to ShelterTree" %}{% endblock %}
+{% block title %}{% trans "Welcome to" %} ShelterTree {% endblock %}
 
 {% block content %}
 <div class="container my-5">
@@ -16,10 +16,10 @@
             <div class="text-center mb-5">
                 <img src="{% static 'img/brand/logo.svg' %}" alt="ShelterTree Logo" height="80" class="mb-3">
                 <h1 class="display-5 fw-bold">{% trans "Welcome" %}, {{ user.username }}!</h1>
-                <p class="lead text-muted">{% trans "Let's set up your profile. This is your space, and you are in control." %}</p>
+                <p class="lead text-muted">{% trans "This is your space. Let's set up your profile." %}</p>
             </div>
             
-            <div class="card shadow-sm">
+            <div class="card shadow-md">
                 <div class="card-body p-4 p-md-5">
                     
                     <form method="post">
@@ -66,10 +66,14 @@
                                     
                                     <div class="mb-3">
                                         <label class="form-label d-block">{{ form.display_name_preference.label }}</label>
-                                        <div class="btn-group w-100" role="group">
-                                            {% for radio in form.display_name_preference %}
-                                                <input type="radio" class="btn-check" name="{{ form.display_name_preference.name }}" id="{{ radio.id_for_label }}" value="{{ radio.choice_value }}" autocomplete="off" {% if form.display_name_preference.value|default:'USERNAME' == radio.choice_value %}checked{% endif %}>
-                                                <label class="btn btn-outline-primary" for="{{ radio.id_for_label }}">{{ radio.choice_label }}</label>
+                                        <div class="btn-group w-100" role="group" aria-label="{{ form.display_name_preference.label }}">
+                                            {% for choice in form.display_name_preference %}
+                                            <input type="radio" 
+                                                class="btn-check" 
+                                                name="{{ form.display_name_preference.name }}" 
+                                                id="{{ choice.id_for_label }}" 
+                                                value="{{ choice.data.value }}" {% if choice.data.selected %}checked{% endif %}>
+                                            <label class="btn btn-outline-primary" for="{{ choice.id_for_label }}">{{ choice.data.label }}</label>
                                             {% endfor %}
                                         </div>
                                     </div>
@@ -85,6 +89,8 @@
                                 <i class="fas fa-user-cog me-2 text-primary"></i>{% trans "Your Details" %}
                             </legend>
                             <p class="text-muted small">{% trans "This information is private and helps us personalize your experience." %}</p>
+                            
+
                             <div class="mb-3">
                                 <label for="{{ form.user_type.id_for_label }}" class="form-label">{{ form.user_type.label }}</label>
                                 {{ form.user_type|attr:"class:form-select" }}
@@ -110,8 +116,9 @@
     </div>
 </div>
 
+
 <!-- ==================================================================== -->
-<!-- The Avatar Picker Modal                                              -->
+<!-- The Upgraded Avatar Picker Modal                                     -->
 <!-- ==================================================================== -->
 <div class="modal fade" id="avatarPickerModal" tabindex="-1" aria-labelledby="avatarPickerModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable modal-lg">
@@ -123,10 +130,16 @@
             <div class="modal-body">
                 <div class="row g-3 g-lg-4 justify-content-center">
                     
-                    <!-- The correct, clean loop provided by the view -->
                     {% for sprite_name in sprite_options %}
                     <div class="col-4 col-md-2">
-                        <a href="#" class="avatar-option-container" data-avatar-path="img/avatars/sprites/{{ sprite_name }}.svg" role="button">
+                        <!-- 
+                            THE CRITICAL FIX: 
+                            We have replaced role="button" with data-bs-dismiss="modal".
+                            This tells Bootstrap to handle the closing process natively.
+                        -->
+                        <a href="#" class="avatar-option-container" 
+                           data-avatar-path="img/avatars/sprites/{{ sprite_name }}.svg" 
+                           data-bs-dismiss="modal">
                             <img src="{% static 'img/avatars/sprites/'|add:sprite_name|add:'.svg' %}" alt="{{ sprite_name }} Avatar">
                         </a>
                     </div>
@@ -141,41 +154,31 @@
 
 {% block extra_js %}
 <script>
-    // Get references to all the key elements
+    // Get references to the key elements
     const avatarPreview = document.getElementById('avatarPreview');
     const avatarPathInput = document.getElementById('id_avatar');
     const avatarOptionContainers = document.querySelectorAll('.avatar-option-container');
-    const modalElement = document.getElementById('avatarPickerModal');
-    const avatarPickerButton = document.getElementById('avatar-picker-button');
 
-    if (modalElement && avatarPickerButton) {
-        const avatarModal = new bootstrap.Modal(modalElement);
+    // --- THE DEFINITIVE, SIMPLIFIED FIX ---
+    // We no longer need a reference to the modal object or the button.
+    // Our JavaScript is now purely for data manipulation.
 
-        // --- THE DEFINITIVE, WORLD-CLASS FIX ---
+    avatarOptionContainers.forEach(container => {
+        container.addEventListener('click', function(event) {
+            event.preventDefault(); // Still need this to prevent the link from navigating
 
-        // 1. The Click Handler: This function's ONLY job is to update the data and request the modal to close.
-        avatarOptionContainers.forEach(container => {
-            container.addEventListener('click', function(event) {
-                event.preventDefault();
+            // 1. Get the data from the clicked avatar
+            const selectedPath = this.getAttribute('data-avatar-path');
+            const selectedSrc = this.querySelector('img').src;
+            
+            // 2. Update the hidden form input and the preview image
+            avatarPathInput.value = selectedPath;
+            avatarPreview.src = selectedSrc;
 
-                // Update the form and the preview image
-                const selectedPath = this.getAttribute('data-avatar-path');
-                const selectedSrc = this.querySelector('img').src;
-                avatarPathInput.value = selectedPath;
-                avatarPreview.src = selectedSrc;
-                
-                // Tell the modal to start its closing process. This will trigger our event listener below.
-                avatarModal.hide();
-            });
+            // 3. That's it! We DO NOT call .hide() or .focus()
+            // Bootstrap's data-bs-dismiss="modal" handles the closing and
+            // the focus return automatically and accessibly.
         });
-
-        // 2. The Event Listener: This function's ONLY job is to manage focus at the correct time.
-        // It listens for Bootstrap's 'hide.bs.modal' event.
-        modalElement.addEventListener('hide.bs.modal', function (event) {
-            // This event fires *immediately* when `.hide()` is called, BEFORE the closing animation.
-            // This is the perfect, safe moment to move the focus.
-            avatarPickerButton.focus();
-        });
-    }
+    });
 </script>
 {% endblock %}

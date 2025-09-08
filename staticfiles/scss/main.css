@@ -9576,7 +9576,6 @@ textarea.form-control-lg {
   box-shadow: 0 0.125rem 0.25rem rgba(43, 63, 76, 0.075); }
   .avatar-option-container:hover {
     transform: scale(1.05);
-    border-color: #21b576;
     box-shadow: 0 0.5rem 1rem rgba(43, 63, 76, 0.1); }
   .avatar-option-container img {
     position: absolute;
