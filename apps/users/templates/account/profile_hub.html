@@ -1,107 +1,93 @@
 {% extends "base.html" %}
 {% load i18n %}
+{% load static %}
 
-{% block title %}{% trans "My Profile Hub" %} | ShelterTree{% endblock %}
+{% block title %}{% trans "My Profile" %} | ShelterTree {% endblock %}
 
 {% block content %}
-<div class="container mt-4 mb-5">
-    <h1 class="mb-4">{% trans "My Profile & Settings" %}</h1>
-    
-    {% comment %} <!-- This block will display success messages passed from views -->
-    {% if messages %}
-        {% for message in messages %}
-            <div class="alert alert-success alert-dismissible fade show" role="alert">
-                {{ message }}
-                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+<div class="container my-4 my-lg-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+
+            <!-- 1. The Personalized Welcome Header (Unchanged, it's perfect) -->
+            <div class="profile-header d-flex flex-column flex-md-row align-items-center rounded-3 mb-4">
+                <img src="{{ user.get_avatar_url }}" class="profile-avatar mb-3 mb-md-0" alt="Your Avatar">
+                <div class="ms-md-4 text-center text-md-start">
+                    <h2 class="h3 mb-0 text-white">{% blocktrans with name=user.first_name|default:user.username %}Welcome back, {{ name }}{% endblocktrans %}</h2>
+                    <p class="mb-0 text-white-50">{% trans "This is your personal hub. Manage your profile and contributions." %}</p>
+                </div>
             </div>
-        {% endfor %}
-    {% endif %} {% endcomment %}
 
-    <div class="row g-4">
-
-        <!-- ==================================================================== -->
-        <!-- Personal Information Card (No changes needed here)                  -->
-        <!-- ==================================================================== -->
-        <div class="col-lg-6">
-            <div class="card h-100">
+            <!-- Display Success Messages (Unchanged) -->
+    
+            <!-- ==================================================================== -->
+            <!-- 2. The Dashboard Cards - Now Using Custom Premium Styles           -->
+            <!-- ==================================================================== -->
+            
+            <!-- Card 1: Personal Information -->
+            <div class="card dashboard-card mb-4">
                 <div class="card-header d-flex justify-content-between align-items-center">
-                    <h4>{% trans "Personal Information" %}</h4>
+                    <span><i class="fas fa-user-circle fa-fw me-2"></i>{% trans "Personal Information" %}</span>
                     <a href="{% url 'account_profile_edit' %}" class="btn btn-outline-secondary btn-sm">
-                        <i class="fas fa-edit me-1"></i>{% trans "Edit" %}
+                        <span class="d-none d-sm-inline">{% trans "Edit Profile" %}</span>
+                        <i class="fas fa-edit d-sm-none"></i>
                     </a>
                 </div>
-                <ul class="list-group list-group-flush">
-                    <li class="list-group-item"><strong>{% trans "First Name" %}:</strong> {{ user.first_name|default:'<span class="text-muted">Not set</span>'|safe }}</li>
-                    <li class="list-group-item"><strong>{% trans "Last Name" %}:</strong> {{ user.last_name|default:'<span class="text-muted">Not set</span>'|safe }}</li>
-                    <li class="list-group-item"><strong>{% trans "User Type" %}:</strong> {{ user.get_user_type_display|default:'<span class="text-muted">Not set</span>'|safe }}</li>
-                    <li class="list-group-item"><strong>{% trans "Home Country" %}:</strong> {{ user.country.name|default:'<span class="text-muted">Not set</span>'|safe }}</li>
-                </ul>
-            </div>
-        </div>
-
-        <!-- ==================================================================== -->
-        <!-- Account Security Card (This section is updated)                     -->
-        <!-- ==================================================================== -->
-        <div class="col-lg-6">
-            <div class="card h-100">
-                <div class="card-header">
-                    <h4>{% trans "Account Security" %}</h4>
+                <div class="card-body p-0">
+                    <!-- Using our new premium list style -->
+                    <div class="profile-list-item"><span class="item-label text-primary">{% trans "Public Display Name" %}</span><span class="item-value text-primary">{{ user.get_display_name }}</span></div>
+                    <div class="profile-list-item"><span class="item-label">{% trans "Full Name" %}</span><span class="item-value">{{ user.get_full_name|default:'<span class="text-muted">Not set</span>'|safe }}</span></div>
+                    <div class="profile-list-item"><span class="item-label">{% trans "Username" %}</span><span class="item-value">{{ user.username }}</span></div>
+                    <div class="profile-list-item"><span class="item-label">{% trans "User Type" %}</span><span class="item-value">{{ user.get_user_type_display|default:'<span class="text-muted">Not set</span>'|safe }}</span></div>
+                    <div class="profile-list-item"><span class="item-label">{% trans "Home Country" %}</span><span class="item-value">{{ user.country.name|default:'<span class="text-muted">Not set</span>'|safe }}</span></div>
+                    
                 </div>
-                <ul class="list-group list-group-flush">
-                    <li class="list-group-item">
-                        <strong>{% trans "Username" %}:</strong> {{ user.username }}
-                    </li>
-                    <li class="list-group-item d-flex justify-content-between align-items-center">
-                        <span><strong>{% trans "Email" %}:</strong> {{ user.email }}</span>
-                        <a href="{% url 'account_email' %}" class="btn btn-outline-secondary btn-sm">
-                            <i class="fas fa-envelope me-1"></i>{% trans "Manage" %}
-                        </a>
-                    </li>
-                    <li class="list-group-item d-flex justify-content-between align-items-center">
-                        <span><strong>{% trans "Password" %}:</strong> ••••••••</span>
-                        <a href="{% url 'account_change_password' %}" class="btn btn-outline-secondary btn-sm">
-                            <i class="fas fa-key me-1"></i>{% trans "Change" %}
-                        </a>
-                    </li>
-                    <li class="list-group-item d-flex justify-content-between align-items-center">
-                        <span><strong>{% trans "Connected Accounts" %}:</strong></span>
-                        <a href="{% url 'socialaccount_connections' %}" class="btn btn-outline-secondary btn-sm">
-                            <i class="fas fa-link me-1"></i>{% trans "Manage" %}
-                        </a>
-                    </li>
-
-                    <!-- ==================================================================== -->
-                    <!-- THE IMPROVED PHONE VERIFICATION SECTION                              -->
-                    <!-- ==================================================================== -->
-                    <li class="list-group-item d-flex justify-content-between align-items-center">
-                        <span>
-                            <strong>{% trans "Phone Number" %}:</strong>
-                            {% if user.is_phone_verified %}
-                                <span class="ms-2">{{ user.phone_number }}</span>
-                                <span class="badge bg-success rounded-pill ms-2">{% trans "Verified" %}</span>
-                            {% else %}
-                                <span class="text-muted ms-2">{% trans "Not added" %}</span>
-                            {% endif %}
-                        </span>
-                        
-                        {% if user.is_phone_verified %}
-                            <!-- If verified, the action is to 'Change' the number -->
-                            <a href="{% url 'phone_add' %}" class="btn btn-outline-secondary btn-sm">
-                                <i class="fas fa-edit me-1"></i>{% trans "Change" %}
-                            </a>
-                        {% else %}
-                            <!-- If not verified, the primary action is to 'Add & Verify' -->
-                            <a href="{% url 'phone_add' %}" class="btn btn-primary btn-sm">
-                                <i class="fas fa-plus-circle me-1"></i>{% trans "Add & Verify" %}
-                            </a>
-                        {% endif %}
-                    </li>
-                    <!-- ==================================================================== -->
-
-                </ul>
             </div>
-        </div>
 
+            <!-- Card 2: Community & Content -->
+            <div class="card dashboard-card mb-4">
+                <div class="card-header">
+                    <span><i class="fas fa-users fa-fw me-2"></i>{% trans "Community Activity" %}</span>
+                </div>
+                <div class="list-group list-group-flush community-links">
+                    <a href="{% url 'my_contributions' %}" class="list-group-item list-group-item-action d-flex justify-content-between align-items-center">
+                        <span>{% trans "My Contributions" %}</span>
+                        <i class="fas fa-chevron-right text-muted"></i>
+                    </a>
+                    <a href="#" class="list-group-item list-group-item-action d-flex justify-content-between align-items-center disabled">
+                        <span>{% trans "My Saved Properties" %} <span class="badge bg-light text-dark rounded-pill">{% trans "Coming Soon" %}</span></span>
+                        <i class="fas fa-chevron-right text-muted"></i>
+                    </a>
+                    <a href="#" class="list-group-item list-group-item-action d-flex justify-content-between align-items-center disabled">
+                        <span>{% trans "My Information Bounties" %} <span class="badge bg-light text-dark rounded-pill">{% trans "Coming Soon" %}</span></span>
+                        <i class="fas fa-chevron-right"></i>
+                    </a>
+                </div>
+            </div>
+
+            <!-- Card 3: Account Security -->
+            <div class="card dashboard-card">
+                <div class="card-header">
+                    <span><i class="fas fa-user-shield fa-fw me-2"></i>{% trans "Account Security" %}</span>
+                </div>
+                <div class="card-body p-0">
+                    <div class="profile-list-item"><span class="item-label">{% trans "Email" %}</span><a href="{% url 'account_email' %}" class="btn btn-sm btn-outline-secondary"><span class="d-none d-sm-inline">{% trans "Manage" %}</span><i class="fas fa-envelope d-sm-none"></i></a></div>
+                    <div class="profile-list-item"><span class="item-label">{% trans "Password" %}</span><a href="{% url 'account_change_password' %}" class="btn btn-sm btn-outline-secondary"><span class="d-none d-sm-inline">{% trans "Change" %}</span><i class="fas fa-key d-sm-none"></i></a></div>
+                    <div class="profile-list-item"><span class="item-label">{% trans "Phone Number" %}</span>
+                        {% if user.is_phone_verified %}
+                            <div class="text-end">
+                                <span class="item-value me-2">{{ user.phone_number }}</span>
+                                <span class="badge bg-success rounded-pill">{% trans "Verified" %}</span>
+                            </div>
+                        {% else %}
+                            <a href="{% url 'phone_add' %}" class="btn btn-sm btn-primary"><i class="fas fa-plus-circle me-1 me-sm-2"></i><span class="d-none d-sm-inline">{% trans "Add & Verify" %}</span></a>
+                        {% endif %}
+                    </div>
+                     <div class="profile-list-item"><span class="item-label">{% trans "Connected Accounts" %}</span><a href="{% url 'socialaccount_connections' %}" class="btn btn-sm btn-outline-secondary"><span class="d-none d-sm-inline">{% trans "Manage" %}</span><i class="fas fa-link d-sm-none"></i></a></div>
+                </div>
+            </div>
+
+        </div>
     </div>
 </div>
 {% endblock %}

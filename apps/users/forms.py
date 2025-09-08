@@ -33,12 +33,23 @@ class ProfileEditForm(forms.ModelForm):
     class Meta:
         model = CustomUser
         # We only allow editing of these specific, non-sensitive fields.
-        fields = ['first_name', 'last_name', 'user_type', 'country']
+        fields = [
+            'avatar', 'first_name', 'last_name', 'display_name_preference',
+            'user_type', 'country'
+        ]
+        widgets = {
+            'display_name_preference': forms.RadioSelect,
+            'avatar': forms.HiddenInput(),
+        }
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.fields['first_name'].required = True
         self.fields['last_name'].required = True
+        self.fields['user_type'].required = True
+        self.fields['country'].required = True
+        self.fields['user_type'].empty_label = "--- Select Your Role ---"
+        self.fields['country'].empty_label = "--- Select Your Country ---"
 
 
 class OnboardingForm(forms.ModelForm):

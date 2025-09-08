@@ -2,6 +2,7 @@
 {% load i18n %}
 {% load static %}
 {% load widget_tweaks %}
+{% load avatar_tags %}
 
 {% block title %}{% trans "Welcome to" %} ShelterTree {% endblock %}
 
@@ -19,7 +20,7 @@
                 <p class="lead text-muted">{% trans "This is your space. Let's set up your profile." %}</p>
             </div>
             
-            <div class="card shadow-md">
+            <div class="card shadow-lg">
                 <div class="card-body p-4 p-md-5">
                     
                     <form method="post">
@@ -128,6 +129,7 @@
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
+                {% get_avatar_sprites as sprite_options %}
                 <div class="row g-3 g-lg-4 justify-content-center">
                     
                     {% for sprite_name in sprite_options %}

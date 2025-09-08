@@ -27,15 +27,16 @@ class CustomUser(AbstractUser):
     )
     
     # --- NEW: The Display Name Preference Field ---
-    class DisplayNameChoice(models.TextChoices):
-        USERNAME = 'USERNAME', _('Username Only')
-        FIRST_NAME_INITIAL = 'FIRST_NAME_INITIAL', _('First Name & Last Initial')
+    class DisplayNamePreference(models.TextChoices):
+        USERNAME = 'USERNAME', _('Username')
+        INITIALS = 'INITIALS', _('First Name & Last Initial')
+
 
     display_name_preference = models.CharField(
         max_length=20,
-        choices=DisplayNameChoice.choices,
-        default=DisplayNameChoice.USERNAME,
-        verbose_name=_("Review Display Name")
+        choices=DisplayNamePreference.choices,
+        default=DisplayNamePreference.USERNAME,
+        verbose_name=_("Public Display Name (Choose an option)")
     )
     
     onboarding_complete = models.BooleanField(
@@ -157,6 +158,21 @@ class CustomUser(AbstractUser):
         if self.avatar:
             return static(self.avatar)
         return static('img/avatars/default_sprite.svg')
+    
+    def get_display_name(self):
+        """
+        Returns the user's public-facing name based on their chosen preference.
+        This now handles the "First Name & Last Initial" format.
+        """
+        # THE FIX: We check for the INITIALS preference first.
+        # This requires both a first name and a last name to be present.
+        if (self.display_name_preference == CustomUser.DisplayNamePreference.INITIALS 
+            and self.first_name and self.last_name):
+            # Format: "James T."
+            return f"{self.first_name.capitalize()} {self.last_name[0].upper()}."
+        
+        # The default fallback is always the username for all other cases.
+        return self.username
     
     
     

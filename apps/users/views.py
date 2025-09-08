@@ -37,6 +37,12 @@ class ProfileEditView(LoginRequiredMixin, SuccessMessageMixin, UpdateView):
     def get_object(self):
         # Ensure the view operates on the currently logged-in user.
         return self.request.user
+    
+    def get_context_data(self, **kwargs):
+        # The 'sprite_options' logic is now GONE from the view.
+        context = super().get_context_data(**kwargs)
+        # The view is now much cleaner.
+        return context
 
 @method_decorator(never_cache, name='dispatch')
 class OnboardingView(LoginRequiredMixin, UpdateView):
@@ -104,15 +110,9 @@ class OnboardingView(LoginRequiredMixin, UpdateView):
         return initial
     
     def get_context_data(self, **kwargs):
+        # The 'sprite_options' logic is now GONE from the view.
         context = super().get_context_data(**kwargs)
-        
-        # This is now the single source of truth for which sprites are available.
-        context['sprite_options'] = [
-            "Bee", "Bloom", "Dog", "Cat", "Dove", "Butterfly", 
-            "Yellow_flower", "Rabbit", "Gardenia", "Small_kitten", 
-            "Bull_dog", "Yellow_flower2"
-        ]
-        
+        # The view is now much cleaner.
         return context
 
     def form_valid(self, form):

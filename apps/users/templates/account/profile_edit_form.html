@@ -1,22 +1,98 @@
-<!-- templates/account/profile_edit_form.html -->
 {% extends "base.html" %}
 {% load i18n %}
+{% load static %}
+{% load widget_tweaks %}
+{% load avatar_tags %} <!-- This is correctly included -->
 
-{% block title %}{% trans "Edit Profile" %} | ShelterTree{% endblock %}
+{% block title %}{% trans "Edit Profile" %} | ShelterTree {% endblock %}
 
 {% block content %}
-<div class="container mt-4 mb-5">
+<div class="container my-5">
     <div class="row justify-content-center">
-        <div class="col-md-7">
-            <div class="card">
-                <div class="card-body">
-                    <h2 class="card-title">{% trans "Edit Your Profile" %}</h2>
+        <div class="col-lg-8">
+
+            <!-- The Page Header -->
+            <div class="text-center mb-5">
+                <h1 class="display-5 fw-bold">{% trans "Edit Your Profile" %}</h1>
+                <p class="lead text-muted">{% trans "Your changes will be reflected across your ShelterTree account." %}</p>
+            </div>
+            
+            <div class="card shadow-sm">
+                <div class="card-body p-4 p-md-5">
+                    
                     <form method="post">
                         {% csrf_token %}
-                        {{ form.as_p }}
-                        <div class="mt-4 d-flex justify-content-end">
-                            <a href="{% url 'account_profile' %}" class="btn btn-secondary me-2">{% trans "Cancel" %}</a>
-                            <button type="submit" class="btn btn-primary">{% trans "Save Changes" %}</button>
+                        {{ form.avatar }}
+
+                        <!-- Public Identity Section -->
+                        <fieldset class="border rounded-3 p-3 mb-4">
+                            <legend class="float-none w-auto px-2 h6"><i class="fas fa-user-shield me-2 text-primary"></i>{% trans "Your Public Identity" %}</legend>
+                            <div class="alert alert-info small">
+                                <h6 class="alert-heading fw-bold"><i class="fas fa-lock me-2"></i>{% trans "You're in Control" %}</h6>
+                                <p class="mb-1">{% trans "Your chosen 'Shelter Sprite' and display name will be visible on your reviews. You can change these settings at any time." %}</p>
+                            </div>
+                            <div class="row align-items-center g-4">
+                                <!-- The Interactive Avatar Picker UI -->
+                                <div class="col-md-4 text-center">
+                                    <div class="profile-avatar-uploader">
+                                        <img src="{{ user.get_avatar_url }}" alt="Your selected avatar" class="avatar-preview" id="avatarPreview">
+                                        <button type="button" class="upload-button" id="avatar-picker-button" data-bs-toggle="modal" data-bs-target="#avatarPickerModal" title="{% trans 'Choose your avatar' %}">
+                                            <i class="fas fa-pencil-alt"></i>
+                                        </button>
+                                    </div>
+                                    <small class="text-muted mt-2 d-block">{% trans "Change your Sprite" %}</small>
+                                </div>
+                                <!-- Name & Display Preference -->
+                                <div class="col-md-8">
+                                    <div class="mb-3">
+                                        <label for="{{ form.first_name.id_for_label }}" class="form-label">{{ form.first_name.label }}</label>
+                                        {{ form.first_name|attr:"class:form-control" }}
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="{{ form.last_name.id_for_label }}" class="form-label">{{ form.last_name.label }}</label>
+                                        {{ form.last_name|attr:"class:form-control" }}
+                                    </div>
+                                    <div class="mb-3">
+                                        <label class="form-label d-block">{{ form.display_name_preference.label }}</label>
+                                        <div class="btn-group w-100" role="group" aria-label="{{ form.display_name_preference.label }}">
+                                            
+                                            {% comment %}
+                                            <!-- ==================================================================== -->
+                                            <!-- THE CRITICAL FIX: Using your original, correct loop structure.       -->
+                                            <!-- This correctly renders the radio buttons and ensures the form submits. -->
+                                            <!-- ==================================================================== -->
+                                            {% endcomment %}
+                                            {% for choice in form.display_name_preference %}
+                                                <input type="radio" class="btn-check" name="{{ form.display_name_preference.name }}" id="{{ choice.id_for_label }}" value="{{ choice.data.value }}" {% if form.display_name_preference.value|stringformat:"s" == choice.data.value|stringformat:"s" %}checked{% endif %} autocomplete="off">
+                                                <label class="btn btn-outline-primary" for="{{ choice.id_for_label }}">{{ choice.data.label }}</label>
+                                            {% endfor %}
+
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </fieldset>
+                        
+                        <!-- Private Information Section -->
+                        <fieldset class="border rounded-3 p-3">
+                            <legend class="float-none w-auto px-2 h6"><i class="fas fa-user-cog me-2 text-primary"></i>{% trans "Your Details" %}</legend>
+                            <p class="text-muted small">{% trans "This information is private and helps us personalize your experience." %}</p>
+                            <div class="mb-3">
+                                <label for="{{ form.user_type.id_for_label }}" class="form-label">{{ form.user_type.label }}</label>
+                                {{ form.user_type|attr:"class:form-select" }}
+                            </div>
+                            <div class="mb-3">
+                                <label for="{{ form.country.id_for_label }}" class="form-label">{{ form.country.label }}</label>
+                                {{ form.country|attr:"class:form-select" }}
+                            </div>
+                        </fieldset>
+
+                        <!-- Final Actions: Save or Cancel -->
+                        <div class="mt-4 d-flex justify-content-end align-items-center">
+                            <a href="{% url 'account_profile' %}" class="btn btn-secondary me-3">{% trans "Cancel" %}</a>
+                            <button type="submit" class="btn btn-primary btn-lg">
+                                <i class="fas fa-save me-2"></i>{% trans "Save Changes" %}
+                            </button>
                         </div>
                     </form>
                 </div>
@@ -24,4 +100,58 @@
         </div>
     </div>
 </div>
+
+<!-- The Avatar Picker Modal (Unchanged and Correct) -->
+<div class="modal fade" id="avatarPickerModal" tabindex="-1" aria-labelledby="avatarPickerModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable modal-lg">
+        <div class="modal-content">
+            <div class="modal-header border-0">
+                <h5 class="modal-title" id="avatarPickerModalLabel">{% trans "Choose Your Shelter Sprite" %}</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                {% get_avatar_sprites as sprite_options %}
+                <div class="row g-3 g-lg-4 justify-content-center">
+                    {% for sprite_name in sprite_options %}
+                        <div class="col-4 col-md-2">
+                            <a href="#" class="avatar-option-container" data-avatar-path="img/avatars/sprites/{{ sprite_name }}.svg" role="button">
+                                <img src="{% static 'img/avatars/sprites/'|add:sprite_name|add:'.svg' %}" alt="{{ sprite_name }} Avatar">
+                            </a>
+                        </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<!-- The JavaScript is unchanged and correct -->
+<script>
+    const avatarPreview = document.getElementById('avatarPreview');
+    const avatarPathInput = document.getElementById('id_avatar');
+    const avatarOptionContainers = document.querySelectorAll('.avatar-option-container');
+    const modalElement = document.getElementById('avatarPickerModal');
+    const avatarPickerButton = document.getElementById('avatar-picker-button');
+
+    if (modalElement && avatarPickerButton) {
+        const avatarModal = new bootstrap.Modal(modalElement);
+
+        avatarOptionContainers.forEach(container => {
+            container.addEventListener('click', function(event) {
+                event.preventDefault();
+                const selectedPath = this.getAttribute('data-avatar-path');
+                const selectedSrc = this.querySelector('img').src;
+                avatarPathInput.value = selectedPath;
+                avatarPreview.src = selectedSrc;
+                avatarModal.hide();
+            });
+        });
+
+        modalElement.addEventListener('hide.bs.modal', function (event) {
+            avatarPickerButton.focus();
+        });
+    }
+</script>
 {% endblock %}
