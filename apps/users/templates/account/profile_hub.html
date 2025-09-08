@@ -39,7 +39,7 @@
                     <div class="profile-list-item"><span class="item-label">{% trans "Full Name" %}</span><span class="item-value">{{ user.get_full_name|default:'<span class="text-muted">Not set</span>'|safe }}</span></div>
                     <div class="profile-list-item"><span class="item-label">{% trans "Username" %}</span><span class="item-value">{{ user.username }}</span></div>
                     <div class="profile-list-item"><span class="item-label">{% trans "User Type" %}</span><span class="item-value">{{ user.get_user_type_display|default:'<span class="text-muted">Not set</span>'|safe }}</span></div>
-                    <div class="profile-list-item"><span class="item-label">{% trans "Home Country" %}</span><span class="item-value">{{ user.country.name|default:'<span class="text-muted">Not set</span>'|safe }}</span></div>
+                    <div class="profile-list-item"><span class="item-label">{% trans "Country" %}</span><span class="item-value">{{ user.country.name|default:'<span class="text-muted">Not set</span>'|safe }}</span></div>
                     
                 </div>
             </div>

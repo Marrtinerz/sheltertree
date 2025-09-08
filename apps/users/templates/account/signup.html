@@ -42,22 +42,49 @@
             handles all fields from the allauth SignupForm (username, email,
             password, and password2) without hardcoding their names.
         -->
-        {% for field in form %}
-            <div class="form-floating mb-3">
-                <!-- 
-                    The `attr` filter from widget_tweaks applies our custom classes
-                    and an empty placeholder to the field, making it compatible
-                    with Bootstrap's floating labels.
-                -->
-                {{ field|attr:"class: form-control"|attr:"placeholder: " }}
-                <label for="{{ field.id_for_label }}">{{ field.label }}</label>
-                
-                <!-- Display any validation errors for this specific field -->
-                {% for error in field.errors %}
-                    <div class="invalid-feedback d-block">{{ error }}</div>
-                {% endfor %}
+        <div class="form-floating mb-3">
+            {{ form.username|attr:"class:form-control"|attr:"placeholder:" }}
+            <label for="{{ form.username.id_for_label }}">{{ form.username.label }}</label>
+            
+            <!-- The new, cheerful, and informative help text -->
+            <div class="form-text mt-2 text-start px-1">
+                <i class="fas fa-info-circle me-1"></i>
+                {% blocktrans %}
+                Choose a fun, anonymous username! This will be your public name across ShelterTree, and it cannot be changed.
+                {% endblocktrans %}
             </div>
-        {% endfor %}
+            
+            {% for error in form.username.errors %}
+                <div class="invalid-feedback d-block">{{ error }}</div>
+            {% endfor %}
+        </div>
+
+        <!-- Email Field -->
+        <div class="form-floating mb-3">
+            {{ form.email|attr:"class:form-control"|attr:"placeholder:" }}
+            <label for="{{ form.email.id_for_label }}">{{ form.email.label }}</label>
+            {% for error in form.email.errors %}
+                <div class="invalid-feedback d-block">{{ error }}</div>
+            {% endfor %}
+        </div>
+
+        <!-- Password Field -->
+        <div class="form-floating mb-3">
+            {{ form.password1|attr:"class:form-control"|attr:"placeholder:" }}
+            <label for="{{ form.password1.id_for_label }}">{{ form.password1.label }}</label>
+            {% for error in form.password1.errors %}
+                <div class="invalid-feedback d-block">{{ error }}</div>
+            {% endfor %}
+        </div>
+
+        <!-- Password Confirmation Field -->
+        <div class="form-floating mb-3">
+            {{ form.password2|attr:"class:form-control"|attr:"placeholder:" }}
+            <label for="{{ form.password2.id_for_label }}">{{ form.password2.label }}</label>
+            {% for error in form.password2.errors %}
+                <div class="invalid-feedback d-block">{{ error }}</div>
+            {% endfor %}
+        </div>
         
         <!-- Display any general form errors (e.g., "Password too common") -->
         {% if form.non_field_errors %}

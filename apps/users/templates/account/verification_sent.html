@@ -1,11 +1,60 @@
 {% extends "base.html" %}
 {% load i18n %}
-{% block title %}{% trans "Verify Your E-mail Address" %} | ShelterTree{% endblock %}
+{% load static %}
+
+{% block title %}{% trans "Verify Your Email" %} | ShelterTree{% endblock %}
+
 {% block content %}
-<div class="container mt-4 text-center">
-    <div class="col-md-8 offset-md-2">
-        <h1>{% trans "Verify Your E-mail Address" %}</h1>
-        <p>{% blocktrans %}We have sent an e-mail to you for verification. Follow the link provided to finalize the signup process. Please contact us if you do not receive it within a few minutes.{% endblocktrans %}</p>
+<div class="container my-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-7">
+            
+            <div class="card shadow-sm text-center border-0">
+                <div class="card-body p-4 p-md-5">
+
+                    <!-- 1. The Visual Icon -->
+                    <div class="mb-4">
+                        <i class="fas fa-paper-plane fa-4x text-primary"></i>
+                    </div>
+
+                    <!-- 2. The Clear Headline -->
+                    <h1 class="display-5 fw-bold">{% trans "Almost there!" %}</h1>
+                    
+                    <!-- 3. The Reassuring Sub-headline with Confirmation -->
+                    <p class="lead text-muted mt-3">
+                        {% blocktrans %}
+                        We've sent a verification link to your inbox at:
+                        {% endblocktrans %}
+                    </p>
+                    <p class="fs-5 fw-bold text-dark">{{ email }}</p>
+
+                    <hr class="my-4">
+
+                    <!-- 4. The Clear "What's Next?" Instructions (Unchanged and Correct) -->
+                    <div class="text-start">
+                        <h5 class="fw-bold mb-3">{% trans "What's Next?" %}</h5>
+                        <p><strong class="me-2">Step 1:</strong> {% trans "Check your email inbox (and your spam folder, just in case)." %}</p>
+                        <p><strong class="me-2">Step 2:</strong> {% trans "Open the email from ShelterTree." %}</p>
+                        <p><strong class="me-2">Step 3:</strong> {% trans "Click the verification link to activate your account." %}</p>
+                    </div>
+
+                    <!-- 5. The Proactive Support / Troubleshooting -->
+                    <div class="mt-4 pt-3 border-top">
+                        <small class="text-muted">
+                            {% comment %}
+                            <!-- ==================================================================== -->
+                            <!-- THE CRITICAL FIX: Reconstructing the sentence to work with `trans` -->
+                            <!-- ==================================================================== -->
+                            {% endcomment %}
+                            {% trans "Didn't receive the email?" %}
+                            <a href="{% url 'account_email' %}">{% trans "Click here to login and resend the verification link." %}</a>.
+                        </small>
+                    </div>
+
+                </div>
+            </div>
+
+        </div>
     </div>
 </div>
 {% endblock %}

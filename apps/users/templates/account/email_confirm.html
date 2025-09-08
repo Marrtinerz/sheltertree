@@ -1,43 +1,63 @@
 {% extends "base.html" %}
 {% load i18n %}
-{% load allauth %} <!-- This tag library is still needed for other features -->
+{% load allauth %} <!-- This tag library is still needed for user_display -->
 
-{% block title %}{% trans "Confirm E-mail Address" %} | ShelterTree{% endblock %}
+{% block title %}{% trans "Confirm Your E-mail Address" %} | ShelterTree{% endblock %}
 
 {% block content %}
-<div class="container mt-5 mb-5">
+<div class="container my-5">
     <div class="row justify-content-center">
-        <div class="col-md-7">
+        <div class="col-lg-6">
             <div class="card shadow-sm text-center">
                 <div class="card-body p-5">
 
-                    <h1 class="card-title mb-3">{% trans "Confirm Your E-mail Address" %}</h1>
-
                     {% if confirmation %}
+                        
+                        <!-- The Icon: Instantly communicates the purpose -->
+                        <div class="mb-4">
+                            <i class="fas fa-envelope-check fa-4x text-primary"></i>
+                        </div>
 
-                        {# --- THIS BLOCK IS NOW CORRECTED --- #}
-                        {# We removed the incorrect {% user_display %} tag #}
-                        <p class="fs-5">
-                            {% blocktrans with confirmation.email_address.email as email %}
-                            Please confirm that <a href="mailto:{{ email }}"><strong>{{ email }}</strong></a> is an e-mail address for user <strong>{{ confirmation.email_address.user }}</strong>.
+                        <h1 class="h2 fw-bold">{% trans "One Last Step..." %}</h1>
+                        
+                        <p class="lead text-muted">
+                            {% blocktrans with user_display=confirmation.email_address.user %}
+                            To activate your account for <strong>{{ user_display }}</strong>, please confirm this is your email address.
                             {% endblocktrans %}
                         </p>
 
+                        <!-- The Email Address Block: Makes the email a clear, verifiable element -->
+                        <div class="email-display-box my-4 p-3 border rounded bg-light">
+                            <p class="h5 text-dark text-decoration-none">
+                                {{ confirmation.email_address.email }}
+                            </p>
+                        </div>
+
                         <form method="post" action="{% url 'account_confirm_email' confirmation.key %}">
                             {% csrf_token %}
-                            <div class="d-grid mt-4">
-                                <button type="submit" class="btn btn-primary btn-lg">{% trans 'Confirm' %}</button>
+                            <div class="d-grid">
+                                <button type="submit" class="btn btn-primary btn-lg">{% trans 'Confirm & Activate My Account' %}</button>
                             </div>
                         </form>
 
                     {% else %}
+                        
+                        <!-- The Error State: A clear, helpful message for invalid links -->
+                        <div class="mb-4">
+                            <i class="fas fa-exclamation-triangle fa-4x text-warning"></i>
+                        </div>
+
+                        <h1 class="h2 fw-bold">{% trans "Link Expired" %}</h1>
+                        
                         {% url 'account_email' as email_url %}
-                        <p>
+                        <p class="lead text-muted">
                             {% blocktrans %}
-                            This e-mail confirmation link expired or is invalid. Please
-                            <a href="{{ email_url }}">issue a new e-mail confirmation request</a>.
+                            This e-mail confirmation link is no longer valid. This can happen if it has already been used or has expired.
                             {% endblocktrans %}
                         </p>
+                        <div class="d-grid mt-4">
+                             <a href="{{ email_url }}" class="btn btn-secondary">{% trans "Request a New Confirmation Link" %}</a>
+                        </div>
                     {% endif %}
                 </div>
             </div>
