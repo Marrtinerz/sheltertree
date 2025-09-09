@@ -9659,6 +9659,40 @@ textarea.form-control-lg {
 .bg-primary-soft {
   background-color: rgba(33, 181, 118, 0.1); }
 
+.contributions-nav .nav-link {
+  font-weight: 500;
+  color: #5A6D7C;
+  padding: 0.75rem 1.5rem; }
+  .contributions-nav .nav-link.active {
+    background-color: #2B3F4C;
+    color: #fff;
+    box-shadow: 0 0.125rem 0.25rem rgba(43, 63, 76, 0.075); }
+
+.contribution-item {
+  display: block;
+  background-color: #fff;
+  border: 1px solid rgba(90, 109, 124, 0.25);
+  border-radius: 0.5rem;
+  padding: 1.5rem;
+  margin-bottom: 1rem;
+  transition: all 0.2s ease-in-out; }
+  .contribution-item:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 0.5rem 1rem rgba(43, 63, 76, 0.1);
+    border-color: rgba(33, 181, 118, 0.4);
+    text-decoration: none; }
+
+.empty-state {
+  background-color: #f4fbf8;
+  border: 1px dashed rgba(33, 181, 118, 0.3);
+  border-radius: 0.8rem;
+  padding: 3rem;
+  text-align: center; }
+  .empty-state .empty-state-icon {
+    font-size: 3rem;
+    color: #21b576;
+    opacity: 0.5; }
+
 /* // 3. (Optional) Add any other custom site-wide styles here later.
 body {
   background-color: $light; // Use your new theme color

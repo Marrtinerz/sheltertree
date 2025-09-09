@@ -1,89 +1,120 @@
 {% extends "base.html" %}
 {% load i18n %}
-{% load status_tags %} <!-- Load your custom, intelligent status_badge tag -->
+{% load status_tags %}
 
-{% block title %}{% trans "My Contributions" %} | ShelterTree {% endblock %}
+{% block title %}{% trans "My Contributions" %} | ShelterTree{% endblock %}
 
 {% block content %}
-<div class="container mt-4 mb-5">
-    <h1 class="mb-4">{% trans "My Contributions" %}</h1>
+<div class="container my-4 my-lg-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-9">
 
-    <!-- ==================================================================== -->
-    <!-- Tab Navigation - Dynamically sets the active tab from the view     -->
-    <!-- ==================================================================== -->
-    <ul class="nav nav-tabs mb-4" id="contributionsTab" role="tablist">
-        <li class="nav-item" role="presentation">
-            <button class="nav-link {% if active_tab == 'reviews' %}active{% endif %}" id="reviews-tab" data-bs-toggle="tab" data-bs-target="#reviews" type="button" role="tab" aria-controls="reviews" aria-selected="{% if active_tab == 'reviews' %}true{% else %}false{% endif %}">
-                {% trans "My Reviews" %} <span class="badge bg-secondary">{{ reviews.paginator.count }}</span>
-            </button>
-        </li>
-        <li class="nav-item" role="presentation">
-            <button class="nav-link {% if active_tab == 'properties' %}active{% endif %}" id="properties-tab" data-bs-toggle="tab" data-bs-target="#properties" type="button" role="tab" aria-controls="properties" aria-selected="{% if active_tab == 'properties' %}true{% else %}false{% endif %}">
-                {% trans "My Property Submissions" %} <span class="badge bg-secondary">{{ properties.paginator.count }}</span>
-            </button>
-        </li>
-    </ul>
+            <!-- ==================================================================== -->
+            <!-- 1. Page Header with Primary Call to Action                       -->
+            <!-- ==================================================================== -->
+            <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center mb-4">
+                <h1 class="mb-3 mb-md-0">{% trans "My Contributions" %}</h1>
+                <a href="{% url 'reviews:search' %}?intent=review" class="btn btn-primary">
+                    <i class="fas fa-plus-circle me-2"></i>{% trans "Write a New Review" %}
+                </a>
+            </div>
 
-    <!-- ==================================================================== -->
-    <!-- Tab Content                                                        -->
-    <!-- ==================================================================== -->
-    <div class="tab-content" id="contributionsTabContent">
+            <!-- ==================================================================== -->
+            <!-- 2. Premium Tab Navigation ("Pills")                                -->
+            <!-- ==================================================================== -->
+            <ul class="nav nav-pills nav-fill mb-4 contributions-nav" id="contributionsTab" role="tablist">
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link {% if active_tab == 'reviews' %}active{% endif %}" id="reviews-tab" data-bs-toggle="tab" data-bs-target="#reviews" type="button" role="tab" aria-controls="reviews" aria-selected="{% if active_tab == 'reviews' %}true{% else %}false{% endif %}">
+                        {% trans "Reviews" %} <span class="badge bg-light text-dark rounded-pill ms-1">{{ reviews.paginator.count }}</span>
+                    </button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link {% if active_tab == 'properties' %}active{% endif %}" id="properties-tab" data-bs-toggle="tab" data-bs-target="#properties" type="button" role="tab" aria-controls="properties" aria-selected="{% if active_tab == 'properties' %}true{% else %}false{% endif %}">
+                        {% trans "Property Submissions" %} <span class="badge bg-light text-dark rounded-pill ms-1">{{ properties.paginator.count }}</span>
+                    </button>
+                </li>
+            </ul>
 
-        <!-- Reviews Tab Pane - Dynamically sets the active pane -->
-        <div class="tab-pane fade {% if active_tab == 'reviews' %}show active{% endif %}" id="reviews" role="tabpanel" aria-labelledby="reviews-tab">
-            {% for review in reviews %}
-                <div class="card mb-3">
-                    <div class="card-body">
-                        <div class="d-flex justify-content-between align-items-start">
-                            <div>
-                                <h5 class="card-title mb-1">
-                                    <a href="{% url 'reviews:property-detail' pk=review.unit.property.pk %}">{{ review.unit.property.name }}</a>
-                                </h5>
-                                <p class="card-subtitle text-muted">{{ review.unit.property.address }}</p>
+            <!-- ==================================================================== -->
+            <!-- 3. Tab Content                                                     -->
+            <!-- ==================================================================== -->
+            <div class="tab-content" id="contributionsTabContent">
+
+                <!-- Reviews Tab Pane -->
+                <div class="tab-pane fade {% if active_tab == 'reviews' %}show active{% endif %}" id="reviews" role="tabpanel" aria-labelledby="reviews-tab">
+                    {% for review in reviews %}
+                        <a href="{% url 'reviews:property-detail' pk=review.unit.property.pk %}" class="contribution-item text-dark text-decoration-none">
+                            <div class="item-header">
+                                <!-- Title Section (grows to fill space) -->
+                                <div class="flex-grow-1">
+                                    <div class="item-title">
+                                        <i class="fas fa-comment-alt fa-fw item-icon text-primary"></i>
+                                        <div>
+                                            <h5 class="mb-0">{{ review.unit.property.name }}</h5>
+                                            <p class="mb-0 text-muted small">{{ review.unit.property.address }}</p>
+                                        </div>
+                                    </div>
+                                    <div class="item-content">
+                                        <p class="mb-0 d-none d-md-block d-lg-block">"{{ review.pros|truncatewords:30 }}..."</p>
+                                        <small class="mb-0 d-sm-block d-md-none d-lg-none">"{{ review.pros|truncatewords:30 }}..."</small>
+                                    </div>
+                                </div>
+                                <!-- Status Section (doesn't shrink) -->
+                                <div class="item-status text-md-end">
+                                    {% status_badge review.status %}
+                                </div>
                             </div>
-                            <!-- THE FIX: Passing the review's own status to the badge -->
-                            {% status_badge review.status %}
+                            <hr class="my-3">
+                            <small class="text-muted">Reviewed on {{ review.created_at|date:"F j, Y" }}</small>
+                        </a>
+                    {% empty %}
+                        <div class="empty-state">
+                            <div class="empty-state-icon mb-3"><i class="fas fa-pencil-alt"></i></div>
+                            <h4 class="fw-bold">{% trans "You haven't written any reviews yet." %}</h4>
+                            <p class="text-muted">{% trans "Share your experience to help the community find their peace of mind." %}</p>
+                            <a href="{% url 'reviews:search' %}?intent=review" class="btn btn-primary mt-2">{% trans "Write Your First Review" %}</a>
                         </div>
-                        <hr>
-                        <p class="card-text fst-italic">"{{ review.pros|truncatewords:30 }}..."</p>
-                        <small class="text-muted">Reviewed on {{ review.created_at|date:"F j, Y" }}</small>
-                    </div>
+                    {% endfor %}
+                    
+                    {% include 'partials/_pagination_controls.html' with page_obj=reviews page_param='review_page' tab_id='reviews' other_page_params='&property_page='|add:properties.number %}
                 </div>
-            {% empty %}
-                <div class="text-center p-4 bg-light rounded">
-                    <p class="mb-0">{% trans "You have not written any reviews yet." %}</p>
-                </div>
-            {% endfor %}
-            
-            <!-- Include the stateful pagination controls for reviews -->
-            {% include 'partials/_pagination_controls.html' with page_obj=reviews page_param='review_page' tab_id='reviews' other_page_params='&property_page='|add:properties.number %}
-        </div>
 
-        <!-- Properties Tab Pane - Dynamically sets the active pane -->
-        <div class="tab-pane fade {% if active_tab == 'properties' %}show active{% endif %}" id="properties" role="tabpanel" aria-labelledby="properties-tab">
-            {% for prop in properties %}
-                <div class="card mb-3">
-                    <div class="card-body">
-                        <div class="d-flex justify-content-between align-items-start">
-                            <div>
-                                <h5 class="card-title mb-1">{{ prop.name }}</h5>
-                                <p class="card-subtitle text-muted">{{ prop.address }}</p>
+                <!-- Properties Tab Pane -->
+                <div class="tab-pane fade {% if active_tab == 'properties' %}show active{% endif %}" id="properties" role="tabpanel" aria-labelledby="properties-tab">
+                    {% for prop in properties %}
+                        <div class="contribution-item">
+                            <div class="item-header">
+                                <!-- Title Section -->
+                                <div class="flex-grow-1">
+                                    <div class="item-title">
+                                        <i class="fas fa-building fa-fw item-icon text-primary"></i>
+                                        <div>
+                                            <h5 class="mb-0">{{ prop.name }}</h5>
+                                            <p class="mb-0 text-muted small">{{ prop.address }}</p>
+                                        </div>
+                                    </div>
+                                </div>
+                                <!-- Status Section -->
+                                <div class="item-status text-md-end">
+                                    {% status_badge prop.status %}
+                                </div>
                             </div>
-                            <!-- This was already correct and works with our upgraded tag -->
-                            {% status_badge prop.status %}
+                            <hr class="my-3">
+                            <small class="text-muted">Submitted on {{ prop.created_at|date:"F j, Y" }}</small>
                         </div>
-                        <hr>
-                        <small class="text-muted">Submitted on {{ prop.created_at|date:"F j, Y" }}</small>
-                    </div>
-                </div>
-            {% empty %}
-                <div class="text-center p-4 bg-light rounded">
-                    <p class="mb-0">{% trans "You have not submitted any new properties yet." %}</p>
-                </div>
-            {% endfor %}
+                    {% empty %}
+                         <div class="empty-state">
+                            <div class="empty-state-icon mb-3"><i class="fas fa-building text-primary"></i></div>
+                            <h4 class="fw-bold">{% trans "You haven't submitted any properties yet." %}</h4>
+                            <p class="text-muted">{% trans "Can't find a property? Be the first to add it to our platform." %}</p>
+                            <a href="{% url 'reviews:add-property' %}" class="btn btn-primary mt-2">{% trans "Add a New Property" %}</a>
+                        </div>
+                    {% endfor %}
 
-            <!-- Include the stateful pagination controls for properties -->
-            {% include 'partials/_pagination_controls.html' with page_obj=properties page_param='property_page' tab_id='properties' other_page_params='&review_page='|add:reviews.number %}
+                    {% include 'partials/_pagination_controls.html' with page_obj=properties page_param='property_page' tab_id='properties' other_page_params='&review_page='|add:reviews.number %}
+                </div>
+            </div>
+
         </div>
     </div>
 </div>
