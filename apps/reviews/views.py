@@ -231,23 +231,38 @@ class PropertyDetailView(LoginRequiredMixin, DetailView):
 
 # --- WRITE VIEWS (for logged-in users, protected by @login_required) ---
 
-@login_required
-def add_property(request):
+class AddPropertyView(LoginRequiredMixin, CreateView):
     """
-    View for Stage 1: Submitting a new property for admin approval.
+    Handles the creation of a new Property using a class-based view.
+    This is the modern, scalable, and professional approach.
     """
-    if request.method == 'POST':
-        form = PropertyForm(request.POST)
-        if form.is_valid():
-            property_instance = form.save(commit=False)
-            property_instance.status = PropertyStatus.PENDING_APPROVAL
-            property_instance.added_by = request.user
-            property_instance.save()
-            messages.success(request, _("Property submitted for review! Now, please add your unit and review."))
-            return redirect('reviews:add-property-success', pk=property_instance.pk)
-    else:
-        form = PropertyForm()
-    return render(request, 'reviews/add_property.html', {'form': form})
+    model = Property
+    form_class = PropertyForm
+    template_name = 'reviews/add_property.html'
+    
+    def form_valid(self, form):
+        """
+        This method is called when the submitted form is valid.
+        It's the perfect place to set fields before saving.
+        """
+        # Set the fields that are not on the form
+        form.instance.status = PropertyStatus.PENDING_APPROVAL
+        form.instance.added_by = self.request.user
+        
+        # We need to save the object here to get its primary key (pk)
+        self.object = form.save()
+        
+        messages.success(self.request, _("Property submitted for review! Now, please add your unit and review."))
+        
+        # Let the parent class handle the final HTTP redirect
+        return super().form_valid(form)
+
+    def get_success_url(self):
+        """
+        Returns the URL to redirect to after a successful submission.
+        We override this to pass the new property's pk to the success page.
+        """
+        return reverse_lazy('reviews:add-property-success', kwargs={'pk': self.object.pk})
 
 
 @login_required
@@ -260,89 +275,153 @@ def add_property_success(request, pk):
     return render(request, 'reviews/add_property_success.html', {'property': property_instance})
 
 
-@login_required
-def add_unit_and_review(request, property_pk):
+class AddUnitAndReviewView(LoginRequiredMixin, TemplateView):
     """
-    View for Flow 2: Adding a new unit AND a review for a given property.
-    Now redirects to the review success page.
+    Handles the creation of a new PropertyUnit and its associated Review.
+    This view manages two forms simultaneously and provides a clean,
+    class-based structure for the logic.
     """
-    property_instance = get_object_or_404(Property, pk=property_pk)
+    template_name = 'reviews/add_unit_and_review.html'
+    
+    def dispatch(self, request, *args, **kwargs):
+        """
+        This method runs first. It's the perfect place to fetch objects
+        that are needed by both GET and POST requests.
+        """
+        # Fetch the parent property once and attach it to the view instance.
+        self.property = get_object_or_404(Property, pk=self.kwargs['property_pk'])
+        return super().dispatch(request, *args, **kwargs)
 
-    if request.method == 'POST':
+    def get_context_data(self, **kwargs):
+        """
+        Populates the context dictionary for the template.
+        """
+        context = super().get_context_data(**kwargs)
+        context['property'] = self.property
+        # If forms aren't passed in kwargs (e.g., on initial GET), create empty ones.
+        context.setdefault('unit_form', PropertyUnitForm())
+        context.setdefault('review_form', ReviewForm())
+        return context
+
+    def get(self, request, *args, **kwargs):
+        """
+        Handles GET requests: displays the empty forms.
+        """
+        return self.render_to_response(self.get_context_data())
+
+    def post(self, request, *args, **kwargs):
+        """
+        Handles POST requests: validates both forms and processes the data.
+        """
         unit_form = PropertyUnitForm(request.POST)
         review_form = ReviewForm(request.POST)
 
         if unit_form.is_valid() and review_form.is_valid():
-            # Save the unit first
-            unit = unit_form.save(commit=False)
-            unit.property = property_instance
-            unit.save()
+            return self.forms_valid(unit_form, review_form)
+        else:
+            return self.forms_invalid(unit_form, review_form)
 
-            # Now save the review, linking it to the new unit and the user
-            review = review_form.save(commit=False)
-            review.unit = unit
-            review.author = request.user
-            
-            # Set review status based on parent property's status
-            if property_instance.status == PropertyStatus.APPROVED:
-                review.status = ReviewStatus.PENDING_CONTENT_REVIEW
-            else:
-                review.status = ReviewStatus.PENDING_PROPERTY_APPROVAL
-            
-            # The save() method on the Review model will automatically handle
-            # setting the is_author_phone_verified flag.
-            review.save()
+    def forms_valid(self, unit_form, review_form):
+        """
+        This method is called when both forms are valid.
+        It contains all the success logic from your original FBV.
+        """
+        # Save the unit, linking it to the property.
+        unit = unit_form.save(commit=False)
+        unit.property = self.property
+        unit.save()
 
-            # --- THE CRITICAL CHANGE ---
-            # Instead of a generic message, we redirect to the success page.
-            # The success page will handle displaying the congratulations and the verification incentive.
-            return redirect('reviews:review_success', review_pk=review.pk)
-
-    else:
-        unit_form = PropertyUnitForm()
-        review_form = ReviewForm()
-
-    return render(request, 'reviews/add_unit_and_review.html', {
-        'property': property_instance,
-        'unit_form': unit_form,
-        'review_form': review_form
-    })
-
-
-@login_required
-def add_review_to_unit(request, unit_pk):
-    """
-    View for Flow 3: Adding a review to an EXISTING unit.
-    Now redirects to the review success page.
-    """
-    unit_instance = get_object_or_404(PropertyUnit, pk=unit_pk)
-    property_instance = unit_instance.property
-
-    if request.method == 'POST':
-        review_form = ReviewForm(request.POST)
-        if review_form.is_valid():
-            review = review_form.save(commit=False)
-            review.unit = unit_instance
-            review.author = request.user
+        # Save the review, linking it to the new unit and the user.
+        review = review_form.save(commit=False)
+        review.unit = unit
+        review.author = self.request.user
+        
+        # Set the review's initial status based on the parent property's status.
+        if self.property.status == PropertyStatus.APPROVED:
             review.status = ReviewStatus.PENDING_CONTENT_REVIEW
-            
-            # The save() method on the Review model will automatically handle
-            # setting the is_author_phone_verified flag.
-            review.save()
+        else:
+            review.status = ReviewStatus.PENDING_PROPERTY_APPROVAL
+        
+        # The Review's save() method handles the is_author_phone_verified snapshot.
+        review.save()
 
-            # --- THE CRITICAL CHANGE ---
-            # Redirect to the success page with the new review's PK.
-            # This triggers the "Get Verified" incentive flow.
-            return redirect('reviews:review_success', review_pk=review.pk)
+        # Store the newly created review on the view instance so get_success_url can access it.
+        self.object = review
+        return redirect(self.get_success_url())
 
-    else:
-        review_form = ReviewForm()
+    def forms_invalid(self, unit_form, review_form):
+        """
+        This method is called when one or both forms are invalid.
+        It re-renders the page with the forms containing the error messages.
+        """
+        return self.render_to_response(
+            self.get_context_data(unit_form=unit_form, review_form=review_form)
+        )
 
-    return render(request, 'reviews/add_review_to_unit.html', {
-        'unit': unit_instance,
-        'property': property_instance,
-        'review_form': review_form
-    })
+    def get_success_url(self):
+        """
+        Returns the URL to redirect to after a successful submission.
+        """
+        return reverse_lazy('reviews:review_success', kwargs={'review_pk': self.object.pk})
+
+
+class AddReviewView(LoginRequiredMixin, CreateView):
+    """
+    Handles the creation of a new Review for a specific PropertyUnit.
+    This is the modern, scalable, and professional "Review Composer" view.
+    """
+    model = Review
+    form_class = ReviewForm
+    template_name = 'reviews/add_review_to_unit.html' # The new premium template
+
+    def get_context_data(self, **kwargs):
+        """
+        Passes the necessary unit and property context to the template.
+        """
+        context = super().get_context_data(**kwargs)
+        self.unit = get_object_or_404(PropertyUnit, pk=self.kwargs['unit_pk'])
+        context['unit'] = self.unit
+        context['property'] = self.unit.property
+        return context
+
+    def get_form_kwargs(self):
+        """
+        Passes keyword arguments to the form. We could use this to pass
+        'is_bounty' if we were handling that flow here.
+        """
+        kwargs = super().get_form_kwargs()
+        # Example for the future:
+        # unit = get_object_or_404(PropertyUnit, pk=self.kwargs['unit_pk'])
+        # if unit.property.community_question:
+        #     kwargs['is_bounty'] = True
+        return kwargs
+
+    def form_valid(self, form):
+        """
+        This method is called when the submitted form is valid.
+        It's the perfect place to set fields before saving.
+        """
+        # Get the unit from the context we set up in get_context_data
+        unit = get_object_or_404(PropertyUnit, pk=self.kwargs['unit_pk'])
+        
+        # Connect the review to the unit, author, and set its initial status
+        form.instance.unit = unit
+        form.instance.author = self.request.user
+        form.instance.status = ReviewStatus.PENDING_CONTENT_REVIEW
+        
+        # The save() method on the Review model will handle the verification flag.
+        # We need to save the object here to get its primary key (pk) for the redirect.
+        self.object = form.save()
+        
+        # Let the parent class handle the final HTTP response (which will be a redirect)
+        return super().form_valid(form)
+
+    def get_success_url(self):
+        """
+        Returns the URL to redirect to after a successful submission.
+        This is where we send the user to our "incentive" page.
+        """
+        return reverse_lazy('reviews:review_success', kwargs={'review_pk': self.object.pk})
     
 
 class HomePageView(TemplateView):

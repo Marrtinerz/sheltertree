@@ -27,10 +27,10 @@ urlpatterns = [
     # --- PROPERTY & REVIEW ACTIONS ---
     
     path('property/<int:pk>/', views.PropertyDetailView.as_view(), name='property-detail'),
-    path('property/add/', views.add_property, name='add-property'),
+    path('property/add/', views.AddPropertyView.as_view(), name='add-property'),
     path('property/add/success/<int:pk>/', views.add_property_success, name='add-property-success'),
-    path('property/<int:property_pk>/add-review/', views.add_unit_and_review, name='add-unit-and-review'),
-    path('unit/<int:unit_pk>/add-review/', views.add_review_to_unit, name='add-review-to-unit'),
+    path('property/<int:property_pk>/add-review/', views.AddUnitAndReviewView.as_view(), name='add-unit-and-review'),
+    path('property/unit/<int:unit_pk>/add-review/', views.AddReviewView.as_view(), name='add-review-to-unit'),
     path('review/<int:review_pk>/vote/', views.vote_on_review, name='vote_on_review'),
     path('review/success/<int:review_pk>/', views.ReviewSuccessView.as_view(), name='review_success'),
     

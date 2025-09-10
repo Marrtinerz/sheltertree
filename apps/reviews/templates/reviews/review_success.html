@@ -1,50 +1,62 @@
 {% extends "base.html" %}
 {% load i18n %}
 
-{% block title %}{% trans "Review Submitted for Approval" %} | ShelterTree{% endblock %}
+{% block title %}{% trans "Review Submitted!" %} | ShelterTree{% endblock %}
 
 {% block content %}
-<div class="container mt-5 mb-5 text-center">
+<div class="container my-5">
     <div class="row justify-content-center">
-        <div class="col-md-8">
-            <i class="fas fa-paper-plane fa-4x text-success mb-3"></i>
-            <h1>{% trans "Thank You For Your Contribution!" %}</h1>
+        <div class="col-lg-8">
+            <div class="card success-page-card text-center">
+                <div class="card-body p-4 p-md-5">
 
-            <!-- ==================================================================== -->
-            <!-- THE CORRECTED MESSAGING                                            -->
-            <!-- ==================================================================== -->
-            <p class="lead text-muted">
-                {% trans "Your review has been submitted for a quick quality check by our team." %}
-            </p>
-            <p>
-                {% trans "To ensure we maintain a high-quality, trustworthy community, all reviews are published after being approved. This usually takes 24-48 hours." %}
-            </p>
-            
-            <div class="card my-4">
-                <div class="card-header">
-                    {% trans "Your Submitted Review (Pending Approval)" %}
-                </div>
-                <div class="card-body">
-                    <p class="fst-italic">"{{ review.pros|truncatewords:20 }}..."</p>
+                    <!-- The Animated Success Icon (reusing our premium component) -->
+                    <div class="success-icon-wrapper mb-4">
+                        <i class="fas fa-check success-icon"></i>
+                    </div>
+
+                    <!-- The New, Aspirational Copy -->
+                    <h1 class="display-5 fw-bold">{% trans "Thanks for Sharing your Experience" %}</h1>
+                    <p class="lead text-muted">
+                        {% blocktrans %}
+                        To ensure we maintain a high-quality, trustworthy community, all reviews are published after a quick quality check, usually within 24 hours.
+                        {% endblocktrans %}
+                    </p>
+                    
+                    <hr class="my-4">
+
+                    <!-- ==================================================================== -->
+                    <!-- The Intelligent "Next Step" Section                              -->
+                    <!-- This block changes based on the user's verification status.      -->
+                    <!-- ==================================================================== -->
+                    <div class="next-step-section">
+                        {% if not user.is_phone_verified %}
+                            <!-- Case 1: The User is NOT verified -->
+                            <h2 class="h3 fw-bold">{% trans "Make Your Review Stand Out!" %}</h2>
+                            <p class="mb-3">
+                                {% trans "Get a 'Verified' badge. It's a free, one-time verification that helps everyone trust your insights." %}
+                            </p>
+                            
+                            <a href="{% url 'phone_add' %}" class="btn btn-primary btn-lg rounded-pill px-5 py-3">
+                                <i class="fas fa-mobile-alt me-2"></i>{% trans "Get Your Verified Badge" %}
+                            </a>
+                            <div class="mt-3">
+                                <a href="{% url 'reviews:property-detail' pk=review.unit.property.pk %}" class="text-muted small">{% trans "Maybe Later" %}</a>
+                            </div>
+                        {% else %}
+                            <!-- Case 2: The User is ALREADY verified -->
+                            {% comment %} <h2 class="h3 fw-bold">{% trans "You are a Trusted Voice" %}</h2> {% endcomment %}
+                            <p class="mb-3">
+                                {% trans "You are a Verified Reviewer. Your feedback carries extra weight on ShelterTree." %}
+                            </p>
+                            <a href="{% url 'reviews:property-detail' pk=review.unit.property.pk %}" class="btn btn-primary rounded-pill px-5 py-3">
+                                {% trans "Back to the Property Page" %}
+                            </a>
+                        {% endif %}
+                    </div>
+
                 </div>
             </div>
-
-            <!-- ==================================================================== -->
-            <!-- The Incentive Prompt (This logic remains the same and is correct)  -->
-            <!-- ==================================================================== -->
-            {% if not user.is_phone_verified %}
-                <div class="alert alert-info shadow-sm">
-                    <h4 class="alert-heading">{% trans "Make Your Review Stand Out!" %}</h4>
-                    <p>{% trans "Reviews from 'Verified Reviewers' are often prioritized and trusted more by the community. Get your badge now—it's a one-time, free process." %}</p>
-                    <hr>
-                    <a href="{% url 'phone_add' %}" class="btn btn-primary btn-lg">
-                        <i class="fas fa-mobile-alt me-2"></i>{% trans "Get Verified Badge" %}
-                    </a>
-                    <a href="{% url 'reviews:property-detail' pk=review.unit.property.pk %}" class="btn btn-outline-secondary mt-2 mt-md-0">
-                        {% trans "Maybe Later" %}
-                    </a>
-                </div>
-            {% endif %}
         </div>
     </div>
 </div>

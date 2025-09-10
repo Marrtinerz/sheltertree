@@ -148,7 +148,7 @@ class Review(models.Model):
     
     # --- MINOR FIX ---
     # Corrected the help_text for the 'cons' field.
-    cons = models.TextField(help_text=_("What are the biggest challenges or worst things about living here?"), verbose_name=_("Cons"))
+    cons = models.TextField(help_text=_("What are the unique challenges or worst things about living here?"), verbose_name=_("Cons"))
 
     status = models.CharField(
         max_length=20,

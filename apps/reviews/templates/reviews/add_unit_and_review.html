@@ -1,32 +1,126 @@
-<!-- reviews/templates/reviews/add_unit_and_review.html -->
 {% extends "base.html" %}
 {% load i18n %}
+{% load widget_tweaks %}
 
-{% block title %}{% trans "Add a Review" %} for {{ property.name }} | ShelterTree{% endblock %}
+{% block title %}{% trans "Leave a Review" %} for {{ property.name }} | ShelterTree{% endblock %}
 
 {% block content %}
-    <h1>{% trans "Add Your Review for" %} <span style="color: #005A31;">{{ property.name }}</span></h1>
-    <p class="intro-text" style="color: #555; margin-bottom: 2rem;">
-        {% trans "Please provide your specific unit identifier and your honest feedback on the core aspects of living here." %}
-    </p>
+<div class="container my-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <div class="card shadow-lg review-composer-card">
+                <div class="card-header text-center">
+                    <h1 class="mb-1 h2">{% trans "Tell the Story of Your Home" %}</h1>
+                    <p class="mb-0 opacity-75">{% trans "Your detailed experience helps someone find their own place of rest." %}</p>
+                </div>
+                
+                <div class="card-body p-4 p-md-5">
+                    <!-- Contextual Information Block -->
+                    <div class="property-context mb-4 text-center">
+                        <p class="mb-1 small text-muted">{% trans "You are reviewing:" %}</p>
+                        <h4 class="h5 mb-0">{{ property.name }}</h4>
+                    </div>
 
-    <form method="post" novalidate>
-        {% csrf_token %}
+                    <form method="post" novalidate>
+                        {% csrf_token %}
+                        <!-- Display any non-field errors from both forms -->
+                        {{ unit_form.non_field_errors }}
+                        {{ review_form.non_field_errors }}
 
-        <!-- Unit Form -->
-        <fieldset style="border: 1px solid #ddd; padding: 1.5rem; border-radius: 8px; margin-bottom: 1.5rem;">
-            <legend style="font-size: 1.2em; font-weight: bold;">{% trans "Step 1: Your Unit" %}</legend>
-            {{ unit_form.as_p }}
-        </fieldset>
+                        <!-- ==================================================================== -->
+                        <!-- The Unified, Multi-Step Form                                       -->
+                        <!-- ==================================================================== -->
+                        
+                        <!-- Fieldset 1: The New Unit -->
+                        <fieldset class="review-fieldset mb-4">
+                            <legend><i class="fas fa-door-open fa-fw me-2"></i>{% trans "Step 1: Identify Your Unit" %}</legend>
+                            <p class="text-muted small">{% trans "Add your specific house number or apartment identifier. This will be visible with your review." %}</p>
+                            <div class="mb-3">
+                                <label for="{{ unit_form.unit_identifier.id_for_label }}" class="form-label">{{ unit_form.unit_identifier.label }}</label>
+                                {{ unit_form.unit_identifier|attr:"class:form-control" }}
+                                <small class="form-text text-muted">{{ unit_form.unit_identifier.help_text }}</small>
+                                {{ unit_form.unit_identifier.errors }}
+                            </div>
+                        </fieldset>
 
-        <!-- Review Form -->
-        <fieldset style="border: 1px solid #ddd; padding: 1.5rem; border-radius: 8px;">
-            <legend style="font-size: 1.2em; font-weight: bold;">{% trans "Step 2: Your Review" %}</legend>
-            {{ review_form.as_p }}
-        </fieldset>
+                        <!-- Fieldset 2: Your Stay -->
+                        <fieldset class="review-fieldset mb-4">
+                            <legend><i class="fas fa-clock fa-fw me-2"></i>{% trans "Step 2: Your Stay" %}</legend>
+                            <div class="mb-3">
+                                <label for="{{ review_form.residence_length.id_for_label }}" class="form-label">{{ review_form.residence_length.label }}</label>
+                                {{ review_form.residence_length|attr:"class:form-select" }}
+                                {{ review_form.residence_length.errors }}
+                            </div>
+                        </fieldset>
 
-        <button type="submit" class="button" style="margin-top: 1.5rem; padding: 0.8rem 1.5rem; font-size: 1.1em;">
-            {% trans "Submit Review" %}
-        </button>
-    </form>
+                        <!-- Fieldset 3: Ratings -->
+                        <fieldset class="review-fieldset mb-4">
+                            <legend><i class="fas fa-star-half-alt fa-fw me-2"></i>{% trans "Step 3: Your Ratings" %}</legend>
+                            <p class="text-muted small">{% trans "Rate each category from 1 (very bad) to 5 (excellent)." %}</p>
+                            {% for field in review_form.visible_fields %}
+                                {% if 'rating' in field.name %}
+                                    <div class="d-flex flex-column flex-sm-row justify-content-between align-items-sm-center mb-3">
+                                        <label class="form-label mb-2 mb-sm-0">{{ field.label }}</label>
+                                        <div class="star-rating-input">
+                                            {% for radio in field reversed %}
+                                                {{ radio.tag }}
+                                                <label for="{{ radio.id_for_label }}"><i class="fas fa-star"></i></label>
+                                            {% endfor %}
+                                        </div>
+                                    </div>
+                                    {{ field.errors }}
+                                {% endif %}
+                            {% endfor %}
+                        </fieldset>
+
+                        <!-- Fieldset 4: The Details -->
+                        <fieldset class="review-fieldset">
+                            <legend><i class="fas fa-feather-alt fa-fw me-2"></i>{% trans "Step 4: The Details" %}</legend>
+                            <!-- ==================================================================== -->
+                            <!-- ADD THIS ENTIRE "review-guideline" BLOCK                           -->
+                            <!-- ==================================================================== -->
+                            <div class="review-guideline d-flex align-items-start mb-4">
+                                <div class="guideline-icon me-3">
+                                    <i class="fas fa-lightbulb"></i>
+                                </div>
+                                <div>
+                                    {% comment %} <h6 class="fw-bold mb-1">{% trans "A Note on Helpful Reviews" %}</h6> {% endcomment %}
+                                    <p class="small text-muted mb-0">
+                                        {% blocktrans %}
+                                        The most helpful reviews are clear, honest, and respectful. Remember to be kind! 😊
+                                        {% endblocktrans %}
+                                    </p>
+                                </div>
+                            </div>
+                            <!-- ==================================================================== -->
+                            
+                            <div class="mb-3">
+                                <label for="{{ review_form.pros.id_for_label }}" class="form-label text-success fw-bold"><i class="fas fa-plus-circle me-2"></i>{{ review_form.pros.label }}</label>
+                                {{ review_form.pros|attr:"class:form-control"|attr:"rows:4" }}
+                                <small class="form-text text-muted">{{ review_form.pros.help_text }}</small>
+                                {{ review_form.pros.errors }}
+                            </div>
+                            <div class="mb-3">
+                                <label for="{{ review_form.cons.id_for_label }}" class="form-label text-danger fw-bold"><i class="fas fa-minus-circle me-2"></i>{{ review_form.cons.label }}</label>
+                                {{ review_form.cons|attr:"class:form-control"|attr:"rows:4" }}
+                                <small class="form-text text-muted">{{ review_form.cons.help_text }}</small>
+                                {{ review_form.cons.errors }}
+                            </div>
+                        </fieldset>
+                        
+                        <div class="d-grid mt-4">
+                            <button type="submit" class="btn btn-primary">
+                                <i class="fas fa-paper-plane me-2"></i>{% trans "Submit My Review" %}
+                            </button>
+                        </div>
+                    </form>
+
+                    <div class="text-center mt-3">
+                        <a href="{% url 'reviews:property-detail' pk=property.pk %}" class="text-muted small">{% trans "Cancel and return to property page" %}</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
 {% endblock %}

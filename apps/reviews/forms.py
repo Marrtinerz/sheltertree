@@ -1,6 +1,6 @@
 from django import forms
 from django.utils.translation import gettext_lazy as _
-from .models import Property, PropertyUnit, Review, ResidenceLength
+from .models import Property, PropertyUnit, Review, ResidenceLength, OverallRating
 from apps.locations.models import Country, State
 from django.urls import reverse
 from django.utils.safestring import mark_safe
@@ -157,11 +157,16 @@ class PropertyUnitForm(forms.ModelForm):
 
 class ReviewForm(forms.ModelForm):
     """
-    Form for the main review content, including all ratings and text feedback.
+    The main form for creating and editing a review.
+    
+    This form is architected to be "smart" about its rating fields.
+    It programmatically changes their widget to RadioSelect, which is the
+    necessary foundation for the custom star-rating UI in the template.
     """
+    
     class Meta:
         model = Review
-        # The 'unit', 'author', and 'status' are all set in the view, not the form.
+        # The 'unit', 'author', and 'status' are correctly set in the view, not the form.
         fields = [
             'residence_length',
             'security_rating',
@@ -173,20 +178,43 @@ class ReviewForm(forms.ModelForm):
             'pros',
             'cons'
         ]
-        # Using specific widgets to improve the user experience.
+        
+        # We define the widget TYPE here. Presentation (like rows/placeholders)
+        # is best handled in the template with widget_tweaks for consistency.
         widgets = {
-            'pros': forms.Textarea(attrs={'rows': 5, 'placeholder': _('e.g., Great security, constant power, quiet environment...')}),
-            'cons': forms.Textarea(attrs={'rows': 5, 'placeholder': _('e.g., Excessive bills, incompetent management, flooding, frequent water shortages...')}),
+            'pros': forms.Textarea(attrs={'rows': 5, 'placeholder': _('e.g., The water is very clean...')}),
+            'cons': forms.Textarea(attrs={'rows': 5, 'placeholder': _('e.g., Taking a walk is dangerous...')}),
         }
-        # Clear, question-based labels for better usability.
+
+        # User-friendly labels are a world-class detail. These are perfect.
         labels = {
-            'residence_length': _("How long have you lived (or did you live) at this property?"),
-            'security_rating': _("How would you rate the security?"),
-            'electricity_rating': _("How would you rate the electricity supply?"),
-            'water_rating': _("How would you rate the water supply and quality?"),
-            'management_rating': _("How would you rate the property management?"),
-            'road_network_rating': _("How would you rate the roads, congestion, and drainage?"),
-            'mobile_network_rating': _("How would you rate the mobile network for calls and data?"),
-            'pros': _("Pros (The good things)"),
-            'cons': _("Cons (The bad things)"),
+            'residence_length': _("How long have you lived (or did you live) here?"),
+            'security_rating': _("Security"),
+            'electricity_rating': _("Electricity Supply"),
+            'water_rating': _("Water Supply & Quality"),
+            'management_rating': _("Property Management"),
+            'road_network_rating': _("Roads & Access"),
+            'mobile_network_rating': _("Mobile Network"),
+            'pros': _("Pros"),
+            'cons': _("Cons"),
         }
+
+        # # Help texts provide crucial guidance to the user.
+        # help_texts = {
+        #     'pros': _('e.g., Great security, constant power, quiet environment...'),
+        #     'cons': _('e.g., Excessive bills, incompetent management, flooding...'),
+        # }
+                
+    def __init__(self, *args, **kwargs):
+        """
+        Overrides the default __init__ to dynamically configure all rating fields.
+        """
+        super().__init__(*args, **kwargs)
+        
+        for field_name, field in self.fields.items():
+            if 'rating' in field_name:
+                # --- THE DEFINITIVE FIX ---
+                # Create the RadioSelect widget AND give it the correct choices
+                # in a single, correct step. This prevents both the blank
+                # choice (6th star) and the empty widget (no stars) issues.
+                field.widget = forms.RadioSelect(choices=OverallRating.choices)

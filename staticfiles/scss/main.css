@@ -9762,6 +9762,62 @@ textarea.form-control-lg {
 .add-property-wizard .form-section {
   transition: opacity 0.4s ease-in-out; }
 
+.review-composer-card .card-header {
+  background: linear-gradient(135deg, #556570 0%, #2B3F4C 100%);
+  color: #fff;
+  padding: 2rem;
+  border-bottom: none; }
+  .review-composer-card .card-header h1, .review-composer-card .card-header .h1, .review-composer-card .card-header p {
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3); }
+
+.review-composer-card .property-context {
+  background-color: #f4fbf8;
+  border: 1px solid #d3f0e4;
+  border-radius: 0.5rem;
+  padding: 1rem 1.25rem; }
+
+.review-composer-card .review-fieldset {
+  border: 1px solid rgba(90, 109, 124, 0.25);
+  padding: 1.5rem;
+  border-radius: 0.5rem; }
+  .review-composer-card .review-fieldset legend {
+    float: none;
+    width: auto;
+    padding: 0 0.5rem;
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: #2B3F4C; }
+    .review-composer-card .review-fieldset legend i {
+      color: #21b576; }
+
+.review-composer-card .star-rating-input {
+  display: flex;
+  flex-direction: row-reverse;
+  justify-content: flex-end;
+  font-size: 1.5rem; }
+  .review-composer-card .star-rating-input input[type="radio"] {
+    display: none; }
+  .review-composer-card .star-rating-input label {
+    color: #ccc;
+    cursor: pointer;
+    transition: color 0.2s ease;
+    padding: 0 0.1em; }
+    .review-composer-card .star-rating-input label:hover, .review-composer-card .star-rating-input label:hover ~ label {
+      color: #F0AD4E; }
+  .review-composer-card .star-rating-input input[type="radio"]:checked + label,
+  .review-composer-card .star-rating-input input[type="radio"]:checked ~ label {
+    color: #F0AD4E; }
+
+.review-guideline {
+  background-color: #f4fbf8;
+  border: 1px solid #d3f0e4;
+  border-radius: 0.5rem;
+  padding: 1rem; }
+  .review-guideline .guideline-icon {
+    font-size: 1.5rem;
+    color: #21b576;
+    opacity: 0.8; }
+
 /* // 3. (Optional) Add any other custom site-wide styles here later.
 body {
   background-color: $light; // Use your new theme color
