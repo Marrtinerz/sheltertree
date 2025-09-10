@@ -299,7 +299,7 @@ class AddUnitAndReviewView(LoginRequiredMixin, TemplateView):
         context = super().get_context_data(**kwargs)
         context['property'] = self.property
         # If forms aren't passed in kwargs (e.g., on initial GET), create empty ones.
-        context.setdefault('unit_form', PropertyUnitForm())
+        context.setdefault('unit_form', PropertyUnitForm(property=self.property))
         context.setdefault('review_form', ReviewForm())
         return context
 
@@ -313,7 +313,7 @@ class AddUnitAndReviewView(LoginRequiredMixin, TemplateView):
         """
         Handles POST requests: validates both forms and processes the data.
         """
-        unit_form = PropertyUnitForm(request.POST)
+        unit_form = PropertyUnitForm(request.POST, property=self.property)
         review_form = ReviewForm(request.POST)
 
         if unit_form.is_valid() and review_form.is_valid():

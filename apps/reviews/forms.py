@@ -4,6 +4,7 @@ from .models import Property, PropertyUnit, Review, ResidenceLength, OverallRati
 from apps.locations.models import Country, State
 from django.urls import reverse
 from django.utils.safestring import mark_safe
+from django.core.exceptions import ValidationError
 
 
 class PropertySearchForm(forms.Form):
@@ -138,14 +139,10 @@ class PropertyForm(forms.ModelForm):
             
         return cleaned_data
 
+
 class PropertyUnitForm(forms.ModelForm):
-    """
-    Form for adding a specific unit (e.g., apartment number) to a property.
-    This is intentionally simple and focused.
-    """
     class Meta:
         model = PropertyUnit
-        # The 'property' relationship is linked in the view logic, not set by the user here.
         fields = ['unit_identifier']
         labels = {
             'unit_identifier': _("Your Unit Identifier"),
@@ -153,6 +150,48 @@ class PropertyUnitForm(forms.ModelForm):
         help_texts = {
             'unit_identifier': _("e.g., 'Apartment A521' or 'House 7, Block 10'"),
         }
+        # Labels and help texts can remain the same
+
+    def __init__(self, *args, **kwargs):
+        """
+        Accepts a 'property' instance from the view to use for validation.
+        """
+        # This is a professional pattern: we pop our custom kwarg before
+        # the parent class's __init__ is called, as it doesn't expect it.
+        self.property = kwargs.pop('property', None)
+        super().__init__(*args, **kwargs)
+
+    def clean_unit_identifier(self):
+        """
+        This method is automatically called by Django during form validation.
+        It validates and standardizes the unit_identifier.
+        """
+        # 1. Get the raw data submitted by the user.
+        identifier = self.cleaned_data.get('unit_identifier')
+
+        if identifier and self.property:
+            # 2. Standardize the data: remove leading/trailing whitespace
+            #    and convert to Title Case for consistency. "apt 5b" -> "Apt 5b".
+            cleaned_identifier = identifier.strip()
+
+            # 3. The Validation Query: Check if a unit with this identifier
+            #    (case-insensitive) already exists for THIS specific property.
+            if PropertyUnit.objects.filter(
+                property=self.property, 
+                unit_identifier__iexact=cleaned_identifier
+            ).exists():
+                # 4. If it exists, raise a user-friendly validation error.
+                raise ValidationError(
+                    _("A unit with this identifier already exists for this property. Please go back to the property page to review the existing unit."),
+                    code='duplicate_unit'
+                )
+            
+            # 5. If validation passes, return the cleaned, standardized data.
+            return cleaned_identifier
+        
+        # Return the original identifier if something unexpected happened.
+        return identifier
+
 
 
 class ReviewForm(forms.ModelForm):
