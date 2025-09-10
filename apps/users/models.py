@@ -174,6 +174,26 @@ class CustomUser(AbstractUser):
         # The default fallback is always the username for all other cases.
         return self.username
     
+    # --- NEW, WORLD-CLASS METHOD ---
+    def get_masked_phone_number(self):
+        """
+        Returns a privacy-protected, masked version of the user's phone number.
+        Shows the international prefix and the last 4 digits.
+        Example: +2348031234567 -> +234 •••• 4567
+        """
+        if not self.phone_number:
+            return ""
+
+        phone = str(self.phone_number)
+        
+        # E.164 format includes a '+'. We keep the '+' and the next 3 digits (country code).
+        # We also keep the last 4 digits.
+        if len(phone) > 8: # A reasonable length to apply masking
+            return f"{phone[:7]} xxxx"
+        else:
+            # If the number is too short for some reason, just return a generic masked version.
+            return "xxxx"
+    
     
     
 # apps/users/models.py

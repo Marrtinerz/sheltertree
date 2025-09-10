@@ -89,3 +89,23 @@
     margin-left: .25em;
   }
 }
+
+// --- NEW: Styles for the Single-Task Verification Card ---
+.verification-card {
+  .card-body {
+    padding: 2rem 2.5rem; // More generous padding
+  }
+
+  // Make the choice buttons feel distinct
+  .btn-whatsapp {
+    // A custom, on-brand WhatsApp green
+    background-color: #25D366;
+    border-color: #25D366;
+    color: #fff;
+
+    &:hover {
+      background-color: darken(#25D366, 10%);
+      border-color: darken(#25D366, 10%);
+    }
+  }
+}

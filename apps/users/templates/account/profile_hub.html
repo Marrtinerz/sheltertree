@@ -2,7 +2,7 @@
 {% load i18n %}
 {% load static %}
 
-{% block title %}{% trans "My Profile" %} | ShelterTree {% endblock %}
+{% block title %}{% trans "My Profile" %} | ShelterTree{% endblock %}
 
 {% block content %}
 <div class="container my-4 my-lg-5">
@@ -71,19 +71,64 @@
                     <span><i class="fas fa-user-shield fa-fw me-2"></i>{% trans "Account Security" %}</span>
                 </div>
                 <div class="card-body p-0">
-                    <div class="profile-list-item"><span class="item-label">{% trans "Email" %}</span><a href="{% url 'account_email' %}" class="btn btn-sm btn-outline-secondary"><span class="d-none d-sm-inline">{% trans "Manage" %}</span><i class="fas fa-envelope d-sm-none"></i></a></div>
-                    <div class="profile-list-item"><span class="item-label">{% trans "Password" %}</span><a href="{% url 'account_change_password' %}" class="btn btn-sm btn-outline-secondary"><span class="d-none d-sm-inline">{% trans "Change" %}</span><i class="fas fa-key d-sm-none"></i></a></div>
-                    <div class="profile-list-item"><span class="item-label">{% trans "Phone Number" %}</span>
+                    
+                    <!-- Email Item (Unchanged) -->
+                    <div class="profile-list-item">
+                        <span class="item-label">{% trans "Email" %}</span>
+                        <a href="{% url 'account_email' %}" class="btn btn-sm btn-outline-secondary">
+                            <span class="d-none d-sm-inline">{% trans "Manage" %}</span>
+                            <i class="fas fa-envelope d-sm-none"></i>
+                        </a>
+                    </div>
+                    
+                    <!-- Password Item (Unchanged) -->
+                    <div class="profile-list-item">
+                        <span class="item-label">{% trans "Password" %}</span>
+                        <a href="{% url 'account_change_password' %}" class="btn btn-sm btn-outline-secondary">
+                            <span class="d-none d-sm-inline">{% trans "Change" %}</span>
+                            <i class="fas fa-key d-sm-none"></i>
+                        </a>
+                    </div>
+
+                    <!-- ==================================================================== -->
+                    <!-- THE NEW, WORLD-CLASS PHONE VERIFICATION ITEM                         -->
+                    <!-- ==================================================================== -->
+                    <!-- Phone Number Item (This is the updated section) -->
+                    <div class="profile-list-item">
+                        <span class="item-label">{% trans "Phone Number" %}</span>
+
                         {% if user.is_phone_verified %}
-                            <div class="text-end">
-                                <span class="item-value me-2">{{ user.phone_number }}</span>
-                                <span class="badge bg-success rounded-pill">{% trans "Verified" %}</span>
+                            <div class="d-flex align-items-center">
+                                <div class="me-3 text-end">
+                                    
+                                    <!-- THE FIX: We now call our new, secure model method -->
+                                    <span class="item-value">{{ user.get_masked_phone_number }}</span>
+                                    
+                                    <span class="badge bg-success rounded-pill ms-1">{% trans "Verified" %}</span>
+                                </div>
+                                <a href="{% url 'phone_add' %}" class="btn btn-sm btn-outline-secondary">
+                                    <span class="d-none d-sm-inline">{% trans "Change" %}</span>
+                                    <i class="fas fa-edit d-sm-none"></i>
+                                </a>
                             </div>
                         {% else %}
-                            <a href="{% url 'phone_add' %}" class="btn btn-sm btn-primary"><i class="fas fa-plus-circle me-1 me-sm-2"></i><span class="d-none d-sm-inline">{% trans "Add & Verify" %}</span></a>
+                            <a href="{% url 'phone_add' %}" class="btn btn-sm btn-primary">
+                                <i class="fas fa-plus-circle me-1 me-sm-2"></i>
+                                <span class="d-none d-sm-inline">{% trans "Add & Verify" %}</span>
+                            </a>
                         {% endif %}
                     </div>
-                     <div class="profile-list-item"><span class="item-label">{% trans "Connected Accounts" %}</span><a href="{% url 'socialaccount_connections' %}" class="btn btn-sm btn-outline-secondary"><span class="d-none d-sm-inline">{% trans "Manage" %}</span><i class="fas fa-link d-sm-none"></i></a></div>
+                    <!-- ==================================================================== -->
+                    
+                    <!-- Connected Accounts Item (Unchanged) -->
+                    <div class="profile-list-item">
+                        <span class="item-label">{% trans "Connected Accounts" %}</span>
+                        <a href="{% url 'socialaccount_connections' %}" class="btn btn-sm btn-outline-secondary">
+                            <span class="d-none d-sm-inline">{% trans "Manage" %}</span>
+                            <i class="fas fa-link d-sm-none"></i>
+                        </a>
+                    </div>
+                    
                 </div>
             </div>
 

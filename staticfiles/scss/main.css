@@ -9323,6 +9323,17 @@ textarea.form-control-lg {
   .separator:not(:empty)::after {
     margin-left: .25em; }
 
+.verification-card .card-body {
+  padding: 2rem 2.5rem; }
+
+.verification-card .btn-whatsapp {
+  background-color: #25D366;
+  border-color: #25D366;
+  color: #fff; }
+  .verification-card .btn-whatsapp:hover {
+    background-color: #1da851;
+    border-color: #1da851; }
+
 .btn {
   font-weight: 500;
   text-transform: none;

@@ -254,7 +254,7 @@
                         </div>
                         <h4 class="card-title">{% trans "Share Your Experience" %}</h4>
                         <p class="card-text">Help your community by adding a review of your current or former home. Your honest insights will make a difference.</p>
-                        <a href="{% url 'reviews:add-property' %}" class="btn btn-outline-dark stretched-link">{% trans "Add a New Property" %}</a>
+                        <a href="{% url 'reviews:search' %}?intent=review" class="btn btn-outline-dark stretched-link">{% trans "Leave a Review" %}</a>
                     </div>
                 </div>
             </div>
@@ -269,7 +269,7 @@
                         <h4 class="card-title">{% trans "Request a Review" %}</h4>
                         <p class="card-text">Interested in a property not yet on our platform? Let us know, and we'll mobilize our community to investigate.</p>
                         <!-- This link is a placeholder for now -->
-                        <a href="#" class="btn btn-outline-dark stretched-link">{% trans "Tell Us What to Find" %}</a>
+                        <a href="{% url 'reviews:request_review_coming_soon' %}" class="btn btn-outline-dark stretched-link">{% trans "Tell Us What to Find" %}</a>
                     </div>
                 </div>
             </div>
@@ -323,7 +323,7 @@
     <div class="container">
         <div class="row">
             <div class="col-lg-8 mx-auto text-center">
-                <h2 class="display-5 fw-bold">{% trans "Join a Community Building Trust in Real Estate" %}</h2>
+                <h2 class="display-5 fw-bold">{% trans "Join a Community Building Trust and Transparency Across Africa" %}</h2>
                 <p class="lead text-muted mt-3">
                     {% blocktrans %}
                     Become a member to share your experience, get the full story on any property, and help create a more transparent world for renters and homeowners.
