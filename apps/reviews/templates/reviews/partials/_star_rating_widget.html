@@ -1,0 +1,16 @@
+{% comment %}
+This template takes a single form field (e.g., form.security_rating)
+and renders it as a beautiful, interactive star rating input.
+{% endcomment %}
+<div class="star-rating-input">
+    {# We loop through each choice in the rating field (1, 2, 3, 4, 5) #}
+    {% for choice in field %}
+        {# This renders the actual <input type="radio"> tag, which will be hidden by our CSS #}
+        {{ choice.tag }}
+        
+        {# This is the visible <label> that looks like a star #}
+        <label for="{{ choice.id_for_label }}">
+            <i class="fas fa-star"></i>
+        </label>
+    {% endfor %}
+</div>
