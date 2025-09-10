@@ -146,8 +146,17 @@ class PhoneNumberForm(forms.Form):
             cleaned_data['phone_number_e164'] = phone_number_e164
 
             # --- THE VALIDATION THAT USES self.user ---
-            # Check if this phone number is already in use by another verified user.
-            if CustomUser.objects.filter(phone_number=phone_number_e164, is_phone_verified=True).exclude(pk=self.user.pk).exists():
+            # --- THE CRITICAL, WORLD-CLASS FIX ---
+            #
+            # Check 1: Is the user trying to re-verify their OWN, ALREADY verified number?
+            if self.user.is_phone_verified and self.user.phone_number == phone_number_e164:
+                raise ValidationError("This phone number is already verified on your account.")
+
+            # Check 2: Is this number already in use by ANOTHER verified user?
+            if CustomUser.objects.filter(
+                phone_number=phone_number_e164, 
+                is_phone_verified=True
+            ).exclude(pk=self.user.pk).exists():
                 raise ValidationError("This phone number is already associated with another verified account.")
 
         except phonenumbers.NumberParseException:

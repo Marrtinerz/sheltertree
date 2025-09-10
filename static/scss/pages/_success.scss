@@ -1,0 +1,49 @@
+// static/scss/pages/_success.scss
+
+// Keyframe animation for the success icon
+@keyframes pulse-success {
+  0% {
+    transform: scale(1);
+    box-shadow: 0 0 0 0 rgba($success, 0.7);
+  }
+  70% {
+    transform: scale(1.05);
+    box-shadow: 0 0 0 20px rgba($success, 0);
+  }
+  100% {
+    transform: scale(1);
+    box-shadow: 0 0 0 0 rgba($success, 0);
+  }
+}
+
+// The main container for the success page content
+.success-page-card {
+  border: none;
+  border-radius: $border-radius-lg;
+  box-shadow: $box-shadow-lg;
+}
+
+// The wrapper for our animated icon
+.success-icon-wrapper {
+  width: 100px;
+  height: 100px;
+  margin: 0 auto;
+  background-color: tint-color($success, 90%); // A very light green
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  animation: pulse-success 1.5s infinite;
+
+  .success-icon {
+    font-size: 3rem;
+    color: $success;
+  }
+}
+
+// Styling for the "Next Step" section
+.next-step-section {
+  background-color: tint-color($primary, 95%); // A very light, on-brand teal/green
+  border-radius: $border-radius;
+  padding: 1.5rem;
+}
