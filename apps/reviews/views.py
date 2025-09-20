@@ -7,7 +7,7 @@ from django.utils.translation import gettext_lazy as _
 from django.db.models import Avg, Count, Sum, OuterRef, Subquery, Case, When, IntegerField
 from django.views.generic import TemplateView, CreateView
 from django.contrib.postgres.search import SearchQuery, SearchRank, SearchVector
-from .models import Property, PropertyUnit, Review, PropertyStatus, ReviewStatus, Vote
+from .models import Property, PropertyUnit, Review, PropertyStatus, ReviewStatus, Vote, PropertyManager
 from .forms import PropertyForm, PropertyUnitForm, ReviewForm, PropertySearchForm
 from django.db.models import Q, F
 from django.template.loader import render_to_string
@@ -16,6 +16,7 @@ from collections import defaultdict
 from django.contrib.auth.mixins import LoginRequiredMixin
 from apps.users.forms import FeatureInterestForm
 from apps.users.models import FeatureInterest
+from django.db.models.functions import Coalesce
 
 # --- READ-ONLY VIEWS (for the public) ---
 
@@ -43,31 +44,25 @@ from apps.users.models import FeatureInterest
 # Hybrid search and find
 def find_properties(query_string):
     """
-    Performs a hybrid search.
-    1. A high-relevance, ranked search using PostgreSQL FTS.
-    2. A broad, "catch-all" substring search using Q objects.
-    
-    The results are combined, with ranked results appearing first.
+    This is now the single source of truth for all property searches.
+    It performs a hybrid search and returns a single, ordered, and CHAINABLE QuerySet.
     """
     if not query_string or len(query_string) < 3:
-        return []
+        return Property.objects.none() # Return an empty QuerySet
 
     # === Method 1: High-Relevance FTS Search ===
-    # This search finds whole words and ranks them.
-    query = SearchQuery(query_string, search_type='websearch')
-    
+    fts_query = SearchQuery(query_string, search_type='websearch')
     fts_results = Property.objects.annotate(
-        rank=SearchRank(F('search_vector'), query)
+        rank=SearchRank(F('search_vector'), fts_query)
     ).filter(
-        search_vector=query,
+        search_vector=fts_query,
         status=PropertyStatus.APPROVED
     ).order_by('-rank')
     
-    # Get the IDs of the high-relevance results to avoid duplicates
-    fts_result_ids = {p.id for p in fts_results}
+    # Get an ordered list of IDs from the high-relevance results
+    fts_result_ids = list(fts_results.values_list('id', flat=True))
 
     # === Method 2: Broad Substring Search (`icontains`) ===
-    # This search is our "catch-all" for partial matches.
     substring_query = Q(name__icontains=query_string) | \
                       Q(address__icontains=query_string) | \
                       Q(city__icontains=query_string) | \
@@ -77,15 +72,25 @@ def find_properties(query_string):
     substring_results = Property.objects.filter(
         substring_query,
         status=PropertyStatus.APPROVED
-    ).exclude(
-        id__in=fts_result_ids # Exclude results we already found
-    ).distinct()
-
-    # === Combine the Results ===
-    # Convert querysets to lists and combine them. The ranked FTS results are first.
-    final_results = list(fts_results) + list(substring_results)
+    ).exclude(id__in=fts_result_ids).distinct()
     
-    return final_results
+    substring_result_ids = list(substring_results.values_list('id', flat=True))
+
+    # === Combine the IDs, preserving the order (FTS results first) ===
+    final_ids = fts_result_ids + substring_result_ids
+
+    if not final_ids:
+        return Property.objects.none() # Return an empty QuerySet
+
+    # === The World-Class Pattern: Preserve Custom Order in a QuerySet ===
+    # This creates a temporary "ordering" field in the database based on the
+    # position of each ID in our Python list.
+    preserved_order = Case(*[When(pk=pk, then=pos) for pos, pk in enumerate(final_ids)])
+    
+    # Finally, return a SINGLE QuerySet containing all the properties,
+    # ordered by our custom ranking. This QuerySet can be paginated,
+    # annotated, or filtered further.
+    return Property.objects.filter(id__in=final_ids).order_by(preserved_order)
 
 
 class SearchView(TemplateView):
@@ -130,21 +135,37 @@ def live_search_results(request):
 
 
 class PropertyListView(ListView):
-    """
-    Displays a list of all publicly visible properties.
-    KEY CHANGE: We override get_queryset to only show APPROVED properties.
-    """
     model = Property
     template_name = 'reviews/property_list.html'
     context_object_name = 'properties'
-    paginate_by = 12
+    paginate_by = 9
 
     def get_queryset(self):
         """
-        Only return properties that have been approved by an admin.
-        This is a critical security and data quality measure.
+        This view now delegates all annotation logic to the custom manager method,
+        ensuring that only approved reviews are included in calculations.
         """
-        return Property.objects.filter(status=PropertyStatus.APPROVED).order_by('-created_at')
+        query = self.request.GET.get('q')
+
+        if query:
+            # If there is a search query, use our powerful search engine.
+            queryset = find_properties(query)
+        else:
+            # If there is no search, just show the latest approved properties.
+            queryset = Property.objects.filter(status=PropertyStatus.APPROVED).order_by('-created_at')
+
+        # --- THE FIX ---
+        # Replace the manual annotation with the manager method.
+        # This guarantees that only APPROVED reviews are counted and averaged.
+        return queryset.with_reputation_data()
+
+    def get_context_data(self, **kwargs):
+        """
+        Pass the search query back to the template for display.
+        """
+        context = super().get_context_data(**kwargs)
+        context['query'] = self.request.GET.get('q', '')
+        return context
 
 
 class PropertyDetailView(LoginRequiredMixin, DetailView):
@@ -232,35 +253,29 @@ class PropertyDetailView(LoginRequiredMixin, DetailView):
 # --- WRITE VIEWS (for logged-in users, protected by @login_required) ---
 
 class AddPropertyView(LoginRequiredMixin, CreateView):
-    """
-    Handles the creation of a new Property using a class-based view.
-    This is the modern, scalable, and professional approach.
-    """
     model = Property
     form_class = PropertyForm
     template_name = 'reviews/add_property.html'
     
     def form_valid(self, form):
         """
-        This method is called when the submitted form is valid.
-        It's the perfect place to set fields before saving.
+        This is the corrected implementation. We modify the form's instance
+        and then let the parent class handle the save operation.
         """
         # Set the fields that are not on the form
         form.instance.status = PropertyStatus.PENDING_APPROVAL
         form.instance.added_by = self.request.user
         
-        # We need to save the object here to get its primary key (pk)
-        self.object = form.save()
-        
         messages.success(self.request, _("Property submitted for review! Now, please add your unit and review."))
         
-        # Let the parent class handle the final HTTP redirect
+        # DO NOT save here. Let the parent class do it.
+        # The super().form_valid(form) call will save the instance and set self.object.
         return super().form_valid(form)
 
     def get_success_url(self):
         """
-        Returns the URL to redirect to after a successful submission.
-        We override this to pass the new property's pk to the success page.
+        This method will work correctly because the super().form_valid() call
+        in the corrected code above will set self.object before this is called.
         """
         return reverse_lazy('reviews:add-property-success', kwargs={'pk': self.object.pk})
 

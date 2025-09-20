@@ -6,6 +6,8 @@ from django.contrib.postgres.search import SearchVectorField
 from django.contrib.postgres.indexes import GinIndex
 from django.contrib.postgres.search import SearchVector
 from django.conf import settings
+from django.db.models import Q, Count, Avg, F, OuterRef, Subquery
+from django.db.models.functions import Coalesce
 
 # --- Status Enums ---
 
@@ -53,7 +55,62 @@ class ResidenceLength(models.IntegerChoices):
     OVER_4_YEARS = 60, _("More than 4 years")
 
 
-# --- Main Models ---
+class PropertyQuerySet(models.QuerySet):
+    """
+    A custom QuerySet for the Property model to hold reusable
+    filtering and annotation logic.
+    """
+    def with_reputation_data(self):
+        """
+        Annotates the QuerySet with approved review counts and a true overall
+        average rating using robust, Coalesce-wrapped subqueries.
+        """
+        # Define the base for our subqueries: only approved reviews for the parent property.
+        approved_reviews = Review.objects.filter(
+            unit__property_id=OuterRef('pk'),
+            status=ReviewStatus.APPROVED
+        ).values('unit__property_id') # Must group by the property to aggregate
+
+        # Subquery for the count of approved reviews.
+        review_count_subquery = approved_reviews.annotate(
+            count=Count('pk')
+        ).values('count')
+
+        # --- THE CRITICAL FIX IS HERE ---
+        # Subquery for the overall average rating.
+        # Each Avg() is now wrapped in Coalesce to gracefully handle properties with zero reviews.
+        overall_avg_subquery = approved_reviews.annotate(
+            overall_avg=(
+                Coalesce(Avg('security_rating'), 0.0) +
+                Coalesce(Avg('electricity_rating'), 0.0) +
+                Coalesce(Avg('water_rating'), 0.0) +
+                Coalesce(Avg('management_rating'), 0.0) +
+                Coalesce(Avg('road_network_rating'), 0.0) +
+                Coalesce(Avg('mobile_network_rating'), 0.0)
+            ) / 6.0
+        ).values('overall_avg')
+        
+        # Annotate the main queryset with the results of our safe subqueries.
+        return self.annotate(
+            review_count=Coalesce(Subquery(review_count_subquery), 0),
+            overall_average_rating=Coalesce(
+                Subquery(overall_avg_subquery), 
+                0.0, 
+                output_field=models.FloatField()
+            )
+        )
+
+# --- The World-Class Manager ---
+class PropertyManager(models.Manager):
+    def get_queryset(self):
+        return PropertyQuerySet(self.model, using=self._db)
+
+    def with_reputation_data(self):
+        """
+        A clean proxy method to call the QuerySet's method.
+        Allows for the elegant Property.objects.with_reputation_data() syntax.
+        """
+        return self.get_queryset().with_reputation_data()
 
 class Property(models.Model):
     name = models.CharField(max_length=255, verbose_name=_("Property Name"), blank=True)
@@ -64,26 +121,24 @@ class Property(models.Model):
     city = models.CharField(max_length=100, blank=True, null=True, verbose_name=_("City"))
     postal_code = models.CharField(max_length=20, blank=True, verbose_name=_("Postal Code / ZIP Code"))
     
-    
     country = models.ForeignKey(
         Country,
-        on_delete=models.PROTECT, # Use PROTECT instead of SET_NULL
-        null=False,              # Cannot be NULL in the database
-        blank=False,             # Cannot be blank in forms
+        on_delete=models.PROTECT,
+        null=False,
+        blank=False,
         verbose_name=_("Country")
     )
     
     state = models.ForeignKey(
         State,
-        on_delete=models.PROTECT, # Use PROTECT instead of SET_NULL
-        null=False,              # Cannot be NULL in the database
-        blank=False,             # Cannot be blank in forms
+        on_delete=models.PROTECT,
+        null=False,
+        blank=False,
         verbose_name=_("State / Province / Region")
     )
     property_type = models.CharField(
         max_length=20,
         choices=PropertyType.choices,
-        # Remove the default to force the user to make an active choice
         verbose_name=_("Type of Property")
     )
 
@@ -93,10 +148,13 @@ class Property(models.Model):
         default=PropertyStatus.PENDING_APPROVAL,
         verbose_name=_("Status")
     )
-    search_vector = SearchVectorField(null=True, blank=True, editable=False)
+    search_vector = SearchVectorField(null=True, editable=False) # editable=False is a best practice
 
     added_by = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.SET_NULL, null=True, related_name="added_properties")
     created_at = models.DateTimeField(auto_now_add=True)
+
+    # Use our new, intelligent manager for all queries.
+    objects = PropertyManager()
 
     class Meta:
         verbose_name = _("Property")

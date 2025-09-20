@@ -33,7 +33,7 @@
   --bs-secondary: #5A6D7C;
   --bs-success: #28a745;
   --bs-danger: #E54D42;
-  --bs-warning: #F0AD4E;
+  --bs-warning: #f5c036;
   --bs-info: #4A90E2;
   --bs-dark: #2B3F4C;
   --bs-light: #f8f9fa;
@@ -41,7 +41,7 @@
   --bs-secondary-rgb: 90, 109, 124;
   --bs-success-rgb: 40, 167, 69;
   --bs-danger-rgb: 229, 77, 66;
-  --bs-warning-rgb: 240, 173, 78;
+  --bs-warning-rgb: 245, 192, 54;
   --bs-info-rgb: 74, 144, 226;
   --bs-dark-rgb: 43, 63, 76;
   --bs-light-rgb: 248, 249, 250;
@@ -49,7 +49,7 @@
   --bs-secondary-text-emphasis: #242c32;
   --bs-success-text-emphasis: #10431c;
   --bs-info-text-emphasis: #1e3a5a;
-  --bs-warning-text-emphasis: #60451f;
+  --bs-warning-text-emphasis: #624d16;
   --bs-danger-text-emphasis: #5c1f1a;
   --bs-light-text-emphasis: #495057;
   --bs-dark-text-emphasis: #495057;
@@ -57,7 +57,7 @@
   --bs-secondary-bg-subtle: #dee2e5;
   --bs-success-bg-subtle: #d4edda;
   --bs-info-bg-subtle: #dbe9f9;
-  --bs-warning-bg-subtle: #fcefdc;
+  --bs-warning-bg-subtle: #fdf2d7;
   --bs-danger-bg-subtle: #fadbd9;
   --bs-light-bg-subtle: #fcfcfd;
   --bs-dark-bg-subtle: #ced4da;
@@ -65,7 +65,7 @@
   --bs-secondary-border-subtle: #bdc5cb;
   --bs-success-border-subtle: #a9dcb5;
   --bs-info-border-subtle: #b7d3f3;
-  --bs-warning-border-subtle: #f9deb8;
+  --bs-warning-border-subtle: #fbe6af;
   --bs-danger-border-subtle: #f5b8b3;
   --bs-light-border-subtle: #e9ecef;
   --bs-dark-border-subtle: #adb5bd;
@@ -145,7 +145,7 @@
   --bs-secondary-text-emphasis: #9ca7b0;
   --bs-success-text-emphasis: #7eca8f;
   --bs-info-text-emphasis: #92bcee;
-  --bs-warning-text-emphasis: #f6ce95;
+  --bs-warning-text-emphasis: #f9d986;
   --bs-danger-text-emphasis: #ef948e;
   --bs-light-text-emphasis: #f8f9fa;
   --bs-dark-text-emphasis: #dee2e6;
@@ -153,7 +153,7 @@
   --bs-secondary-bg-subtle: #121619;
   --bs-success-bg-subtle: #08210e;
   --bs-info-bg-subtle: #0f1d2d;
-  --bs-warning-bg-subtle: #302310;
+  --bs-warning-bg-subtle: #31260b;
   --bs-danger-bg-subtle: #2e0f0d;
   --bs-light-bg-subtle: #343a40;
   --bs-dark-bg-subtle: #1a1d20;
@@ -161,7 +161,7 @@
   --bs-secondary-border-subtle: #36414a;
   --bs-success-border-subtle: #186429;
   --bs-info-border-subtle: #2c5688;
-  --bs-warning-border-subtle: #90682f;
+  --bs-warning-border-subtle: #937320;
   --bs-danger-border-subtle: #892e28;
   --bs-light-border-subtle: #495057;
   --bs-dark-border-subtle: #343a40;
@@ -1567,13 +1567,13 @@ progress {
 
 .table-warning {
   --bs-table-color: #000;
-  --bs-table-bg: #fcefdc;
-  --bs-table-border-color: #cabfb0;
-  --bs-table-striped-bg: #efe3d1;
+  --bs-table-bg: #fdf2d7;
+  --bs-table-border-color: #cac2ac;
+  --bs-table-striped-bg: #f0e6cc;
   --bs-table-striped-color: #000;
-  --bs-table-active-bg: #e3d7c6;
+  --bs-table-active-bg: #e4dac2;
   --bs-table-active-color: #000;
-  --bs-table-hover-bg: #e9ddcc;
+  --bs-table-hover-bg: #eae0c7;
   --bs-table-hover-color: #000;
   color: var(--bs-table-color);
   border-color: var(--bs-table-border-color); }
@@ -2441,19 +2441,19 @@ textarea.form-control-lg {
 
 .btn-warning {
   --bs-btn-color: #000;
-  --bs-btn-bg: #F0AD4E;
-  --bs-btn-border-color: #F0AD4E;
+  --bs-btn-bg: #f5c036;
+  --bs-btn-border-color: #f5c036;
   --bs-btn-hover-color: #000;
-  --bs-btn-hover-bg: #f2b969;
-  --bs-btn-hover-border-color: #f2b560;
-  --bs-btn-focus-shadow-rgb: 204, 147, 66;
+  --bs-btn-hover-bg: #f7c954;
+  --bs-btn-hover-border-color: #f6c64a;
+  --bs-btn-focus-shadow-rgb: 208, 163, 46;
   --bs-btn-active-color: #000;
-  --bs-btn-active-bg: #f3bd71;
-  --bs-btn-active-border-color: #f2b560;
+  --bs-btn-active-bg: #f7cd5e;
+  --bs-btn-active-border-color: #f6c64a;
   --bs-btn-active-shadow: inset 0 3px 5px rgba(0, 0, 0, 0.125);
   --bs-btn-disabled-color: #000;
-  --bs-btn-disabled-bg: #F0AD4E;
-  --bs-btn-disabled-border-color: #F0AD4E; }
+  --bs-btn-disabled-bg: #f5c036;
+  --bs-btn-disabled-border-color: #f5c036; }
 
 .btn-info {
   --bs-btn-color: #000;
@@ -2568,19 +2568,19 @@ textarea.form-control-lg {
   --bs-gradient: none; }
 
 .btn-outline-warning {
-  --bs-btn-color: #F0AD4E;
-  --bs-btn-border-color: #F0AD4E;
+  --bs-btn-color: #f5c036;
+  --bs-btn-border-color: #f5c036;
   --bs-btn-hover-color: #000;
-  --bs-btn-hover-bg: #F0AD4E;
-  --bs-btn-hover-border-color: #F0AD4E;
-  --bs-btn-focus-shadow-rgb: 240, 173, 78;
+  --bs-btn-hover-bg: #f5c036;
+  --bs-btn-hover-border-color: #f5c036;
+  --bs-btn-focus-shadow-rgb: 245, 192, 54;
   --bs-btn-active-color: #000;
-  --bs-btn-active-bg: #F0AD4E;
-  --bs-btn-active-border-color: #F0AD4E;
+  --bs-btn-active-bg: #f5c036;
+  --bs-btn-active-border-color: #f5c036;
   --bs-btn-active-shadow: inset 0 3px 5px rgba(0, 0, 0, 0.125);
-  --bs-btn-disabled-color: #F0AD4E;
+  --bs-btn-disabled-color: #f5c036;
   --bs-btn-disabled-bg: transparent;
-  --bs-btn-disabled-border-color: #F0AD4E;
+  --bs-btn-disabled-border-color: #f5c036;
   --bs-gradient: none; }
 
 .btn-outline-info {
@@ -5642,8 +5642,8 @@ textarea.form-control-lg {
   color: RGBA(var(--bs-warning-rgb), var(--bs-link-opacity, 1)) !important;
   text-decoration-color: RGBA(var(--bs-warning-rgb), var(--bs-link-underline-opacity, 1)) !important; }
   .link-warning:hover, .link-warning:focus {
-    color: RGBA(243, 189, 113, var(--bs-link-opacity, 1)) !important;
-    text-decoration-color: RGBA(243, 189, 113, var(--bs-link-underline-opacity, 1)) !important; }
+    color: RGBA(247, 205, 94, var(--bs-link-opacity, 1)) !important;
+    text-decoration-color: RGBA(247, 205, 94, var(--bs-link-underline-opacity, 1)) !important; }
 
 .link-info {
   color: RGBA(var(--bs-info-rgb), var(--bs-link-opacity, 1)) !important;
@@ -9417,7 +9417,7 @@ textarea.form-control-lg {
   .review-card-home .review-ratings {
     font-size: 0.9rem; }
     .review-card-home .review-ratings .star-rating {
-      color: #F0AD4E;
+      color: #f5c036;
       letter-spacing: 2px; }
   .review-card-home .card-footer {
     border-top: 1px solid rgba(43, 63, 76, 0.05); }
@@ -9803,10 +9803,10 @@ textarea.form-control-lg {
     transition: color 0.2s ease;
     padding: 0 0.1em; }
     .review-composer-card .star-rating-input label:hover, .review-composer-card .star-rating-input label:hover ~ label {
-      color: #F0AD4E; }
+      color: #f5c036; }
   .review-composer-card .star-rating-input input[type="radio"]:checked + label,
   .review-composer-card .star-rating-input input[type="radio"]:checked ~ label {
-    color: #F0AD4E; }
+    color: #f5c036; }
 
 .review-guideline {
   background-color: #f4fbf8;
@@ -9817,6 +9817,67 @@ textarea.form-control-lg {
     font-size: 1.5rem;
     color: #21b576;
     opacity: 0.8; }
+
+.property-gallery-header {
+  background-color: #f8f9fa;
+  border-radius: 0.8rem;
+  padding: 2rem;
+  border: 1px solid rgba(90, 109, 124, 0.25); }
+  @media (min-width: 992px) {
+    .property-gallery-header {
+      padding: 2.5rem; } }
+.property-card {
+  display: block;
+  text-decoration: none;
+  color: #2B3F4C;
+  border-radius: 0.8rem;
+  box-shadow: 0 0.5rem 1rem rgba(43, 63, 76, 0.1);
+  overflow: hidden;
+  transition: all 0.3s ease;
+  height: 100%; }
+  .property-card:hover {
+    transform: translateY(-8px) scale(1.02);
+    box-shadow: 0 1rem 3rem rgba(43, 63, 76, 0.175); }
+  .property-card .card-img-wrapper {
+    position: relative;
+    aspect-ratio: 4 / 3; }
+    .property-card .card-img-wrapper img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover; }
+    .property-card .card-img-wrapper .card-img-overlay {
+      background: linear-gradient(to top, rgba(43, 63, 76, 0.9) 0%, rgba(43, 63, 76, 0) 70%);
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-end;
+      padding: 1.25rem; }
+  .property-card .card-body {
+    padding: 1.25rem; }
+  .property-card .card-title {
+    font-weight: 600;
+    color: #fff;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis; }
+  .property-card .card-location {
+    color: #5A6D7C;
+    font-size: 0.9rem; }
+  .property-card .card-reputation {
+    font-weight: 500;
+    display: flex;
+    align-items: center; }
+    .property-card .card-reputation .fa-star {
+      color: #f5c036; }
+  .property-card .card-new-badge {
+    display: inline-block;
+    font-size: 0.8rem;
+    font-weight: 600;
+    padding: 0.4em 0.8em;
+    background-color: #e9f8f1;
+    color: #21b576;
+    border-radius: 0.3rem; }
+    .property-card .card-new-badge i {
+      margin-right: 0.5em; }
 
 /* // 3. (Optional) Add any other custom site-wide styles here later.
 body {

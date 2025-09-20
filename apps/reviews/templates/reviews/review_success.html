@@ -16,11 +16,14 @@
                     </div>
 
                     <!-- The New, Aspirational Copy -->
-                    <h1 class="display-5 fw-bold">{% trans "Thanks for Sharing your Experience" %}</h1>
+                    <h1 class="display-5 fw-bold">{% trans "You're a Community Hero!" %}</h1>
                     <p class="lead text-muted">
                         {% blocktrans %}
-                        To ensure we maintain a high-quality, trustworthy community, all reviews are published after a quick quality check, usually within 24 hours.
+                        Thank you for telling the story of your home. Every honest review is a light that helps guide someone else on their journey to a peaceful place of rest.
                         {% endblocktrans %}
+                    </p>
+                    <p class="small text-muted mt-3">
+                        {% trans "Our team will quickly review your contribution to ensure it meets our community guidelines before publishing." %}
                     </p>
                     
                     <hr class="my-4">
@@ -34,7 +37,7 @@
                             <!-- Case 1: The User is NOT verified -->
                             <h2 class="h3 fw-bold">{% trans "Make Your Review Stand Out!" %}</h2>
                             <p class="mb-3">
-                                {% trans "Get a 'Verified' badge. It's a free, one-time verification that helps everyone trust your insights." %}
+                                {% trans "Get a 'Verified Reviewer' badge on this review and all future contributions. It's a one-time, free process that helps the community trust your insights." %}
                             </p>
                             
                             <a href="{% url 'phone_add' %}" class="btn btn-primary btn-lg rounded-pill px-5 py-3">
@@ -46,9 +49,7 @@
                         {% else %}
                             <!-- Case 2: The User is ALREADY verified -->
                             {% comment %} <h2 class="h3 fw-bold">{% trans "You are a Trusted Voice" %}</h2> {% endcomment %}
-                            <p class="mb-3">
-                                {% trans "You are a Verified Reviewer. Your feedback carries extra weight on ShelterTree." %}
-                            </p>
+                            <p class="lead">{% trans "Your 'Verified Reviewer' badge will be displayed with this review." %}</p>
                             <a href="{% url 'reviews:property-detail' pk=review.unit.property.pk %}" class="btn btn-primary rounded-pill px-5 py-3">
                                 {% trans "Back to the Property Page" %}
                             </a>

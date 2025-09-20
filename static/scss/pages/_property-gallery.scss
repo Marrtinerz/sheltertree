@@ -1,0 +1,105 @@
+// ====================================================================
+// STYLES FOR THE PROPERTY LIST / GALLERY PAGE
+// This file controls the look and feel of the main property discovery hub.
+// ====================================================================
+
+// --- 1. The Header & Search Section ---
+// This styles the container that holds the main headline and search bar.
+.property-gallery-header {
+  background-color: $light;
+  border-radius: $border-radius-lg;
+  padding: 2rem;
+  border: 1px solid $border-color;
+
+  @media (min-width: 992px) {
+    padding: 2.5rem; // More generous padding on larger screens
+  }
+}
+
+
+// --- 2. The Main Property Card Component ---
+// This is the core of the gallery design.
+.property-card {
+  display: block; // Make the whole card a single block link
+  text-decoration: none;
+  color: $dark;
+  border-radius: $border-radius-lg;
+  box-shadow: $box-shadow;
+  overflow: hidden; // Keeps the image corners rounded
+  transition: all 0.3s ease;
+  height: 100%; // Critical for making cards in the same row equal height
+
+  // The premium hover effect
+  &:hover {
+    transform: translateY(-8px) scale(1.02);
+    box-shadow: $box-shadow-lg;
+  }
+
+  // --- The Image Wrapper ---
+  // This container ensures all images have a consistent shape and size.
+  .card-img-wrapper {
+    position: relative;
+    // Use aspect-ratio for a consistent 4:3 image shape and to prevent layout shift
+    aspect-ratio: 4 / 3;
+
+    img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover; // Ensures the image covers the area without distortion
+    }
+
+    // The gradient overlay at the bottom of the image
+    .card-img-overlay {
+      background: linear-gradient(to top, rgba($dark, 0.9) 0%, rgba($dark, 0) 70%);
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-end;
+      padding: 1.25rem;
+    }
+  }
+
+  // --- The Card Body ---
+  .card-body {
+    padding: 1.25rem;
+  }
+
+  .card-title {
+    font-weight: 600;
+    color: #fff; // The title is now on the image overlay
+    // Truncate long property names with an ellipsis for a clean look
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .card-location {
+    color: $secondary;
+    font-size: 0.9rem;
+  }
+
+  .card-reputation {
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+
+    .fa-star {
+      color: $warning; // Use our theme's star color
+    }
+  }
+
+  // --- The "Newly Added" Badge ---
+  // This is for properties that have no reviews yet.
+  .card-new-badge {
+    display: inline-block;
+    font-size: 0.8rem;
+    font-weight: 600;
+    padding: 0.4em 0.8em;
+    background-color: tint-color($primary, 90%);
+    color: $primary;
+    border-radius: $border-radius-sm;
+    
+    i {
+      margin-right: 0.5em;
+    }
+  }
+}
