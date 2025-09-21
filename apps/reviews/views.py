@@ -168,85 +168,183 @@ class PropertyListView(ListView):
         return context
 
 
-class PropertyDetailView(LoginRequiredMixin, DetailView):
+UNIT_BUTTON_DISPLAY_COUNT = 3
+
+# Now, update the HTMX view to do the same
+def get_unit_reviews(request, property_pk, unit_pk):
     """
-    Displays the details of a single property and its reviews.
-    KEY CHANGE: This view now calculates an "At a Glance" summary for the property.
+    This HTMX view now renders a LARGER partial that includes the filters.
     """
-    model = Property
+    property_obj = get_object_or_404(Property, pk=property_pk)
+    
+    # --- THE NEW SEARCH LOGIC ---
+    unit_query = request.GET.get('unit_q', '') # Get the search query from the URL
+    
+    all_units = PropertyUnit.objects.filter(property=property_obj)
+    
+    if unit_query:
+        # If there's a search, filter the units by the identifier
+        all_units = all_units.filter(unit_identifier__icontains=unit_query)
+    
+    active_unit = get_object_or_404(PropertyUnit, pk=unit_pk)
+    
+    all_reviews_grouped = get_annotated_reviews_for_property(property_obj, request.user)
+    reviews_for_unit = all_reviews_grouped.get(active_unit, [])
+    
+    context = {
+        'property': property_obj,
+        'units': all_units,
+        'reviews': reviews_for_unit,
+        'active_unit': active_unit, # Pass the active unit to the partial
+        'unit_query': unit_query, # Pass the query back to the template
+        'UNIT_BUTTON_DISPLAY_COUNT': UNIT_BUTTON_DISPLAY_COUNT, # Pass the setting
+        'unit_buttons': all_units[:UNIT_BUTTON_DISPLAY_COUNT],
+        'unit_dropdown_items': all_units[UNIT_BUTTON_DISPLAY_COUNT:],
+        'units': all_units, # Still needed for the 'Add My Unit' button
+    }
+    
+    # --- RENDER THE NEW, LARGER PARTIAL ---
+    return render(request, 'reviews/partials/_review_hub_content.html', context)
+
+# ====================================================================
+# 1. The World-Class Helper Function
+# This function encapsulates all complex review-fetching logic.
+# ====================================================================
+def get_annotated_reviews_for_property(property_obj, user):
+    """
+    The single source of truth for fetching and preparing reviews for display.
+
+    This function is architected for high performance:
+    1.  Fetches all approved reviews for a property in one query, efficiently
+        joining the author data with `select_related`.
+    2.  Annotates each review with its helpful/unhelpful vote counts in the same query.
+    3.  Fetches the current user's votes in a second, efficient query.
+    4.  Attaches the user's vote to each review object in Python.
+    
+    Returns a dictionary of {unit: [annotated_reviews]}.
+    """
+    # Step 1 & 2: Fetch and annotate all reviews, including author data.
+    # --- THE RESTORED LOGIC ---
+    # `select_related('author')` is a critical performance optimization that
+    # prevents a separate database query for every single review's author.
+    all_reviews = Review.objects.filter(
+        unit__property=property_obj,
+        status=ReviewStatus.APPROVED
+    ).select_related('author').annotate(
+        helpful_votes=Count('votes', filter=Q(votes__value=1)),
+        unhelpful_votes=Count('votes', filter=Q(votes__value=-1))
+    ).order_by('-created_at')
+
+    # Step 3: Get the current user's votes.
+    user_votes_map = {}
+    if user.is_authenticated:
+        user_votes = Vote.objects.filter(
+            review__in=all_reviews,
+            user=user
+        ).values('review_id', 'value')
+        user_votes_map = {vote['review_id']: vote['value'] for vote in user_votes}
+    
+    # Step 4: Attach the user's vote to each review.
+    for review in all_reviews:
+        review.user_vote_value = user_votes_map.get(review.id)
+
+    # Step 5: Group the fully prepared reviews by unit.
+    reviews_by_unit = defaultdict(list)
+    for review in all_reviews:
+        reviews_by_unit[review.unit].append(review)
+            
+    return dict(reviews_by_unit)
+
+
+# ====================================================================
+# 2. The Full, Corrected, and World-Class Class-Based View
+# ====================================================================
+class PropertyDetailView(DetailView):
+    """
+    The definitive, world-class view for the Property Dashboard.
+    It is now fully context-aware, ensuring the correct users can see
+    the correct property states, while remaining highly performant.
+    """
+    # We no longer define a static queryset here, as it needs to be dynamic.
     template_name = 'reviews/property_detail.html'
     context_object_name = 'property'
 
     def get_queryset(self):
         """
-        Ensures that non-approved properties cannot be accessed via a direct URL guess.
+        This is the new, world-class method for fetching the correct properties.
+        It is context-aware based on the user's role and is the single
+        source of truth for accessing a Property object.
         """
-        return Property.objects.filter(status=PropertyStatus.APPROVED)
+        # Start with our high-performance, annotated queryset. This is the base
+        # for all user types, ensuring reputation data is always available.
+        base_queryset = Property.objects.with_reputation_data()
+
+        # Case 1: The user is an admin or staff member. They can see everything.
+        if self.request.user.is_staff:
+            return base_queryset
+        
+        # Case 2: The user is an authenticated, regular user.
+        if self.request.user.is_authenticated:
+            # They can see all APPROVED properties OR any property they personally added,
+            # regardless of its current status.
+            return base_queryset.filter(
+                Q(status=PropertyStatus.APPROVED) | Q(added_by=self.request.user)
+            ).distinct()
+        
+        # Case 3: The user is anonymous (not logged in).
+        # They can ONLY see approved properties.
+        return base_queryset.filter(status=PropertyStatus.APPROVED)
 
     def get_context_data(self, **kwargs):
         """
-        Extends the context to add an aggregated review summary and to efficiently
-        pre-calculate vote counts and the current user's vote for each review.
+        This method is now built upon our robust get_queryset. It correctly
+        preserves all the efficient data-fetching logic from your previous version.
         """
         context = super().get_context_data(**kwargs)
-        property_instance = self.get_object()
+        property_obj = self.get_object()
 
-        # --- 1. Summary Calculation (This part remains unchanged and is correct) ---
+        # --- Logic from your previous version (preserved and correct) ---
+        
+        # 1. Get ALL units for this property to power the filter buttons.
+        all_units = PropertyUnit.objects.filter(property=property_obj)
+        
+        # --- THE CRITICAL FIX ---
+        # Prepare the two lists directly in the view using Python's powerful slicing.
+        context['unit_buttons'] = all_units[:UNIT_BUTTON_DISPLAY_COUNT]
+        context['unit_dropdown_items'] = all_units[UNIT_BUTTON_DISPLAY_COUNT:]
+        
+        # This original context variable is still useful for the 'Add My Unit' button
+        context['units'] = all_units 
+
+        # 2. Get all APPROVED and fully annotated reviews for this property.
+        reviews_by_unit = get_annotated_reviews_for_property(property_obj, self.request.user)
+        context['reviews_by_unit'] = reviews_by_unit
+        
+        # 3. For the initial display, get reviews for the first unit.
+        first_unit = all_units.first()
+        if first_unit:
+            context['reviews'] = reviews_by_unit.get(first_unit, [])
+            context['active_unit'] = first_unit
+        else:
+            context['reviews'] = []
+            context['active_unit'] = None
+
+        # 4. Explicitly calculate and pass the summary data for the "At a Glance" card.
         summary_data = Review.objects.filter(
-            unit__property=property_instance,
+            unit__property=property_obj, 
             status=ReviewStatus.APPROVED
         ).aggregate(
-            average_security=Avg('security_rating'),
-            average_electricity=Avg('electricity_rating'),
-            average_water=Avg('water_rating'),
-            average_management=Avg('management_rating'),
-            average_roads=Avg('road_network_rating'),
-            average_mobile=Avg('mobile_network_rating'),
-            total_reviews=Count('id')
+            avg_security=Avg('security_rating'),
+            avg_electricity=Avg('electricity_rating'),
+            avg_water=Avg('water_rating'),
+            avg_management=Avg('management_rating'),
+            avg_roads=Avg('road_network_rating'),
+            avg_mobile=Avg('mobile_network_rating'),
         )
-        if summary_data['total_reviews'] > 0:
-            averages = [v for v in summary_data.values() if isinstance(v, float)]
-            summary_data['overall_average'] = sum(averages) / len(averages) if averages else 0
-        else:
-            summary_data['overall_average'] = 0
         context['summary'] = summary_data
-
-
-        # --- 2. THE FIX: Fetch annotated reviews and group them by unit ---
-
-        # First, get all approved reviews for the property, with vote counts annotated.
-        # This is the single source of truth for our reviews.
-        all_reviews_for_property = Review.objects.filter(
-            unit__property=property_instance,
-            status=ReviewStatus.APPROVED
-        ).annotate(
-            helpful_votes=Count('votes', filter=Q(votes__value=1)),
-            unhelpful_votes=Count('votes', filter=Q(votes__value=-1))
-        ).order_by('-created_at')
-
-        # Get the user's vote for each of these reviews
-        if self.request.user.is_authenticated:
-            user_votes = Vote.objects.filter(
-                review__in=all_reviews_for_property,
-                user=self.request.user
-            ).values('review_id', 'value')
-            user_votes_map = {vote['review_id']: vote['value'] for vote in user_votes}
-        else:
-            user_votes_map = {}
-        
-        # Attach the user's vote to each review object
-        for review in all_reviews_for_property:
-            review.user_vote_value = user_votes_map.get(review.id)
-
-        # Now, group these fully-prepared reviews by their unit.
-        # This prevents the template from making new, un-annotated DB queries.
-        reviews_by_unit = defaultdict(list)
-        for review in all_reviews_for_property:
-            reviews_by_unit[review.unit].append(review)
+        # context['unit_query'] = '' # On initial load, the query is empty
+        context['UNIT_BUTTON_DISPLAY_COUNT'] = UNIT_BUTTON_DISPLAY_COUNT
             
-        # Add the grouped data to the context. The key is the Unit object itself.
-        context['reviews_by_unit'] = dict(reviews_by_unit)
-        
         return context
 
 
@@ -521,3 +619,51 @@ class RequestReviewComingSoonView(CreateView):
         # We explicitly set the feature name on the backend.
         form.instance.feature_name = "The Taproot"
         return super().form_valid(form)
+    
+
+def search_units_htmx(request, property_pk):
+    """
+    A dedicated HTMX view that returns ONLY the list of filtered units
+    for the dropdown. This is our "scalpel".
+    """
+    property_obj = get_object_or_404(Property, pk=property_pk)
+    unit_query = request.GET.get('unit_q', '')
+    
+    # We start with all units and filter if there's a query.
+    units = PropertyUnit.objects.filter(property=property_obj)
+    if unit_query:
+        units = units.filter(unit_identifier__icontains=unit_query)
+    
+    # We also need to know which unit is currently active to highlight it.
+    active_unit_pk = request.GET.get('active_unit_pk')
+    
+    context = {
+        'property': property_obj,
+        'unit_dropdown_items': units, # We only need the list for the dropdown
+        'active_unit_pk': int(active_unit_pk) if active_unit_pk else None,
+    }
+    
+    # Render a new, tiny partial template.
+    return render(request, 'reviews/partials/_unit_dropdown_list.html', context)
+
+def get_unit_dropdown_content(request, property_pk):
+    """
+    An HTMX-powered view that returns an HTML fragment containing the
+    ENTIRE content for the "More Units" dropdown, ensuring it is always reset.
+    """
+    property_obj = get_object_or_404(Property, pk=property_pk)
+    all_units = PropertyUnit.objects.filter(property=property_obj)
+    
+    # Get the currently active unit to pass down for highlighting
+    active_unit_pk = request.GET.get('active_unit_pk')
+    
+    context = {
+        'property': property_obj,
+        'unit_buttons': all_units[:UNIT_BUTTON_DISPLAY_COUNT],
+        'unit_dropdown_items': all_units[UNIT_BUTTON_DISPLAY_COUNT:],
+        'active_unit_pk': int(active_unit_pk) if active_unit_pk else None,
+        'unit_query': '', # The search query is always reset
+    }
+    
+    # Render a new, larger partial template for the dropdown content.
+    return render(request, 'reviews/partials/_unit_dropdown_content.html', context)

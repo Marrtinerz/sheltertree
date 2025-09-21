@@ -1,0 +1,17 @@
+{% load i18n %}
+
+<li class="rating-bar-item mb-3">
+    <div class="d-flex justify-content-between mb-1">
+        <span class="rating-label">{% translate label %}</span>
+        <span class="rating-value">{{ insight.label }}</span>
+    </div>
+    <div class="progress">
+        <div class="progress-bar {{ insight.class }}" 
+             role="progressbar" 
+             style="width: {{ insight.percentage }}%" 
+             aria-valuenow="{{ insight.score }}" 
+             aria-valuemin="0" 
+             aria-valuemax="5">
+        </div>
+    </div>
+</li>

@@ -1,0 +1,61 @@
+{% load i18n %}
+{% load static %}
+{% load review_tags %}
+
+<!-- ==================================================================== -->
+<!-- THE NEW, UNIFIED "AT A GLANCE" COMPONENT                             -->
+<!-- ==================================================================== -->
+<div class="card summary-card">
+    <div class="card-header">
+        <h5 class="mb-0"><i class="fas fa-chart-bar me-2"></i>{% trans "At a Glance" %}</h5>
+    </div>
+
+    <!-- The Map is now INSIDE the card -->
+    <div class="map-container">
+        {% if property.latitude and property.longitude and MAPBOX_ACCESS_TOKEN %}
+            <!-- 
+                THE CRITICAL FIX FOR JAVASCRIPT:
+                We give each map a UNIQUE ID to prevent conflicts.
+            -->
+            <div id="{{ map_id }}" style="height: 100%; width: 100%;"></div>
+        {% else %}
+            <div class="d-flex align-items-center justify-content-center h-100 bg-light">
+                <p class="text-muted m-0"><i class="fas fa-map-marked-alt me-2"></i>{% trans "Map not available" %}</p>
+            </div>
+        {% endif %}
+    </div>
+
+    <div class="card-body p-4">
+        {% if property.review_count > 0 %}
+            
+            <!-- Overall Rating Display -->
+            <div class="text-center mb-4 pb-3 border-bottom">
+                {% get_rating_insight property.overall_average_rating as overall_insight %}
+                <span class="badge {{ overall_insight.class }} {{ overall_insight.text }} fs-6 rounded-pill">{{ overall_insight.label }}</span>
+                <h4 class="display-4 fw-bold mb-0">{{ property.overall_average_rating|floatformat:1 }}<span class="fs-5 text-muted">/5</span></h4>
+                <p class="text-muted small">
+                    {% blocktrans count count=property.review_count %}
+                    from {{ count }} review
+                    {% plural %}
+                    from {{ count }} reviews
+                    {% endblocktrans %}
+                </p>
+            </div>
+
+            <!-- Detailed Rating Bars List -->
+            <ul class="list-unstyled">
+                {% rating_bar "Security" summary.avg_security|default:0.0 %}
+                {% rating_bar "Electricity" summary.avg_electricity|default:0.0 %}
+                {% rating_bar "Water Supply" summary.avg_water|default:0.0 %}
+                {% rating_bar "Management" summary.avg_management|default:0.0 %}
+                {% rating_bar "Road Network" summary.avg_roads|default:0.0 %}
+                {% rating_bar "Mobile Network" summary.avg_mobile|default:0.0 %}
+            </ul>
+
+        {% else %}
+            <div class="text-center p-3">
+                <p class="mb-0 text-muted">{% trans "No reviews have been submitted yet for this property." %}</p>
+            </div>
+        {% endif %}
+    </div>
+</div>

@@ -31,7 +31,7 @@ class PropertyUnitInline(admin.TabularInline):
 @admin.register(Property)
 class PropertyAdmin(admin.ModelAdmin):
     actions = ['make_approved', 'make_rejected', 'make_removed']
-    list_display = ('name', 'city', 'country', 'created_at', 'added_by', 'status')
+    list_display = ('name', 'address', 'status', 'city', 'country', 'created_at', 'added_by')
     list_filter = ('status', 'country', 'city')
     search_fields = ('name', 'address', 'google_place_id', 'added_by__username')
     inlines = [PropertyUnitInline]
@@ -137,10 +137,19 @@ class ReviewAdmin(admin.ModelAdmin):
     readonly_fields = ('created_at', 'get_property_link', 'pros', 'cons', 'author', 'security_rating', 'electricity_rating', 'water_rating', 'mobile_network_rating', 'road_network_rating', 'management_rating')
     fields = ('unit', 'get_property_link', 'author', 'security_rating', 'electricity_rating', 'water_rating', 'mobile_network_rating', 'road_network_rating', 'management_rating', 'pros', 'cons', 'is_author_phone_verified', 'status', 'created_at')
 
-    @admin.display(description=_('Parent Property'))
+    
+    @admin.display(description=_('Parent Property'), ordering='unit__property__name')
     def get_property_link(self, obj):
+        """
+        Displays a link to the parent property, now using the robust
+        get_admin_display_name() method to ensure it's never empty.
+        """
+        # --- THE CRITICAL FIX IS HERE ---
+        # We now call our intelligent helper method instead of the raw .name field.
+        display_name = obj.unit.property.get_admin_display_name()
+        
         link = reverse("admin:reviews_property_change", args=[obj.unit.property.id])
-        return format_html('<a href="{}">{}</a>', link, obj.unit.property.name)
+        return format_html('<a href="{}">{}</a>', link, display_name)
 
     @admin.action(description=_('Approve selected reviews (content checked)'))
     def approve_reviews(self, request, queryset):

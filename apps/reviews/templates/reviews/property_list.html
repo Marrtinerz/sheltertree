@@ -1,6 +1,7 @@
 {% extends "base.html" %}
 {% load i18n %}
 {% load static %}
+{% load review_tags %}
 
 {% block title %}{% trans "Browse Properties" %} | ShelterTree{% endblock %}
 
@@ -53,7 +54,7 @@
                         {% endif %}
 
                         <div class="card-img-overlay">
-                            <h5 class="card-title text-white mb-0">{{ property.name }}</h5>
+                           <h5 class="card-title text-white mb-0">{{ property|truncate_address }}</h5>
                         </div>
                     </div>
                     

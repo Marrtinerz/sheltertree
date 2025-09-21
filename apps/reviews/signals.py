@@ -6,24 +6,30 @@ from .models import Property, Review, PropertyStatus
 @receiver(post_save, sender=Property)
 def update_property_search_vector(sender, instance, **kwargs):
     """
-    A signal handler that correctly updates the search_vector for a Property
-    instance after it has been saved, avoiding both recursion and FieldError.
+    A robust, world-class signal handler that correctly updates the search_vector
+    for a Property instance after it has been saved, avoiding both recursion and FieldError.
     """
     # --- The Correct and Final Pattern ---
     
-    # 1. Temporarily disconnect the signal to prevent an infinite loop when we save again.
+    # 1. Temporarily disconnect the signal to prevent an infinite loop.
     post_save.disconnect(update_property_search_vector, sender=Property)
 
-    # 2. Calculate the search vector using a query that supports joins (.annotate).
-    #    We operate on a queryset for the specific instance.
-    vector = SearchVector('name', 'address', 'city', 'state__name', 'country__name')
-    
-    # 3. Update the specific instance's search_vector field in the database.
-    #    We use .update() which is efficient and does not trigger another signal.
-    Property.objects.filter(pk=instance.pk).update(search_vector=vector)
+    try:
+        # 2. Calculate the search vector using a query that supports joins (.annotate).
+        # We operate on a queryset for the specific instance.
+        property_with_vector = Property.objects.filter(pk=instance.pk).annotate(
+            vector=SearchVector('name', 'address', 'city', 'state__name', 'country__name')
+        ).first()
 
-    # 4. Reconnect the signal for future saves on other instances.
-    post_save.connect(update_property_search_vector, sender=Property)
+        if property_with_vector:
+            # 3. Update the specific instance's search_vector field in the database
+            # with the pre-calculated value. This query does NOT contain joins.
+            Property.objects.filter(pk=instance.pk).update(
+                search_vector=property_with_vector.vector
+            )
+    finally:
+        # 4. Reconnect the signal for future saves.
+        post_save.connect(update_property_search_vector, sender=Property)
 
 
 @receiver(post_save, sender=Review)

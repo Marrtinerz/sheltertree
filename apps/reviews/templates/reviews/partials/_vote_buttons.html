@@ -1,5 +1,5 @@
 <!-- templates/reviews/partials/_vote_buttons.html (Corrected) -->
-<div class="review-footer mt-3" id="review-vote-{{ review.pk }}">
+<div class="review-footer" id="review-vote-{{ review.pk }}">
     <small class="text-muted">Was this review helpful?</small>
     
     <form hx-post="{% url 'reviews:vote_on_review' review.pk %}" hx-target="#review-vote-{{ review.pk }}" hx-swap="outerHTML" class="d-inline">

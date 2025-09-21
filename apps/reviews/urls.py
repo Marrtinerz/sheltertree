@@ -33,6 +33,9 @@ urlpatterns = [
     path('property/unit/<int:unit_pk>/add-review/', views.AddReviewView.as_view(), name='add-review-to-unit'),
     path('review/<int:review_pk>/vote/', views.vote_on_review, name='vote_on_review'),
     path('review/success/<int:review_pk>/', views.ReviewSuccessView.as_view(), name='review_success'),
+    path('property/<int:property_pk>/unit-reviews/<int:unit_pk>/', views.get_unit_reviews, name='get_unit_reviews'),
+    path('property/<int:property_pk>/search-units/', views.search_units_htmx, name='search_units_htmx'),
+    path('property/<int:property_pk>/unit-dropdown/', views.get_unit_dropdown_content, name='get_unit_dropdown'),
     
     
     # --- LOCATIONS ---

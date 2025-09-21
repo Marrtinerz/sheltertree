@@ -48,11 +48,11 @@ class OverallRating(models.IntegerChoices):
     EXCELLENT = 5, _('Excellent')
 
 class ResidenceLength(models.IntegerChoices):
-    LESS_THAN_6_MONTHS = 6, _("Less than 6 months")
+    LESS_THAN_6_MONTHS = 6, _("less than 6 months")
     SIX_MONTHS_TO_1_YEAR = 12, _("6 months to 1 year")
     ONE_TO_2_YEARS = 24, _("1 - 2 years")
     TWO_TO_4_YEARS = 48, _("2 - 4 years")
-    OVER_4_YEARS = 60, _("More than 4 years")
+    OVER_4_YEARS = 60, _("more than 4 years")
 
 
 class PropertyQuerySet(models.QuerySet):
@@ -163,8 +163,72 @@ class Property(models.Model):
             GinIndex(fields=['search_vector'])
         ]
 
+    
+    def get_admin_display_name(self, max_length=50):
+        """
+        The definitive method for generating a clean display name FOR THE ADMIN.
+        If the name is missing, it provides a clean, truncated version of the address.
+        """
+        if self.name and self.name.strip(): # Check that the name is not just whitespace
+            return self.name
+        
+        # Fallback to the address
+        if self.address and len(self.address) > max_length:
+            return f"{self.address[:max_length].strip()}..."
+        elif self.address:
+            return self.address
+        
+        # Absolute fallback in case both are missing for some reason
+        return f"Property #{self.pk}"
+
+    # --- THIS IS THE CORRECTED __str__ METHOD ---
     def __str__(self):
-        return f"{self.name} [{self.get_status_display()}]"
+        """
+        The string representation used throughout the Django Admin.
+        It now correctly uses our new helper method for a clean and
+        always-informative display.
+        """
+        # Get the clean, reliable display name from our helper method.
+        display_name = self.get_admin_display_name()
+        
+        # Return the final, formatted string.
+        return f"{display_name} [{self.get_status_display()}]"
+    
+    
+    def get_display_name(self, truncate_address=False, max_length=35):
+        """
+        The definitive, site-wide method for displaying the property's name.
+        It is now context-aware.
+
+        :param truncate_address: If True, fall back to a truncated address.
+        :param max_length: The max length for the truncated address.
+        """
+        if self.name:
+            return self.name
+        
+        if truncate_address:
+            # This path is for list/card views
+            if len(self.address) > max_length:
+                return f"{self.address[:max_length].strip()}..."
+            return self.address
+        
+        # This path is for page headings (<h1>) and other full-page contexts
+        return _("Unnamed Property")
+
+
+    def get_title_name(self):
+        """
+        The definitive method for generating a browser title.
+        If the name is missing, it returns a truncated version of the address
+        to ensure the title is always informative and clean.
+        """
+        if self.name:
+            return self.name
+        
+        # Truncate the address to a reasonable length for a title tag
+        if len(self.address) > 45:
+            return f"{self.address[:45]}..."
+        return self.address
 
 
 class PropertyUnit(models.Model):
@@ -178,7 +242,12 @@ class PropertyUnit(models.Model):
         verbose_name_plural = _("Property Units")
 
     def __str__(self):
-        return f"{self.unit_identifier}, {self.property.name}"
+        """
+        Provides a context-rich string representation for the admin.
+        """
+        # --- THE PREMIUM UPGRADE ---
+        # It now includes the parent property's admin display name.
+        return f"{self.unit_identifier} ({self.property.get_admin_display_name()})"
 
 
 class Review(models.Model):
@@ -234,6 +303,24 @@ class Review(models.Model):
         # Handle the case where the author has been deleted
         author_name = self.author.username if self.author else "Anonymous"
         return f"Review by {author_name} for {self.unit} [{self.get_status_display()}]"
+    
+    def get_overall_rating(self):
+        """
+        Calculates the average rating for this specific review instance.
+        Returns the average as a float, or 0.0 if no ratings are present.
+        """
+        ratings = [
+            self.security_rating, self.electricity_rating, self.water_rating,
+            self.management_rating, self.road_network_rating, self.mobile_network_rating
+        ]
+        
+        # Filter out None values in case some ratings are optional
+        valid_ratings = [r for r in ratings if r is not None]
+        
+        if not valid_ratings:
+            return 0.0
+            
+        return sum(valid_ratings) / len(valid_ratings)
     
 
 class Vote(models.Model):

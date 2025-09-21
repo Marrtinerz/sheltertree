@@ -1,157 +1,186 @@
 {% extends "base.html" %}
 {% load i18n %}
-{% load review_tags %}
+{% load static %}
+{% load review_tags %} <!-- Our custom tag for the "Verified" badge -->
+{% load status_tags %}
 
-{% block title %}{{ property.name }} | ShelterTree{% endblock %}
+{% block title %}{{ property.get_title_name }} | ShelterTree{% endblock %}
 
 {% block content %}
-<div class="container mt-4">
-    <!-- ================================================================= -->
-    <!-- Layer 1a: Property Header & Map Section                         -->
-    <!-- ================================================================= -->
-    <div class="card mb-4">
-        <div class="card-body">
-            <h1 class="card-title">{{ property.name }}</h1>
-            <h6 class="card-subtitle mb-2 text-muted">{{ property.get_property_type_display }}</h6>
-            <p class="card-text mb-1">{{ property.address }}</p>
-            {% comment %} {% if property.city %}
-                <p class="card-text text-muted">{{ property.city }}, {{ property.state }} {{ property.postal_code }}, {{ property.country }}</p>
-            {% endif %} {% endcomment %}
-        </div>
+<div class="container my-5">
+    <div class="row g-lg-5">
 
-        {# --- GRACEFUL MAP HANDLING --- #}
-        {% if property.latitude and property.longitude %}
-            <div id="map" style="height: 400px; width: 100%;"></div>
-        {% else %}
-            <div class="card-footer text-center text-muted">
-                {% trans "Map data is not available for this property." %}
-            </div>
-        {% endif %}
-    </div>
+        <!-- ==================================================================== -->
+        <!-- 1. Main Content Column (70% width on desktop)                      -->
+        <!-- ==================================================================== -->
+        <div class="col-lg-8">
+            
 
-    <!-- ================================================================= -->
-    <!-- Layer 1b: The "At a Glance" Property-Wide Summary               -->
-    <!-- ================================================================= -->
-    <div class="card mb-4">
-        <div class="card-header">
-            <h3 class="mb-0">{% trans "Property At a Glance" %}</h3>
-        </div>
-        <div class="card-body">
-            {% if summary.total_reviews > 0 %}
-                <div class="row align-items-center text-center">
-                    <div class="col-md-4 border-end">
-                        <h4 class="display-4 fw-bold">{{ summary.overall_average|floatformat:1 }} <span class="fs-5 text-muted">/ 5</span></h4>
-                        <p class="text-muted">{% blocktrans with count=summary.total_reviews %}Based on {{ count }} approved reviews{% endblocktrans %}</p>
-                    </div>
-                    <div class="col-md-8">
-                        <div class="row">
-                            <div class="col-6 text-start ps-4">{% trans "Security" %}:</div>
-                            <div class="col-6 text-end pe-4"><span class="badge bg-primary rounded-pill fs-6">{{ summary.average_security|floatformat:1 }} / 5</span></div>
-                            <div class="col-6 text-start ps-4">{% trans "Electricity" %}:</div>
-                            <div class="col-6 text-end pe-4"><span class="badge bg-primary rounded-pill fs-6">{{ summary.average_electricity|floatformat:1 }} / 5</span></div>
-                            <div class="col-6 text-start ps-4">{% trans "Water" %}:</div>
-                            <div class="col-6 text-end pe-4"><span class="badge bg-primary rounded-pill fs-6">{{ summary.average_water|floatformat:1 }} / 5</span></div>
-                            <div class="col-6 text-start ps-4">{% trans "Management" %}:</div>
-                            <div class="col-6 text-end pe-4"><span class="badge bg-primary rounded-pill fs-6">{{ summary.average_management|floatformat:1 }} / 5</span></div>
-                            <div class="col-6 text-start ps-4">{% trans "Roads" %}:</div>
-                            <div class="col-6 text-end pe-4"><span class="badge bg-primary rounded-pill fs-6">{{ summary.average_roads|floatformat:1 }} / 5</span></div>
-                            <div class="col-6 text-start ps-4">{% trans "Mobile Network" %}:</div>
-                            <div class="col-6 text-end pe-4"><span class="badge bg-primary rounded-pill fs-6">{{ summary.average_mobile|floatformat:1 }} / 5</span></div>
-                        </div>
+            <!-- ==================================================================== -->
+            <!-- THE NEW, WORLD-CLASS STATUS BANNER                                 -->
+            <!-- This block only appears if the property is NOT approved.           -->
+            <!-- ==================================================================== -->
+            {% if property.status != 'APPROVED' %}
+                <div class="alert alert-warning d-flex align-items-center mb-4" role="alert">
+                    <i class="fas fa-exclamation-triangle fa-2x me-3"></i>
+                    <div>
+                        <h4 class="alert-heading">
+                            {% status_badge property.status %}
+                        </h4>
+                        <p class="mb-0">
+                            {% if property.status == 'PENDING' %}
+                                {% trans "This property is currently awaiting approval. It is only visible to you and our moderation team." %}
+                            {% else %}
+                                {% trans "This submission requires attention. It is currently not visible to the public." %}
+                            {% endif %}
+                        </p>
                     </div>
                 </div>
-            {% else %}
-                <p class="text-center text-muted">{% trans "There are no approved reviews for this property yet. Be the first to share your experience!" %}</p>
             {% endif %}
-        </div>
-    </div>
 
-    <!-- ================================================================= -->
-    <!-- Call to Action for Flow 2 (Add New Unit)                        -->
-    <!-- ================================================================= -->
-    <div class="card mb-4">
-        <div class="card-body text-center">
-            <h5 class="card-title">{% trans "Share Your Experience" %}</h5>
-            <p class="card-text">{% trans "Is your unit not listed below? Add it here." %}</p>
-            <a href="{% url 'reviews:add-unit-and-review' property_pk=property.pk %}" class="btn btn-primary btn-lg">
-                + {% trans "Add Your Unit & Review" %}
-            </a>
-        </div>
-    </div>
 
-    <!-- Layer 2 & 3: Unit-by-Unit Grouping & Individual Review Cards    -->
-    <!-- ================================================================= -->
-    <div class="card">
-        <div class="card-header">
-            <h2>{% trans "Units & Reviews" %}</h2>
-        </div>
-        <div class="list-group list-group-flush">
-            {% for unit, reviews_list in reviews_by_unit.items %}
-                <div class="list-group-item">
-                    <div class="d-flex w-100 justify-content-between align-items-center mb-3">
-                        <h4 class="mb-0">{% trans "Unit:" %} {{ unit.unit_identifier }}</h4>
-                        <a href="{% url 'reviews:add-review-to-unit' unit_pk=unit.pk %}" class="btn btn-sm btn-outline-primary">+ {% trans "Review this unit" %}</a>
+            <!-- The New Property Header -->
+            <section class="property-header mb-4">
+                <span class="text-primary fw-bold small text-uppercase">{{ property.get_property_type_display }}</span>
+                <h1 class="display-5 fw-bold">{{ property.get_display_name }}</h1>
+                <p class="property-meta text-muted mb-3">
+                    <i class="fas fa-map-marker-alt fa-fw me-1"></i>{{ property.address }}
+                </p>
+                
+                <!-- 
+                    The overall rating is displayed prominently in the header.
+                    It uses the pre-calculated `overall_average_rating` from our
+                    world-class `with_reputation_data` manager method.
+                -->
+                {% if property.review_count > 0 %}
+                    <div class="d-flex align-items-center">
+                        <span class="badge bg-primary rounded-pill fs-6 me-2 overall-rating-badge">
+                            <i class="fas fa-star me-1"></i>{{ property.overall_average_rating|floatformat:1 }}
+                        </span>
+                        <span class="text-muted">
+                            {% blocktrans count count=property.review_count %}
+                            from {{ count }} verified review
+                            {% plural %}
+                            from {{ count }} verified reviews
+                            {% endblocktrans %}
+                        </span>
                     </div>
+                {% else %}
+                    <div class="badge bg-primary rounded-pill fs-6 me-2 overall-rating-badge">
+                        <i class="fas fa-sparkles"></i> {% trans "Newly Added" %}
+                    </div>
+                {% endif %}
+            </section>
+            
+            <!-- ==================================================================== -->
+            <!-- THE CRITICAL MOBILE-FIRST REORDERING                               -->
+            <!-- This block is placed here in the code, but will be reordered     -->
+            <!-- on desktop by Bootstrap's ordering classes.                      -->
+            <!-- ==================================================================== -->
+            <div class="d-lg-none">
+                <hr class="my-4">
+                <section id="mobile-summary-section">
+                    <!-- Include the component with the mobile map ID -->
+                    {% include 'reviews/partials/_at_a_glance_card.html' with map_id='map-mobile' %}
+                </section>
+                <hr class="my-4">
+            </div>
 
-                    {% for review in reviews_list %}
-                        {# The 'if review.status == 'APPROVED'' check is no longer needed here, #}
-                        {# because the view has already pre-filtered them. #}
-                        <div class="review-card mb-3 p-3 border rounded">
-                            <span>
-                                {% verification_badge review %}
-                            </span>
-                            <p>
-                                <strong class="text-muted">{% trans "Reviewed by:" %}</strong> {{ review.author.username }}
-                                <span class="mx-2 text-muted">•</span>
-                                <em class="text-muted">{% trans "Posted:" %} {{ review.created_at|date:"F j, Y" }}</em>
-                            </p>
-                            <p>
-                                <strong>{% trans "Lived here for:" %}</strong>
-                                <span class="badge bg-secondary">{{ review.get_residence_length_display }}</span>
-                            </p>
-                            <div class="row">
-                                <div class="col-md-6">
-                                    <h5>{% trans "Pros" %} 👍</h5>
-                                    <p>{{ review.pros|linebreaksbr }}</p>
-                                </div>
-                                <div class="col-md-6">
-                                    <h5>{% trans "Cons" %} 👎</h5>
-                                    <p>{{ review.cons|linebreaksbr }}</p>
-                                </div>
-                            </div>
-                            {% include 'reviews/partials/_vote_buttons.html' with review=review helpful_votes=review.helpful_votes unhelpful_votes=review.unhelpful_votes user_vote_value=review.user_vote_value %}
-                        </div>
-                    {% empty %}
-                        <p class="text-muted ps-3">{% trans "No approved reviews for this unit yet." %}</p>
-                    {% endfor %}
+            <hr class="my-4 my-lg-5 d-none d-lg-block">
+
+            <!-- =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-= -->
+            <!-- STAGE 3: The Interactive Review Hub                                   -->
+            <!-- This entire section provides a dynamic, HTMX-powered experience.      -->
+            <!-- -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=- -->
+            <section id="review-hub" class="review-hub">
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <h2 class="h3 fw-bold mb-0">{% trans "Community Reviews" %}</h2>
+                    <div class="htmx-indicator spinner-border spinner-border-sm text-primary" role="status">
+                        <span class="visually-hidden">Loading...</span>
+                    </div>
                 </div>
-            {% empty %}
-                <div class="list-group-item">
-                    <p class="text-center text-muted">{% trans "No units have been added to this property yet." %}</p>
+
+                <!-- 
+                    THE CRITICAL FIX: This is our main container and HTMX swap target.
+                    On initial load, it includes our new component. On subsequent clicks,
+                    HTMX will replace the entire content of this div.
+                -->
+                <div id="review-hub-content">
+                    {% include 'reviews/partials/_review_hub_content.html' with units=units reviews=reviews active_unit=active_unit property=property %}
                 </div>
-            {% endfor %}
+
+            </section>
+            <!-- ==================================================================== -->
+
+
+            <!-- ==================================================================== -->
+            <!-- STAGE 4: The "Taproot" Preview                                       -->
+            <!-- This is a strategic placeholder and lead-generation tool.            -->
+            <!-- ==================================================================== -->
+            <section id="taproot-preview" class="mt-5">
+                <div class="taproot-preview-card text-center">
+                    <div class="taproot-icon mb-3">
+                        <i class="fas fa-comments-question"></i> <!-- A custom icon can be designed for "Taproot" later -->
+                    </div>
+                    <h3 class="fw-bold">{% trans "Have a Specific Question?" %}</h3>
+                    <p class="lead text-muted">
+                        {% trans "Sometimes reviews don't cover the one detail you need to know." %}
+                    </p>
+                    <hr class="my-4">
+                    <p>
+                        {% blocktrans %}
+                        Introducing <strong>The Taproot</strong> — our upcoming community Q&A hub. It's a place to dig deeper, ask anything, and get the foundational truths about this property from those who know it best.
+                        {% endblocktrans %}
+                    </p>
+                    <div class="mt-4">
+                        <a href="{% url 'reviews:request_review_coming_soon' %}" class="btn btn-primary">
+                            <i class="fas fa-bell me-2"></i>{% trans "Notify Me When It's Ready" %}
+                        </a>
+                    </div>
+                </div>
+            </section>
+
+        </div>
+
+        <!-- ==================================================================== -->
+        <!-- 2. Secondary "Sticky" Column (30% width on desktop)                -->
+        <!-- ==================================================================== -->
+        <div class="col-lg-4 d-none d-lg-block">
+            <div class="sidebar-sticky">
+                <!-- Include the component with the desktop map ID -->
+                {% include 'reviews/partials/_at_a_glance_card.html' with map_id='map-desktop' %}
+            </div>
         </div>
     </div>
 </div>
 {% endblock %}
 
-
 {% block extra_js %}
-{# This entire script block is only rendered if the coordinates exist #}
-{% if property.latitude and property.longitude and MAPBOX_ACCESS_TOKEN %}
-    <script src="https://api.mapbox.com/mapbox-gl-js/v2.15.0/mapbox-gl.js"></script>
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            mapboxgl.accessToken = '{{ MAPBOX_ACCESS_TOKEN }}';
-            const map = new mapboxgl.Map({
-                container: 'map',
-                style: 'mapbox://styles/mapbox/streets-v11',
-                center: [{{ property.longitude }}, {{ property.latitude }}],
-                zoom: 15
+    {% if property.latitude and property.longitude and MAPBOX_ACCESS_TOKEN %}
+        <script src="https://api.mapbox.com/mapbox-gl-js/v2.15.0/mapbox-gl.js"></script>
+        <script>
+            document.addEventListener('DOMContentLoaded', function() {
+                // --- THE WORLD-CLASS JAVASCRIPT FIX ---
+                // This function finds the visible map container, whether it's mobile or desktop.
+                function initializeMap(containerId) {
+                    const mapContainer = document.getElementById(containerId);
+                    if (!mapContainer) return; // Don't run if the container isn't visible
+
+                    mapboxgl.accessToken = '{{ MAPBOX_ACCESS_TOKEN }}';
+                    const map = new mapboxgl.Map({
+                        container: containerId, // Use the provided ID
+                        style: 'mapbox://styles/mapbox/streets-v11',
+                        center: [{{ property.longitude }}, {{ property.latitude }}],
+                        zoom: 15,
+                        interactive: false
+                    });
+                    new mapboxgl.Marker().setLngLat([{{ property.longitude }}, {{ property.latitude }}]).addTo(map);
+                }
+
+                // Initialize both maps. The JS will only find the one that's currently rendered in the DOM.
+                initializeMap('map-mobile');
+                initializeMap('map-desktop');
             });
-            new mapboxgl.Marker().setLngLat([{{ property.longitude }}, {{ property.latitude }}]).addTo(map);
-            map.addControl(new mapboxgl.NavigationControl());
-        });
-    </script>
-{% endif %}
+        </script>
+    {% endif %}
 {% endblock %}

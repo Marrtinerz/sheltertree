@@ -1,0 +1,110 @@
+{% load i18n %}
+{% load static %}
+{% load review_tags %}
+
+<!-- The Vertical Review Feed -->
+<div class="review-feed">
+    {% for review in reviews %}
+        
+        <!-- ==================================================================== -->
+        <!-- The Definitive, Premium "Insight Card"                             -->
+        <!-- ==================================================================== -->
+        <div class="card review-insight-card mb-4">
+            <!-- Card Header: The Author (Unchanged) -->
+            <div class="card-header d-flex align-items-center">
+                <img src="{{ review.author.get_avatar_url }}" class="rounded-0" alt="{{ review.author.username }}'s Avatar" width="40" height="40" style="object-fit: cover;">
+                <div class="ms-3">
+                    <h6 class="card-title mb-0">{{ review.author.get_display_name }}</h6>
+                    {% verification_badge review %}
+                </div>
+            </div>
+
+            <!-- Card Body: The Core Insights -->
+            <div class="card-body">
+                <!-- 1. The Meta Information Bar -->
+                <div class="review-meta-bar">
+                    <div class="meta-item mb-0">
+                        <i class="fas fa-star fa-fw me-2"></i>
+                        <strong>
+                            {% with overall_review_rating=review.get_overall_rating %}
+                                {{ overall_review_rating|floatformat:1 }} / 5.0
+                            {% endwith %}
+                        </strong> {% trans "Overall Rating" %}
+                    </div>
+                    <div class="meta-item">
+                        <i class="fas fa-clock fa-fw me-2"></i>
+                            {% trans "Lived here for" %}
+                        <span class="text-primary">
+                            {{ review.get_residence_length_display }}
+                        </span>
+                    </div>
+                </div>
+
+                <!-- 2. The Pros & Cons -->
+                <div class="review-body">
+                    <div class="row g-4">
+                        <div class="col-12">
+                            <h6 class="text-success small fw-bold"><i class="fas fa-plus-circle me-1"></i>{% trans "Pros" %}</h6>
+                            <p class="review-text mb-0">{{ review.pros|linebreaksbr }}</p>
+                        </div>
+                        <div class="col-12">
+                            <h6 class="text-danger smallx fw-bold"><i class="fas fa-minus-circle me-1"></i>{% trans "Cons" %}</h6>
+                            <p class="review-text mb-0">{{ review.cons|linebreaksbr }}</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Card Footer: Actions & Timestamp -->
+            <div class="card-footer">
+                <!-- Left Side: Secondary Metadata -->
+                <div class="footer-meta">
+                    <div class="meta-item" title="{% trans 'Posted Date' %}">
+                        <i class="fas fa-calendar-alt fa-fw me-1"></i>
+                        <span>{{ review.created_at|date:"F j, Y" }}</span>
+                    </div>
+                </div>
+
+                <!-- Right Side: Primary Actions (Voting) -->
+                <div class="footer-actions">
+                    {% include 'reviews/partials/_vote_buttons.html' with review=review helpful_votes=review.helpful_votes unhelpful_votes=review.unhelpful_votes user_vote_value=review.user_vote_value %}
+                </div>
+            </div>
+        </div>
+
+    {% empty %}
+        <div class="card bg-light border-0 p-4 text-center">
+            <p class="mb-0 text-muted">{% trans "No approved reviews for this unit yet. Be the first to share your experience!" %}</p>
+        </div>
+    {% endfor %}
+</div>
+
+
+<!-- The Intelligent Call to Action (Unchanged) -->
+<div class="review-cta p-4 text-center mt-4">
+    {% if unit %}
+        <h5 class="fw-bold">{% trans "Is this your unit?" %}</h5>
+        <p class="mb-3">{% trans "Help the community by sharing your experience for" %} <strong>{{ unit.unit_identifier }}</strong>.</p>
+        
+        <!-- THE FIX: Wrap the buttons in a flex container -->
+        <div class="d-flex justify-content-center flex-wrap gap-3">
+            <!-- The `me-2` is now removed from this button -->
+            <a href="{% url 'reviews:add-review-to-unit' unit_pk=unit.pk %}" class="btn btn-primary">
+                {% trans "Review this Unit" %}
+            </a>
+            <a href="{% url 'reviews:add-unit-and-review' property_pk=unit.property.pk %}" class="btn btn-outline-secondary">
+                {% trans "My unit isn't listed" %}
+            </a>
+        </div>
+
+    {% else %}
+        <!-- The CTA for properties with no units (Unchanged) -->
+        <h5 class="fw-bold">{% trans "Be the First to Review This Property" %}</h5>
+        <p class="mb-3">{% trans "No units have been added to this property yet. Add yours now to get the conversation started." %}</p>
+        <a href="{% url 'reviews:add-unit-and-review' property_pk=property.pk %}" class="btn btn-primary">
+            <i class="fas fa-plus-circle me-2"></i>{% trans "Add Your Unit & Review" %}
+        </a>
+    {% endif %}
+</div>
+
+<!-- The scroll button script is no longer needed and can be deleted -->

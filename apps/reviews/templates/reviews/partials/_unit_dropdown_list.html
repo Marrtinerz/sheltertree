@@ -1,0 +1,33 @@
+{% load i18n %}
+
+{% comment %}
+<!-- ==================================================================== -->
+<!-- This partial template now contains the "empty state" logic.        -->
+<!-- It is rendered by our surgical HTMX view: search_units_htmx        -->
+<!-- ==================================================================== -->
+{% endcomment %}
+
+{% for unit in unit_dropdown_items %}
+    <li>
+        <a class="dropdown-item {% if unit.pk == active_unit_pk %}active{% endif %}" href="#"
+           hx-get="{% url 'reviews:get_unit_reviews' property_pk=property.pk unit_pk=unit.pk %}"
+           hx-target="#review-hub-content"
+           hx-swap="innerHTML">{{ unit.unit_identifier }}</a>
+    </li>
+{% empty %}
+    <!-- ==================================================================== -->
+    <!-- THE WORLD-CLASS FIX: The "Smart Empty State"                         -->
+    <!-- This block is rendered only when the 'unit_dropdown_items' list is empty. -->
+    <!-- ==================================================================== -->
+    <li>
+        <p class="dropdown-item-text text-muted small px-3">
+            {% trans "No units match your search." %}
+        </p>
+    </li>
+    <li><hr class="dropdown-divider"></li>
+    <li>
+        <a class="dropdown-item fw-bold text-primary" href="{% url 'reviews:add-unit-and-review' property_pk=property.pk %}">
+            <i class="fas fa-plus-circle me-2"></i>{% trans "Add your unit now" %}
+        </a>
+    </li>
+{% endfor %}

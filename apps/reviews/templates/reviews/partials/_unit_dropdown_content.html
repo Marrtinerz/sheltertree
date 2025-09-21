@@ -1,0 +1,20 @@
+{% load i18n %}
+
+<!-- The Search Input -->
+<div class="mb-2">
+    <input type="search" class="form-control form-control-sm"
+           placeholder="{% trans 'Search for your unit...' %}"
+           name="unit_q"
+           value="{{ unit_query }}"
+           hx-get="{% url 'reviews:search_units_htmx' property_pk=property.pk %}"
+           hx-target="#unit-dropdown-list"
+           hx-vals='{"active_unit_pk": "{{ active_unit_pk }}"}'
+           hx-trigger="keyup changed delay:300ms"
+           hx-swap="innerHTML"
+           aria-label="Search units">
+</div>
+<!-- The Scrollable List container that the search input will update -->
+<ul class="list-unstyled mb-0" id="unit-dropdown-list" style="max-height: 200px; overflow-y: auto;">
+    <!-- On initial load, we include the list partial directly -->
+    {% include 'reviews/partials/_unit_dropdown_list.html' with unit_dropdown_items=unit_dropdown_items active_unit_pk=active_unit_pk property=property %}
+</ul>

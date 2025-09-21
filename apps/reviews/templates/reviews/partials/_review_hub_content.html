@@ -1,0 +1,81 @@
+{% load i18n %}
+{% load static %}
+{% load review_tags %}
+
+{% comment %}
+<!-- ==================================================================== -->
+<!-- 1. The Unit Filter Navigation & The "Add Unit" CTA                 -->
+<!-- This entire block is a single, cohesive flexbox container that     -->
+<!-- is re-rendered by HTMX when a main filter button is clicked.       -->
+<!-- ==================================================================== -->
+{% endcomment %}
+<div class="unit-filters mb-4 d-flex flex-wrap align-items-center gap-2">
+    {% if units %}
+        <!-- Display the first few units as prominent buttons -->
+        <!-- The 'unit_buttons' list is pre-sliced in the view -->
+        {% for unit in unit_buttons %}
+            <button class="btn {% if unit.pk == active_unit.pk %}btn-primary{% else %}btn-outline-secondary{% endif %}"
+                    hx-get="{% url 'reviews:get_unit_reviews' property_pk=property.pk unit_pk=unit.pk %}"
+                    hx-target="#review-hub-content"
+                    hx-swap="innerHTML"
+                    hx-indicator=".htmx-indicator">
+                {{ unit.unit_identifier }}
+            </button>
+        {% endfor %}
+        
+        <!-- If there are more units, create our interactive dropdown -->
+        <!-- The 'unit_dropdown_items' list is pre-sliced in the view -->
+        {% if unit_dropdown_items %}
+            <div class="dropdown d-inline-block">
+                <button class="btn btn-outline-secondary dropdown-toggle" type="button" 
+                        id="moreUnitsDropdown" data-bs-toggle="dropdown" 
+                        data-bs-auto-close="outside" data-bs-strategy="fixed" 
+                        aria-expanded="false">
+                    {% trans "More Units" %}
+                </button>
+                <div class="dropdown-menu p-2" aria-labelledby="moreUnitsDropdown" style="min-width: 250px;">
+                    <!-- The Live Search Input -->
+                    <div class="mb-2">
+                        <input type="search" class="form-control form-control-sm"
+                               placeholder="{% trans 'Search for your unit...' %}"
+                               name="unit_q"
+                               value="{{ unit_query }}"
+                               
+                               {% comment %} <!-- The World-Class "Surgical" HTMX Call --> {% endcomment %}
+                               hx-get="{% url 'reviews:search_units_htmx' property_pk=property.pk %}"
+                               hx-target="#unit-dropdown-list"
+                               hx-vals='{"active_unit_pk": "{{ active_unit.pk }}"}'
+                               hx-trigger="keyup changed delay:300ms"
+                               hx-swap="innerHTML"
+                               aria-label="Search units">
+                    </div>
+                    <!-- The Scrollable List container that HTMX will update -->
+                    <ul class="list-unstyled mb-0" id="unit-dropdown-list" style="max-height: 200px; overflow-y: auto;">
+                        <!-- On initial load, we include the partial directly -->
+                        {% include 'reviews/partials/_unit_dropdown_list.html' with unit_dropdown_items=unit_dropdown_items active_unit_pk=active_unit.pk property=property %}
+                    </ul>
+                </div>
+            </div>
+        {% endif %}
+
+        <!-- The "Add My Unit" Button, pushed to the right on desktop for a clean layout -->
+        <a href="{% url 'reviews:add-unit-and-review' property_pk=property.pk %}" class="btn btn-outline-primary ms-lg-auto">
+            <i class="fas fa-plus-circle me-2"></i>{% trans "My Unit Isn't Listed" %}
+        </a>
+
+    {% else %}
+        <!-- The empty state shown when a property has zero units -->
+        <p class="text-muted mb-0">{% trans "No units have been added for this property yet." %}</p>
+        <a href="{% url 'reviews:add-unit-and-review' property_pk=property.pk %}" class="btn btn-primary ms-lg-auto">
+            <i class="fas fa-plus-circle me-2"></i>{% trans "Be the first to add one!" %}
+        </a>
+    {% endif %}
+</div>
+
+{% comment %}
+<!-- ==================================================================== -->
+<!-- 2. The Review Feed                                                 -->
+<!-- This includes our premium, vertical feed of "Insight Cards".       -->
+<!-- ==================================================================== -->
+{% endcomment %}
+{% include 'reviews/partials/_review_feed.html' with reviews=reviews unit=active_unit property=property %}

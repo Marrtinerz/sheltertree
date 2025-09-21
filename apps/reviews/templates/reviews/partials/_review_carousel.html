@@ -1,0 +1,104 @@
+{% load i18n %}
+{% load static %}
+{% load review_tags %}
+
+<!-- The Horizontally Scrolling Review Carousel -->
+<div class="review-carousel-container mb-4">
+    <div class="review-carousel" id="reviewCarousel">
+        {% for review in reviews %}
+            <div class="review-card-wrapper">
+                
+                <!-- ==================================================================== -->
+                <!-- The New, Premium "Insight Card"                                    -->
+                <!-- ==================================================================== -->
+                <div class="card review-insight-card">
+                    <!-- Card Header: Author Info -->
+                    <div class="card-header d-flex align-items-center">
+                        <img src="{{ review.author.get_avatar_url }}" class="rounded-circle" alt="{{ review.author.username }}'s Avatar" width="40" height="40" style="object-fit: cover;">
+                        <div class="ms-3">
+                            <h6 class="card-title mb-0">{{ review.author.get_display_name }}</h6>
+                            <!-- The badge now shows for everyone -->
+                            {% verification_badge review %}
+                        </div>
+                    </div>
+
+                    <!-- Card Body: The Core Insights -->
+                    <div class="card-body review-body">
+                        <div class="row g-3">
+                            <!-- Pros -->
+                            <div class="col-12">
+                                <h6 class="text-success small text-uppercase fw-bold"><i class="fas fa-plus-circle me-1"></i>{% trans "Pros" %}</h6>
+                                <p class="review-text">{{ review.pros }}</p>
+                            </div>
+                            <!-- Cons -->
+                            <div class="col-12">
+                                <h6 class="text-danger small text-uppercase fw-bold"><i class="fas fa-minus-circle me-1"></i>{% trans "Cons" %}</h6>
+                                <p class="review-text">{{ review.cons }}</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Card Footer: Meta Info & Actions -->
+                    <div class="card-footer d-flex justify-content-between align-items-center">
+                        <div class="residence-length">
+                            <i class="fas fa-clock me-1"></i>
+                            <small>{{ review.get_residence_length_display }}</small>
+                        </div>
+                        <!-- The vote buttons are now cleanly separated -->
+                        {% include 'reviews/partials/_vote_buttons.html' with review=review helpful_votes=review.helpful_votes unhelpful_votes=review.unhelpful_votes user_vote_value=review.user_vote_value %}
+                    </div>
+                </div>
+
+            </div>
+        {% empty %}
+            <div class="col-12">
+                <div class="card bg-light border-0 p-4 text-center">
+                    <p class="mb-0 text-muted">{% trans "No approved reviews for this unit yet. Be the first to share your experience!" %}</p>
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+    
+    <!-- Custom Scroll Buttons (Unchanged) -->
+    {% if reviews|length > 2 %}
+    <button class="btn carousel-control prev d-none d-lg-block" onclick="scrollCarousel(-1)">&laquo;</button>
+    <button class="btn carousel-control next d-none d-lg-block" onclick="scrollCarousel(1)">&raquo;</button>
+    {% endif %}
+</div>
+
+<!-- ==================================================================== -->
+<!-- THE INTELLIGENT CALL TO ACTION                                       -->
+<!-- This now handles all possible states gracefully.                     -->
+<!-- ==================================================================== -->
+<div class="review-cta p-4 text-center">
+    {% if unit %}
+        <!-- STATE 1: A specific unit is selected -->
+        <h5 class="fw-bold">{% trans "Is this your unit?" %}</h5>
+        <p class="mb-3">{% trans "Help the community by sharing your experience for" %} <strong>{{ unit.unit_identifier }}</strong>.</p>
+        <a href="{% url 'reviews:add-review-to-unit' unit_pk=unit.pk %}" class="btn btn-primary me-2">
+            {% trans "Review this Unit" %}
+        </a>
+        <a href="{% url 'reviews:add-unit-and-review' property_pk=unit.property.pk %}" class="btn btn-outline-secondary">
+            {% trans "My unit isn't listed" %}
+        </a>
+    {% else %}
+        <!-- STATE 2: The property has no units yet -->
+        <h5 class="fw-bold">{% trans "Be the First to Review This Property" %}</h5>
+        <p class="mb-3">{% trans "No units have been added to this property yet. Add yours now to get the conversation started." %}</p>
+        <!-- This is the only logical action if there are no units -->
+        <a href="{% url 'reviews:add-unit-and-review' property_pk=property.pk %}" class="btn btn-primary">
+            <i class="fas fa-plus-circle me-2"></i>{% trans "Add Your Unit & Review" %}
+        </a>
+    {% endif %}
+</div>
+
+<!-- The scroll button script can be kept here or moved to the main template -->
+<script>
+    function scrollCarousel(direction) {
+        const carousel = document.getElementById('reviewCarousel');
+        if (carousel) {
+            const scrollAmount = carousel.offsetWidth * 0.8;
+            carousel.scrollBy({ left: scrollAmount * direction, behavior: 'smooth' });
+        }
+    }
+</script>
