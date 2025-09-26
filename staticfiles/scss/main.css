@@ -9537,6 +9537,13 @@ textarea.form-control-lg {
   box-shadow: 0 0.5rem 1rem rgba(43, 63, 76, 0.1);
   border: 1px solid rgba(90, 109, 124, 0.25); }
 
+.navbar-avatar {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2px solid rgba(0, 0, 0, 0.1); }
+
 .feature-showcase-page {
   padding-top: 2rem;
   padding-bottom: 2rem; }
@@ -9560,6 +9567,7 @@ textarea.form-control-lg {
     width: 100px;
     height: 100px;
     object-fit: cover;
+    border-radius: 50%;
     transition: all 0.2s ease; }
     .profile-header .profile-avatar:hover {
       transform: scale(1.1); }
@@ -9617,6 +9625,7 @@ textarea.form-control-lg {
     width: 100%;
     height: 100%;
     object-fit: cover;
+    border-radius: 50%;
     border: 4px solid #fff;
     box-shadow: 0 0.125rem 0.25rem rgba(43, 63, 76, 0.075); }
   .profile-avatar-uploader .upload-button {
@@ -9641,12 +9650,14 @@ textarea.form-control-lg {
   width: 100%;
   padding-top: 100%;
   position: relative;
+  border-radius: 50%;
   border: 3px solid transparent;
   cursor: pointer;
   transition: all 0.2s ease-in-out;
   box-shadow: 0 0.125rem 0.25rem rgba(43, 63, 76, 0.075); }
   .avatar-option-container:hover {
     transform: scale(1.05);
+    border-color: #f8f9fa;
     box-shadow: 0 0.5rem 1rem rgba(43, 63, 76, 0.1); }
   .avatar-option-container img {
     position: absolute;
@@ -9654,7 +9665,8 @@ textarea.form-control-lg {
     left: 0;
     width: 100%;
     height: 100%;
-    object-fit: cover; }
+    object-fit: cover;
+    border-radius: 50%; }
 
 .status-icon-circle {
   display: inline-flex;

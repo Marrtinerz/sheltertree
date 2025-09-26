@@ -12,7 +12,7 @@
         <div class="card review-insight-card mb-4">
             <!-- Card Header: The Author (Unchanged) -->
             <div class="card-header d-flex align-items-center">
-                <img src="{{ review.author.get_avatar_url }}" class="rounded-0" alt="{{ review.author.username }}'s Avatar" width="40" height="40" style="object-fit: cover;">
+                <img src="{{ review.author.get_avatar_url }}" class="rounded-circle" alt="{{ review.author.username }}'s Avatar" width="40" height="40" style="object-fit: cover;">
                 <div class="ms-3">
                     <h6 class="card-title mb-0">{{ review.author.get_display_name }}</h6>
                     {% verification_badge review %}

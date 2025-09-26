@@ -88,18 +88,23 @@
                     </li>
                     {% if user.is_authenticated %}
                         <li class="nav-item dropdown">
-                            <a class="nav-link dropdown-toggle" href="#" id="navbarUserDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                <i class="fas fa-user-circle me-1"></i>
-                                {{ user.get_short_name|default:user.username }}
+                            <a class="nav-link dropdown-toggle d-flex align-items-center" href="#" id="navbarUserDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                <!-- 
+                                    THE CRITICAL FIX:
+                                    The generic icon is replaced with the user's actual avatar.
+                                    We use our new .navbar-avatar class for perfect styling.
+                                -->
+                                <img src="{{ user.get_avatar_url }}" alt="{{ user.username }}'s Avatar" class="navbar-avatar me-2">
+                                <span class="">{{ user.get_short_name|default:user.username }}</span>
                             </a>
                             <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarUserDropdown">
                                 <li><a class="dropdown-item" href="{% url 'account_profile' %}">{% trans "My Profile & Settings" %}</a></li>
                                 <li><a class="dropdown-item" href="{% url 'my_contributions' %}">{% trans "My Contributions" %}</a></li>
                                 <li><hr class="dropdown-divider"></li>
-                                
+
                                 <li><a class="dropdown-item" href="{% url 'core:contact_us' %}">{% trans "Drop Feedback" %}</a></li>
                                 <li><hr class="dropdown-divider"></li>
-                                
+
                                 <li>
                                     <form method="post" action="{% url 'account_logout' %}" class="d-inline">
                                         {% csrf_token %}

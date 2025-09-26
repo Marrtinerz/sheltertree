@@ -39,3 +39,13 @@
   box-shadow: $box-shadow;
   border: 1px solid $border-color;
 }
+
+// --- THIS IS THE WORLD-CLASS AVATAR STYLE ---
+// It must exist inside this file.
+.navbar-avatar {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  object-fit: cover; // Prevents the image from being distorted
+  border: 2px solid rgba(0,0,0,0.1); // A subtle border for definition
+}

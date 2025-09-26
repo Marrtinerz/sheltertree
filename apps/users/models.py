@@ -158,7 +158,7 @@ class CustomUser(AbstractUser):
         from django.templatetags.static import static
         if self.avatar:
             return static(self.avatar)
-        return static('img/avatars/default_sprite.svg')
+        return static('img/avatars/default_sprite.jpg')
     
     def get_display_name(self):
         """

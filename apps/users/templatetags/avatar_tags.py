@@ -21,7 +21,7 @@ def get_avatar_sprites():
         files = os.listdir(sprite_dir_path)
         
         # Filter for SVG files and strip the '.svg' extension
-        sprite_names = [f.split('.')[0] for f in files if f.endswith('.svg')]
+        sprite_names = [f.split('.')[0] for f in files if f.endswith('.jpg')]
         
         return sprite_names # Return a sorted list for consistent order
     
