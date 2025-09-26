@@ -259,7 +259,7 @@ def get_annotated_reviews_for_property(property_obj, user):
 # ====================================================================
 # 2. The Full, Corrected, and World-Class Class-Based View
 # ====================================================================
-class PropertyDetailView(DetailView):
+class PropertyDetailView(LoginRequiredMixin, DetailView):
     """
     The definitive, world-class view for the Property Dashboard.
     It is now fully context-aware, ensuring the correct users can see

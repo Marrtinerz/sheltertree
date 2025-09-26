@@ -1,0 +1,49 @@
+// static/scss/pages/_help-center.scss
+
+.help-hero {
+  background: linear-gradient(rgba($primary, 0.1), rgba($light, 1));
+  padding: 4rem 0;
+  border-radius: $border-radius-lg;
+}
+
+// Custom styling for the Bootstrap Accordion
+.faq-accordion {
+  .accordion-item {
+    background-color: #fff;
+    border: 1px solid $border-color;
+    border-radius: $border-radius !important; // Override default
+    margin-bottom: 1rem;
+    box-shadow: $box-shadow-sm;
+
+    &:last-of-type {
+      margin-bottom: 0;
+    }
+  }
+
+  .accordion-header {
+    button.accordion-button {
+      font-weight: 600;
+      color: $dark;
+
+      &:not(.collapsed) {
+        background-color: tint-color($primary, 95%);
+        color: $primary;
+        box-shadow: none;
+      }
+
+      &:focus {
+        box-shadow: none;
+      }
+    }
+  }
+
+  .accordion-body {
+    font-size: 0.95rem;
+    line-height: 1.7;
+    color: $secondary;
+
+    a {
+      font-weight: 500;
+    }
+  }
+}

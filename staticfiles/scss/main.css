@@ -10057,6 +10057,37 @@ textarea.form-control-lg {
     max-width: 500px;
     color: #5A6D7C; }
 
+.help-hero {
+  background: linear-gradient(rgba(33, 181, 118, 0.1), #f8f9fa);
+  padding: 4rem 0;
+  border-radius: 0.8rem; }
+
+.faq-accordion .accordion-item {
+  background-color: #fff;
+  border: 1px solid rgba(90, 109, 124, 0.25);
+  border-radius: 0.5rem !important;
+  margin-bottom: 1rem;
+  box-shadow: 0 0.125rem 0.25rem rgba(43, 63, 76, 0.075); }
+  .faq-accordion .accordion-item:last-of-type {
+    margin-bottom: 0; }
+
+.faq-accordion .accordion-header button.accordion-button {
+  font-weight: 600;
+  color: #2B3F4C; }
+  .faq-accordion .accordion-header button.accordion-button:not(.collapsed) {
+    background-color: #f4fbf8;
+    color: #21b576;
+    box-shadow: none; }
+  .faq-accordion .accordion-header button.accordion-button:focus {
+    box-shadow: none; }
+
+.faq-accordion .accordion-body {
+  font-size: 0.95rem;
+  line-height: 1.7;
+  color: #5A6D7C; }
+  .faq-accordion .accordion-body a {
+    font-weight: 500; }
+
 /* // 3. (Optional) Add any other custom site-wide styles here later.
 body {
   background-color: $light; // Use your new theme color

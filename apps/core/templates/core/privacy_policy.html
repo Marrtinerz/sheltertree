@@ -1,21 +1,95 @@
 {% extends "base.html" %}
 {% load i18n %}
-{% block title %}{% trans "Privacy Policy" %} | ShelterTree {% endblock %}
+
+{% block title %}{% trans "Privacy Policy" %} | ShelterTree{% endblock %}
 
 {% block content %}
 <div class="container my-5">
     <div class="row">
         <div class="col-lg-8 mx-auto">
             <h1 class="mb-3">{% trans "Privacy Policy" %}</h1>
-            <p class="text-muted">{% trans "Last Updated: August 28, 2025" %}</p>
+            <p class="text-muted">{% trans "Last Updated: September 21, 2025" %}</p>
             <hr>
+
+            <p class="lead">{% blocktrans %}Your privacy is the foundation of the trust you place in our community. At ShelterTree, our mission is to help everyone find a peaceful and secure home. This policy explains what information we collect, how we use it to fulfill that mission, and the choices you have.{% endblocktrans %}</p>
+
             <h4 class="mt-4">{% trans "1. Information We Collect" %}</h4>
-            <p>{% trans "[Placeholder for information collection details...]" %}</p>
+            <p>{% trans "To provide our service, we collect information in a few different ways." %}</p>
+            
+            <p><strong>A. Information You Provide Directly</strong></p>
+            <ul>
+                <li><strong>{% trans "Account Information:" %}</strong> {% blocktrans %}When you create an account, we collect your username, email address, and a securely hashed password.{% endblocktrans %}</li>
+                <li><strong>{% trans "Profile Information:" %}</strong> {% blocktrans %}After signing up, you have the option to provide your first name, last name, user type (Renter or Homeowner), home country, and choose a "Shelter Sprite" avatar. This information helps personalize your experience.{% endblocktrans %}</li>
+                <li><strong>{% trans "Public Content:" %}</strong> {% blocktrans %}The core of ShelterTree is community content. We collect the information you publicly post, including property details, reviews (pros, cons, and ratings), questions, and answers.{% endblocktrans %}</li>
+                <li><strong>{% trans "Communications:" %}</strong> {% blocktrans %}When you contact us through our feedback form, sign up for a feature waitlist, or communicate with us in any other way, we collect the information you provide, such as your email address and/or WhatsApp number.{% endblocktrans %}</li>
+            </ul>
+
+            <p><strong>B. Information Collected Automatically</strong></p>
+            <ul>
+                <li><strong>{% trans "Log & Usage Data:" %}</strong> {% blocktrans %}Like most websites, our servers automatically record information when you use ShelterTree, including your IP address, browser type, operating system, and the pages you visit. We use this to secure and improve our service.{% endblocktrans %}</li>
+                <li><strong>{% trans "Cookies:" %}</strong> {% blocktrans %}We use cookies (small text files stored by your browser) to keep you logged in and to understand how you use our site. You can control these through your browser settings.{% endblocktrans %}</li>
+            </ul>
+
+            <p><strong>C. Information from Third Parties</strong></p>
+            <ul>
+                <li><strong>{% trans "Social Login:" %}</strong> {% blocktrans %}If you sign up using a third-party service like Google, we will receive information from that service as permitted by your privacy settings with them, such as your name and email address.{% endblocktrans %}</li>
+                <li><strong>{% trans "Property Data:" %}</strong> {% blocktrans %}When you add a new property, we use the Google Places API to help autofill details like the address and coordinates. We store the permanent Google Place ID as a reference.{% endblocktrans %}</li>
+            </ul>
+
 
             <h4 class="mt-4">{% trans "2. How We Use Your Information" %}</h4>
-            <p>{% trans "[Placeholder for data usage details...]" %}</p>
+            <p>{% trans "We use your information to operate, improve, and secure our platform." %}</p>
+            <ul>
+                <li><strong>{% trans "To Provide and Maintain the Service:" %}</strong> {% blocktrans %}To display your reviews and profile, allow you to log in, and operate the core features of ShelterTree.{% endblocktrans %}</li>
+                <li><strong>{% trans "To Secure Your Account:" %}</strong> {% blocktrans %}To verify your identity through email confirmation and optional phone number verification.{% endblocktrans %}</li>
+                <li><strong>{% trans "To Communicate With You:" %}</strong> {% blocktrans %}To send you important service updates, security alerts, and, with your consent, to notify you about new features or ask for your feedback. You can opt-out of non-essential communications at any time.{% endblocktrans %}</li>
+                <li><strong>{% trans "To Improve Our Platform:" %}</strong> {% blocktrans %}By analyzing usage data, we can understand what features are popular and how to make ShelterTree better and more user-friendly.{% endblocktrans %}</li>
+            </ul>
 
-            <!-- Add more sections as needed -->
+
+            <h4 class="mt-4">{% trans "3. How We Share Your Information" %}</h4>
+            <p>{% trans "We only share your information in limited circumstances." %}</p>
+            <ul>
+                <li><strong>{% trans "Publicly on ShelterTree:" %}</strong> {% blocktrans %}Your public content, including your reviews, questions, answers, username, and chosen avatar, is visible to anyone who visits our site.{% endblocktrans %}</li>
+                <li><strong>{% trans "With Service Providers:" %}</strong> {% blocktrans %}We work with trusted third-party companies to help us operate, such as cloud hosting providers (like AWS or Google Cloud) and communication services (like Twilio or AfricasTalking to send verification codes). They are contractually obligated to protect your data.{% endblocktrans %}</li>
+                <li><strong>{% trans "For Legal Reasons:" %}</strong> {% blocktrans %}We may disclose your information if required by law or in response to a valid legal request.{% endblocktrans %}</li>
+            </ul>
+
+
+            <h4 class="mt-4">{% trans "4. Your Rights & Choices" %}</h4>
+            <p>{% trans "You are in control of your personal information." %}</p>
+            <ul>
+                <li><strong>{% trans "Access and Update:" %}</strong> {% blocktrans %}You can access and edit your profile information at any time through your "My Profile" page.{% endblocktrans %}</li>
+                <li><strong>{% trans "Account Deletion:" %}</strong> {% blocktrans %}You can request to delete your account by contacting us. Please note that while your personal profile information will be deleted, your anonymized reviews may be retained to continue helping the community.{% endblocktrans %}</li>
+                <li><strong>{% trans "Marketing Opt-Out:" %}</strong> {% blocktrans %}You will have a clear option to unsubscribe from any non-essential marketing emails we send.{% endblocktrans %}</li>
+            </ul>
+
+
+            <h4 class="mt-4">{% trans "5. Data Security" %}</h4>
+            <p>{% blocktrans %}We take the security of your data seriously and use standard technical measures, such as HTTPS encryption and password hashing, to protect it. However, no system is 100% secure, and we cannot guarantee the absolute security of your information.{% endblocktrans %}</p>
+
+
+            <h4 class="mt-4">{% trans "6. Children's Privacy" %}</h4>
+            <p>{% blocktrans %}ShelterTree is not intended for individuals under the age of 16. We do not knowingly collect personal information from children.{% endblocktrans %}</p>
+
+
+            <h4 class="mt-4">{% trans "7. Changes to This Policy" %}</h4>
+            <p>{% blocktrans %}We may update this policy from time to time. If we make significant changes, we will notify you by email or through a notice on our platform.{% endblocktrans %}</p>
+
+
+            <h4 class="mt-4">{% trans "8. Contact Us" %}</h4>
+            
+            <!-- 
+                THE WORLD-CLASS FIX:
+                1. We use `{% url ... as contact_url %}` to generate the URL and store it in a variable.
+                2. We can then safely use the `{{ contact_url }}` variable inside the `blocktrans` tag.
+            -->
+            {% url 'core:contact_us' as contact_url %}
+            <p>
+                {% blocktrans %}
+                If you have any questions about this Privacy Policy, please don't hesitate to <a href="{{ contact_url }}">contact us</a>.
+                {% endblocktrans %}
+            </p>
         </div>
     </div>
 </div>

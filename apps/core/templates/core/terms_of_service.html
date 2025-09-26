@@ -1,21 +1,66 @@
 {% extends "base.html" %}
 {% load i18n %}
-{% block title %}{% trans "Terms of Service" %} | ShelterTree {% endblock %}
+
+{% block title %}{% trans "Terms of Service" %} | ShelterTree{% endblock %}
 
 {% block content %}
 <div class="container my-5">
     <div class="row">
         <div class="col-lg-8 mx-auto">
             <h1 class="mb-3">{% trans "Terms of Service" %}</h1>
-            <p class="text-muted">{% trans "Last Updated: August 28, 2025" %}</p>
+            <p class="text-muted">{% trans "Last Updated: September 21, 2025" %}</p>
             <hr>
-            <h4 class="mt-4">{% trans "1. Introduction" %}</h4>
-            <p>{% trans "[Placeholder for introduction text...]" %}</p>
 
-            <h4 class="mt-4">{% trans "2. User Accounts" %}</h4>
-            <p>{% trans "[Placeholder for user account terms...]" %}</p>
+            <p class="lead">{% blocktrans %}Welcome to ShelterTree. By creating an account or using our platform ("Service"), you agree to be bound by these Terms of Service ("Terms") and our Privacy Policy. This is a binding legal agreement, so please read it carefully.{% endblocktrans %}</p>
 
-            <!-- Add more sections as needed -->
+            <h4 class="mt-4">{% trans "1. Our Service" %}</h4>
+            <p>{% blocktrans %}ShelterTree is a community platform designed to help people find peaceful and secure homes through honest, user-generated reviews, ratings, and community discussions ("Content"). Our service allows you to contribute by adding properties and sharing your experiences.{% endblocktrans %}</p>
+
+            <h4 class="mt-4">{% trans "2. Your Account" %}</h4>
+            <p>{% blocktrans %}You need an account to use ShelterTree. You are responsible for safeguarding your password and for all activities that occur under your account. You must be at least 16 years of age to use our Service.{% endblocktrans %}</p>
+
+            <h4 class="mt-4">{% trans "3. Your Content & Community Guidelines" %}</h4>
+            <p>{% blocktrans %}You are the heart of our community. The content you post helps everyone. By contributing, you agree to the following:{% endblocktrans %}</p>
+            
+            <p><strong>A. You Own Your Content:</strong> {% blocktrans %}You retain all ownership rights to the text and information you submit to the Service.{% endblocktrans %}</p>
+
+            <p><strong>B. Our License to Your Content:</strong> {% blocktrans %}By posting Content to ShelterTree, you grant us a perpetual, worldwide, non-exclusive, royalty-free license to use, display, reproduce, modify, adapt, publish, and distribute your Content. We need these rights to operate and promote the Service. For example, we need the right to display your review on a property page or feature it on our homepage.{% endblocktrans %}</p>
+
+            <p><strong>C. Community Rules:</strong> {% blocktrans %}You agree not to post Content that:{% endblocktrans %}</p>
+            <ul>
+                <li>{% trans "Is knowingly false, dishonest, or misleading." %}</li>
+                <li>{% trans "Is unlawful, defamatory, libelous, obscene, or hateful." %}</li>
+                <li>{% trans "Contains private or personally identifiable information of others without their consent." %}</li>
+                <li>{% trans "Is commercial in nature, such as spam or advertising." %}</li>
+                <li>{% trans "Infringes on the intellectual property rights of others." %}</li>
+            </ul>
+
+            <p><strong>D. Our Right to Moderate:</strong> {% blocktrans %}ShelterTree is a curated platform. We reserve the right, but do not have the obligation, to review, edit, or remove any Content that violates these Terms or that we otherwise believe is inappropriate, without notice.{% endblocktrans %}</p>
+
+            <h4 class="mt-4">{% trans "4. Prohibited Conduct" %}</h4>
+            <p>{% blocktrans %}You agree not to engage in any of the following prohibited activities:{% endblocktrans %}</p>
+            <ul>
+                <li>{% trans "Scraping, crawling, or using any automated means to access the Service for any purpose without our express written permission." %}</li>
+                <li>{% trans "Attempting to interfere with the proper working of the Service." %}</li>
+                <li>{% trans "Impersonating any person or entity, or misrepresenting your affiliation with a person or entity." %}</li>
+            </ul>
+
+            <h4 class="mt-4">{% trans "5. Disclaimers and Limitation of Liability" %}</h4>
+            <p><strong>{% blocktrans %}THE SERVICE IS PROVIDED "AS IS." ShelterTree makes no warranties, express or implied, regarding the Service and disclaims all warranties to the fullest extent permitted by law.{% endblocktrans %}</strong></p>
+            <p><strong>{% blocktrans %}ShelterTree is a platform for opinions. We are not a real estate brokerage and do not verify the accuracy of all user-generated content. You are responsible for your own decisions. We are not liable for any damages or losses related to your use of the Service.{% endblocktrans %}</strong></p>
+
+            <h4 class="mt-4">{% trans "6. Termination" %}</h4>
+            <p>{% blocktrans %}You can close your account at any time by contacting us. We may suspend or terminate your account at any time, without notice, if we believe you have violated these Terms.{% endblocktrans %}</p>
+
+            <h4 class="mt-4">{% trans "7. Governing Law" %}</h4>
+            <p>{% blocktrans %}These Terms shall be governed by the laws of Nigeria, without respect to its conflict of laws principles. You agree to submit to the personal jurisdiction of a court located in Lagos for any actions.{% endblocktrans %}</p>
+
+            <h4 class="mt-4">{% trans "8. Changes to These Terms" %}</h4>
+            <p>{% blocktrans %}We may revise these Terms from time to time. The most current version will always be on this page. If a revision is material, we will notify you by email or by a notice on the Service.{% endblocktrans %}</p>
+            
+            {% url 'core:contact_us' as contact_url %}
+            <p>{% blocktrans %}If you have any questions about these Terms, please <a href="{{ contact_url }}">contact us</a>.{% endblocktrans %}</p>
+
         </div>
     </div>
 </div>

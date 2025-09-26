@@ -1,29 +1,110 @@
 {% extends "base.html" %}
 {% load i18n %}
-{% block title %}{% trans "Help Center" %} | ShelterTree {% endblock %}
+
+{% block title %}{% trans "Help Center" %} | ShelterTree{% endblock %}
 
 {% block content %}
 <div class="container my-5">
-    <div class="text-center">
-        <h1 class="mb-3">{% trans "Help Center" %}</h1>
-        <p class="lead text-muted">{% trans "How can we help you?" %}</p>
+
+    <!-- 1. The Help Center Hero Section -->
+    <div class="help-hero text-center mb-5">
+        <h1 class="display-5 fw-bold">{% trans "Help & Support" %}</h1>
+        <p class="lead text-muted">{% trans "Your questions, answered. Find what you need to get the most out of ShelterTree." %}</p>
     </div>
-    <div class="row mt-5">
+
+    <!-- 2. The FAQ Accordion -->
+    <div class="row">
         <div class="col-lg-8 mx-auto">
-            <div class="accordion" id="faqAccordion">
+            <div class="accordion faq-accordion" id="faqAccordion">
+
+                <!-- FAQ 1: The "What is ShelterTree?" Question -->
                 <div class="accordion-item">
                     <h2 class="accordion-header" id="headingOne">
                         <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
-                            {% trans "How do I write a good review?" %}
+                            {% trans "What is ShelterTree's mission?" %}
                         </button>
                     </h2>
                     <div id="collapseOne" class="accordion-collapse collapse show" aria-labelledby="headingOne" data-bs-parent="#faqAccordion">
                         <div class="accordion-body">
-                            {% trans "[Placeholder for answer...]" %}
+                            {% url 'about_us' as about_url %}
+                            {% blocktrans %}
+                            Our mission is simple: to help everyone find a peaceful and secure home. We are a community-powered platform that provides honest, in-depth reviews of residential properties, empowering you with the transparent information you need to make one of life's most important decisions. You can learn more on our <a href="{{ about_url }}">About Us</a> page.
+                            {% endblocktrans %}
                         </div>
                     </div>
                 </div>
-                <!-- Add more accordion items for other FAQs -->
+
+                <!-- FAQ 2: The "How to Contribute" Question -->
+                <div class="accordion-item">
+                    <h2 class="accordion-header" id="headingTwo">
+                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
+                            {% trans "How do I write a great review?" %}
+                        </button>
+                    </h2>
+                    <div id="collapseTwo" class="accordion-collapse collapse" aria-labelledby="headingTwo" data-bs-parent="#faqAccordion">
+                        <div class="accordion-body">
+                            {% blocktrans %}
+                            The best reviews are honest, detailed, and respectful. Focus on your personal experience. Think about what you would want to know before moving in. A great review includes:
+                            <ul>
+                                <li><strong>Specific Details:</strong> Instead of "bad electricity," say "The power goes out 2-3 times a week for about an hour."</li>
+                                <li><strong>Balanced Perspective:</strong> Mention both the good (Pros) and the bad (Cons). Every property has both.</li>
+                                <li><strong>Actionable Insights:</strong> What is your final recommendation? Would you recommend a friend live here?</li>
+                            </ul>
+                            Remember, your story helps a real person find their next home.
+                            {% endblocktrans %}
+                        </div>
+                    </div>
+                </div>
+
+                <!-- FAQ 3: The "Trust & Safety" Question -->
+                <div class="accordion-item">
+                    <h2 class="accordion-header" id="headingThree">
+                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseThree" aria-expanded="false" aria-controls="collapseThree">
+                            {% trans "What does 'Verified Reviewer' mean?" %}
+                        </button>
+                    </h2>
+                    <div id="collapseThree" class="accordion-collapse collapse" aria-labelledby="headingThree" data-bs-parent="#faqAccordion">
+                        <div class="accordion-body">
+                            {% blocktrans %}
+                            Trust is at the core of ShelterTree. A "Verified Reviewer" badge indicates that a user has completed our optional phone number verification process. This provides an extra layer of confidence in the authenticity of their review. While all community reviews are valuable, the "Verified" badge is a signal of a contributor who has gone the extra step to confirm their identity.
+                            {% endblocktrans %}
+                        </div>
+                    </div>
+                </div>
+
+                <!-- FAQ 4: The "Moderation" Question -->
+                <div class="accordion-item">
+                    <h2 class="accordion-header" id="headingFour">
+                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseFour" aria-expanded="false" aria-controls="collapseFour">
+                            {% trans "Why is my property or review 'Pending Approval'?" %}
+                        </button>
+                    </h2>
+                    <div id="collapseFour" class="accordion-collapse collapse" aria-labelledby="headingFour" data-bs-parent="#faqAccordion">
+                        <div class="accordion-body">
+                            {% blocktrans %}
+                            To maintain the quality and integrity of our platform, all new property submissions and some reviews go through a brief moderation process by our team. This helps us prevent spam and ensure all content adheres to our Community Guidelines. We typically review submissions within 24-48 hours. You can check the status of all your submissions on your <a href="#">My Contributions</a> page.
+                            {% endblocktrans %}
+                        </div>
+                    </div>
+                </div>
+
+                <!-- FAQ 5: The "Contact" Question -->
+                <div class="accordion-item">
+                    <h2 class="accordion-header" id="headingFive">
+                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseFive" aria-expanded="false" aria-controls="collapseFive">
+                            {% trans "My question isn't answered here. How can I get help?" %}
+                        </button>
+                    </h2>
+                    <div id="collapseFive" class="accordion-collapse collapse" aria-labelledby="headingFive" data-bs-parent="#faqAccordion">
+                        <div class="accordion-body">
+                            {% url 'reviews:contact_us' as contact_url %}
+                            {% blocktrans %}
+                            We're here to help! If you have any other questions, have feedback, or need to report an issue, please visit our <a href="{{ contact_url }}">Contact Us</a> page. We read every submission and will get back to you as soon as possible.
+                            {% endblocktrans %}
+                        </div>
+                    </div>
+                </div>
+
             </div>
         </div>
     </div>
