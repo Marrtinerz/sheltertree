@@ -1,0 +1,82 @@
+// static/scss/components/_review-card.scss
+
+.review-insight-card {
+  border: 1px solid $border-color;
+  border-radius: $border-radius-lg;
+  box-shadow: $box-shadow-sm;
+  transition: all 0.3s ease;
+  height: 100%;
+  
+  &:hover {
+    // A more subtle hover for a vertical feed
+    border-color: rgba($primary, 0.4);
+    box-shadow: $box-shadow;
+  }
+
+  .card-body {
+    padding: 1.5rem; // Generous padding is key to the premium feel
+  }
+
+  .card-header {
+    background-color: transparent;
+    border-bottom: 1px solid $border-color;
+    padding: 1.5rem;
+    padding-bottom: 1rem;
+  }
+
+  .card-footer {
+    background-color: #fff; // A clean white background, not gray
+    border-top: 1px solid $border-color;
+    padding: 1.5rem 1.5rem; // Adjust padding for a sleeker feel
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap; // Allow items to wrap on very small screens
+    gap: 1rem; // Add a gap for spacing when items wrap
+
+    // The metadata items (Posted Date, Residence Length)
+    .footer-meta {
+      display: flex;
+      align-items: center;
+      gap: 1.5rem; // Space out the meta items
+      font-size: 0.85rem;
+      color: $secondary;
+      font-weight: 500;
+
+      .meta-item {
+        i {
+          opacity: 0.7; // Make the icons slightly more subtle
+        }
+      }
+    }
+  }
+
+  // A dedicated meta-info bar for the top of the card
+  .review-meta-bar {
+    display: flex;
+    flex-wrap: wrap; // Allows items to wrap on very small screens
+    gap: 1rem; // Consistent spacing between items
+    font-size: 0.9rem;
+    color: $secondary;
+    margin-bottom: 1rem;
+    padding-bottom: 1rem;
+    border-bottom: 1px solid $border-color;
+
+    .meta-item {
+      font-weight: 500;
+      i {
+        color: $primary;
+      }
+    }
+  }
+
+  // Styles for the main review text
+  .review-body {
+    .review-text {
+      font-size: 1rem;
+      line-height: 1.7;
+      
+      // We no longer need to truncate text in a vertical feed
+    }
+  }
+}

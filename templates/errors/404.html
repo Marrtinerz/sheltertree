@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+{% load i18n %}
+{% load static %}
+
+{% block title %}{% trans "Page Not Found (404)" %} | ShelterTree{% endblock %}
+
+{% block content %}
+<div class="error-page-container">
+    <img src="{% static 'img/brand/logo.svg' %}" alt="ShelterTree Logo" height="80" class="mb-4">
+    <h1 class="error-code">404</h1>
+    <h2 class="error-heading mt-3">{% trans "It seems you've taken a wrong turn." %}</h2>
+    <p class="error-message mt-3">
+        {% blocktrans %}
+        The page you're looking for doesn't seem to exist. It might have been moved, or the link you followed may be incorrect.
+        {% endblocktrans %}
+    </p>
+    <div class="mt-4">
+        <a href="{% url 'reviews:home' %}" class="btn btn-primary rounded-pill px-5 py-3">
+            <i class="fas fa-home me-2"></i>{% trans "Go to Homepage" %}
+        </a>
+    </div>
+</div>
+{% endblock %}

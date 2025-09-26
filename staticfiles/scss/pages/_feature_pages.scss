@@ -1,0 +1,26 @@
+// static/scss/pages/_feature_pages.scss
+
+.feature-showcase-page {
+  // Add some extra vertical spacing for a more "landing page" feel
+  padding-top: 2rem;
+  padding-bottom: 2rem;
+  
+  .sneak-peek-badge {
+    // Make the badge feel more special and deliberate
+    font-size: 0.9rem;
+    font-weight: 600;
+  }
+  
+  .card {
+    // Add extra padding inside the form card to make it feel more spacious and focused
+    .card-body {
+      padding: 2rem;
+    }
+  }
+
+  // Ensure the form inputs use our branded focus color
+  .form-control:focus {
+    border-color: $input-focus-border-color;
+    box-shadow: $input-focus-box-shadow;
+  }
+}

@@ -1,0 +1,39 @@
+// static/scss/pages/_add-property.scss
+
+.add-property-wizard {
+  .card-header {
+    background: $primary;
+    color: #fff;
+    padding: 2.7rem 1.7rem 2.5rem 1.7rem;
+
+    // --- THE VISIBILITY FIX ---
+    // This subtle shadow ensures the white text is perfectly readable
+    // // against the entire range of the green gradient.
+    // h1, p {
+    //   text-shadow: 0 2px 4px rgba($dark, 0.1);
+    // }
+  }
+
+  .form-path-selector {
+    // Styles for the "Search First" / "Enter Manually" buttons
+    .btn {
+      font-weight: 500;
+    }
+  }
+
+  // Styling for the Google Autocomplete dropdown
+  #suggestions-container {
+    .list-group-item {
+      padding: 0.75rem 1.25rem;
+      &.active {
+        background-color: $primary;
+        border-color: $primary;
+      }
+    }
+  }
+
+  // Subtle animation for showing/hiding form sections
+  .form-section {
+    transition: opacity 0.4s ease-in-out;
+  }
+}

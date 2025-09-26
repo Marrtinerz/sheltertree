@@ -1,0 +1,13 @@
+.form-control, .form-select {
+  border: 1px solid $border-color;
+  &:focus {
+    // These variables are from our Day 11 _variables.scss file
+    border-color: $input-focus-border-color;
+    box-shadow: $input-focus-box-shadow;
+  }
+}
+
+.form-label {
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+}

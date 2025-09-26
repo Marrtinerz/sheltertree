@@ -1,0 +1,36 @@
+// static/scss/components/_logo.scss
+
+// First, make the main navbar a positioning anchor for our absolute logo.
+.navbar {
+  position: relative;
+}
+
+.navbar-brand-logo {
+  // 1. Take the logo out of the normal document flow.
+  position: absolute;
+  
+  // 2. Position it relative to the navbar.
+  // Position the top edge of the link at the vertical center of the navbar.
+  top: 50%; 
+  // Adjust the left position as needed. `2rem` is a good starting point.
+  left: 2rem; 
+  
+  // 3. The Magic: Pull the element UP by half of its own height.
+  // This perfectly centers the logo vertically on the navbar's center line.
+  transform: translateY(-50%);
+  
+  // 4. Ensure the logo always sits on top of other elements.
+  z-index: 1050; // Higher than a standard navbar's z-index
+  
+  // 5. Add a subtle transition for smoothness.
+  transition: transform 0.3s ease-in-out;
+
+  &:hover {
+    transform: translateY(-50%) scale(1.05); // Slight grow effect on hover
+  }
+
+  // 6. On smaller (mobile) screens, hide the floating logo.
+  @media (max-width: 991.98px) {
+    display: none;
+  }
+}

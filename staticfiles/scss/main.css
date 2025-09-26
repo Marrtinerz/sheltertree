@@ -10038,6 +10038,25 @@ textarea.form-control-lg {
   font-size: 2rem;
   color: #2B3F4C; }
 
+.error-page-container {
+  min-height: 70vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 2rem; }
+  .error-page-container .error-code {
+    font-size: 6rem;
+    font-weight: 700;
+    color: #bce9d6; }
+  .error-page-container .error-heading {
+    font-weight: 600;
+    color: #2B3F4C; }
+  .error-page-container .error-message {
+    max-width: 500px;
+    color: #5A6D7C; }
+
 /* // 3. (Optional) Add any other custom site-wide styles here later.
 body {
   background-color: $light; // Use your new theme color

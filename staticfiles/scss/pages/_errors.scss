@@ -1,0 +1,27 @@
+// static/scss/pages/_errors.scss
+
+.error-page-container {
+  min-height: 70vh; // Ensure it takes up a good portion of the screen
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 2rem;
+
+  .error-code {
+    font-size: 6rem;
+    font-weight: 700;
+    color: tint-color($primary, 70%); // A light, soft version of your brand color
+  }
+
+  .error-heading {
+    font-weight: 600;
+    color: $dark;
+  }
+
+  .error-message {
+    max-width: 500px;
+    color: $secondary;
+  }
+}

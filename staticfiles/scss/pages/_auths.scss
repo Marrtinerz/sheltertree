@@ -1,0 +1,111 @@
+// static/scss/pages/_auth.scss
+
+
+.auth-layout {
+  // Make the layout take up the full available height of the viewport
+  min-height: calc(100vh - 160px); // 100% of viewport height minus the header height
+}
+
+// --- The Branding Side (The Image) ---
+.auth-branding-side {
+  background-image:
+    // This creates a dark, on-brand gradient overlay
+    // linear-gradient(rgba($dark, 0.6), rgba($dark, 0.8)),
+    // Your background image
+    url('/static/img/auth_background1.jpg');
+  
+  background-size: contain;
+  background-position: center;
+  color: #fff;
+
+  // Vertically and horizontally center the text content
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  .branding-content {
+    max-width: 450px; // A comfortable reading width for the text
+    text-align: center;
+  }
+}
+
+// --- NEW: Style for the elegant mission statement quote ---
+.branding-quote {
+  font-style: italic;
+  font-weight: 300; // A lighter weight for elegance
+  line-height: 1.8;
+  border-left: 3px solid rgba(255, 255, 255, 0.5); // A subtle accent
+  padding-left: 2rem;
+  margin-top: 2rem;
+}
+
+
+// --- The Form Side ---
+.auth-form-side {
+  background-color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem;
+
+  .form-container {
+    width: 100%;
+    max-width: 400px; // A clean, focused width for the form
+  }
+}
+
+// --- World-Class Form Styling ---
+// Use Bootstrap 5's "Floating Labels" for a premium, interactive feel
+.form-floating {
+  .form-control {
+    // We need to override Bootstrap's default height to feel more spacious
+    height: 3.5rem;
+    padding: 1rem;
+  }
+  
+  label {
+    padding: 1rem;
+  }
+}
+
+// Style the "or" separator
+.separator {
+  display: flex;
+  align-items: center;
+  text-align: center;
+  color: $secondary;
+
+  &::before, &::after {
+    content: '';
+    flex: 1;
+    border-bottom: 1px solid $border-color;
+  }
+
+  &:not(:empty)::before {
+    margin-right: .25em;
+  }
+  
+  &:not(:empty)::after {
+    margin-left: .25em;
+  }
+}
+
+// --- NEW: Styles for the Single-Task Verification Card ---
+.verification-card {
+  .card-body {
+    padding: 2rem 2.5rem; // More generous padding
+  }
+
+  // Make the choice buttons feel distinct
+  .btn-whatsapp {
+    // A custom, on-brand WhatsApp green
+    background-color: #25D366;
+    border-color: #25D366;
+    color: #fff;
+
+    &:hover {
+      background-color: darken(#25D366, 10%);
+      border-color: darken(#25D366, 10%);
+    }
+  }
+}

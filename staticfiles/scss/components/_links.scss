@@ -1,0 +1,9 @@
+// static/scss/components/_links.scss
+
+// A utility class for links that are temporarily disabled, like our resend timer.
+.link-disabled {
+  color: $secondary;
+  opacity: 0.65;
+  pointer-events: none; // This is the crucial part that prevents clicks
+  text-decoration: none;
+}

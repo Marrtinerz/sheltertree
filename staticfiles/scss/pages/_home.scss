@@ -1,0 +1,269 @@
+// static/scss/pages/_home.scss
+
+.hero-section {
+  position: relative;
+  background-image: url('/static/img/hero_background.jpg');
+  background-size: cover;
+  background-position: center center;
+  color: #fff;
+
+  // --- THE HEIGHT ADJUSTMENT ---
+
+  // Default padding for mobile devices (a generous 6rem top and bottom)
+  padding: 6rem 0;
+
+  // On medium screens (tablets) and larger, increase the padding even more
+  @media (min-width: 768px) {
+    padding: 10rem 0; //background-image: url('/static/img/hero_background3 Increased from 8rem to 10rem for a taller feel
+  }
+
+  // On very large screens, we can make it even more epic
+  @media (min-width: 1200px) {
+    padding: 12rem 0; // A truly immersive 12rem padding
+  }
+}
+
+.hero-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  // A dark, semi-transparent overlay ensures text is always readable
+  background-color: rgba($dark, 0.4);
+}
+
+// Ensure our content appears above the overlay
+.hero-section .container {
+  position: relative;
+  z-index: 2;
+}
+
+.main-search-bar {
+  // Style the search input from our global form for the homepage
+  .form-control {
+    padding: 1rem 1.5rem;
+    font-size: 1.1rem;
+    border: none; // Remove the border for a cleaner look within the group
+    
+    &:focus {
+      box-shadow: none; // Remove the focus glow for a simpler feel
+    }
+  }
+  
+  .btn {
+    padding: 1rem 1.5rem;
+  }
+}
+
+// Specific styling for the live search results on the homepage
+#live-search-results {
+  .list-group-item {
+    background-color: rgba(255, 255, 255, 0.9);
+    color: $dark;
+    border-color: rgba($dark, 0.1);
+
+    &:hover {
+      background-color: #fff;
+    }
+  }
+}
+
+
+
+// --- Styles for the IMMERSIVE Review Cards ---
+.review-card-home {
+  transition: all 0.3s ease-in-out;
+  border: 1px solid rgba($dark, 0.1); // A very subtle border
+
+  &:hover {
+    transform: translateY(-8px); // A more pronounced lift effect
+    box-shadow: $box-shadow-lg;  // Use our theme's largest, softest shadow
+    border-color: rgba($primary, 0.3);
+  }
+  
+  .card-body {
+    padding: 1.5rem; // More generous padding
+  }
+
+  .card-title {
+    font-weight: 600;
+  }
+  
+  // Style the Pros & Cons text for clarity
+  .card-text.small {
+    font-size: 0.9rem;
+    line-height: 1.6;
+    color: lighten($dark, 15%);
+  }
+
+  // Style the detailed rating section
+  .review-ratings {
+    font-size: 0.9rem;
+    
+    .star-rating {
+      color: $warning; // Use our theme's warning color for stars
+      letter-spacing: 2px;
+    }
+  }
+
+  .card-footer {
+    border-top: 1px solid rgba($dark, 0.05);
+  }
+
+  img.rounded-circle {
+    object-fit: cover;
+  }
+}
+
+
+
+
+// --- NEW: Styles for the Service Menu Section ---
+.service-menu-section {
+  border-top: 1px solid $border-color;
+  border-bottom: 1px solid $border-color;
+}
+
+.service-card {
+  transition: all 0.3s ease-in-out;
+  border: 1px solid transparent; // Start with a transparent border to prevent "jumping" on hover
+
+  &:hover {
+    transform: translateY(-5px);
+    box-shadow: $box-shadow;
+    border-color: rgba($primary, 0.4);
+  }
+
+  .card-body {
+    padding: 2rem;
+  }
+  
+  .card-title {
+    font-weight: 600;
+    color: $dark;
+  }
+}
+
+// The circular icon style - this is key to the premium feel
+.icon-circle {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 70px;
+  height: 70px;
+  border-radius: 50%;
+  transition: all 0.3s ease;
+
+  .service-card:hover & {
+    transform: scale(1.1); // Make the icon pop a bit on hover
+  }
+}
+
+
+// --- Styles for the Redesigned Mission Section ---
+.mission-section {
+  // On mobile, the image will stack on top of the text.
+  // We add a bit of space between them for a cleaner look.
+  .row > [class^="col-"] {
+    @media (max-width: 991.98px) {
+      margin-bottom: 2rem;
+    }
+  }
+
+  h2 {
+    position: relative;
+    display: inline-block;
+    padding-bottom: 0.75rem;
+
+    &::after {
+      content: '';
+      position: absolute;
+      bottom: 0;
+      left: 0; // Align to the left of the heading
+      width: 60px;
+      height: 4px;
+      background-color: $primary;
+      border-radius: 2px;
+    }
+  }
+
+  .mission-text {
+    font-size: 1.25rem;
+    font-weight: 400; // A slightly stronger weight for readability
+    color: $dark;
+    line-height: 1.7;
+  }
+
+  .commitment-text {
+    font-size: 1rem;
+    line-height: 1.8;
+  }
+  
+  img {
+      // Add a subtle transition to the image for a premium touch
+      transition: all 0.3s ease-in-out;
+      &:hover {
+          transform: scale(1.02);
+      }
+  }
+}
+
+// --- NEW: Styles for the Final CTA Section ---
+.final-cta-section {
+  // Use a very light, almost-white version of our theme's light color
+  // to subtly separate it from the white mission section above.
+  background-color: tint-color($light, 50%);
+  border-top: 1px solid $border-color;
+  
+  h2 {
+    color: $dark;
+  }
+  
+  .btn-primary {
+    // Make the final button extra prominent and inviting
+    font-weight: 600;
+    box-shadow: $box-shadow-lg;
+    transition: all 0.3s ease;
+
+    &:hover {
+      transform: translateY(-3px) scale(1.02);
+      box-shadow: 0 1.2rem 3.5rem rgba($dark, 0.2);
+    }
+  }
+}
+
+
+
+
+@include media-breakpoint-down(sm) {
+
+  // --- Target the Large Search Bar and Button ---
+  // The .input-group-lg class is making these elements large.
+  .main-search-bar .input-group-lg {
+    
+    .form-control, .btn {
+      // Target: 16px. 16/16 = 1rem. This brings it back to the standard size.
+      font-size: 1rem;
+      
+      // We also need to reduce the padding to match the smaller font size.
+      padding-top: 0.75rem;
+      padding-bottom: 0.75rem;
+    }
+  }
+
+  .mission-text {
+    font-size: 1.125rem !important;
+    font-weight: 300;
+    color: lighten($dark, 10%);
+    line-height: 1.8;
+  }
+
+  .lead {
+    // Target: 18px. Assuming a 16px root font size, 18/16 = 1.125rem.
+    // Using rem is best practice for accessibility.
+    font-size: 1.125rem;
+    font-weight: 400;
+  }
+
+}

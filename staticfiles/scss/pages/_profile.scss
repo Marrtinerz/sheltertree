@@ -1,0 +1,92 @@
+// static/scss/pages/_profile.scss
+
+// 1. The Main Welcome Header (Refined)
+.profile-header {
+  background: linear-gradient(135deg, tint-color($primary, 40%) 0%, $primary 100%);
+  color: #fff;
+  padding: 2rem;
+  border-radius: $border-radius-lg; // A softer, larger radius
+  margin-bottom: 2rem;
+  box-shadow: 0 10px 30px rgba($primary, 0.2); // A more prominent, on-brand shadow
+
+  .profile-avatar {
+    width: 100px;
+    height: 100px;
+    object-fit: cover;
+    // border-radius: 50%;
+    // border: 4px solid rgba(255, 255, 255, 0.8);
+    transition: all 0.2s ease;
+
+    &:hover {
+      transform: scale(1.1);
+    }
+  }
+}
+
+// 2. The New Dashboard Card Style
+.dashboard-card {
+  border: none; // We will use shadow for separation, not borders
+  border-radius: $border-radius-lg;
+  box-shadow: $box-shadow;
+  transition: all 0.3s ease;
+
+  &:hover {
+    transform: translateY(-5px);
+    box-shadow: $box-shadow-lg;
+  }
+
+  .card-header {
+    background-color: transparent;
+    border-bottom: 1px solid $border-color;
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: $dark;
+    padding: 1.25rem;
+    
+    i {
+      color: $primary;
+      opacity: 0.8;
+    }
+  }
+}
+
+// 3. The Premium List Item Style (The Key to the Immersive Feel)
+// This replaces the generic list-group for a custom, elegant look.
+.profile-list-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1.25rem;
+  border-bottom: 1px solid $border-color;
+
+  &:last-child {
+    border-bottom: none;
+  }
+
+  .item-label {
+    font-weight: 500;
+    color: $secondary;
+  }
+
+  .item-value {
+    font-weight: 500;
+    color: $dark;
+    text-align: right;
+  }
+}
+
+// 4. The "Community Links" Style
+// This makes the list group items feel more like premium navigation links.
+.community-links {
+  .list-group-item {
+    padding: 1.25rem;
+    font-weight: 500;
+    transition: all 0.2s ease;
+
+    &:hover {
+      background-color: tint-color($primary, 95%);
+      color: $primary;
+      transform: translateX(5px);
+    }
+  }
+}

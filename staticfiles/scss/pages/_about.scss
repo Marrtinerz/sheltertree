@@ -1,0 +1,53 @@
+// static/scss/pages/_about.scss
+
+// 1. The Mission Hero Section
+.about-hero {
+  background: linear-gradient(rgba($dark, 0.2), rgba($dark, 0.7)), url('/static/img/about_hero.jpg'); // A new, inspiring image
+  background-size: cover;
+  background-position: center;
+  padding: 6rem 0;
+  color: #fff;
+
+  h1 {
+    font-size: 3.5rem;
+    font-weight: 700;
+    text-shadow: 0 2px 5px rgba(#000, 0.3);
+  }
+}
+
+
+
+// 2. The Core Values Section
+.values-section {
+  .value-card {
+    text-align: center;
+    .icon-circle { // We can reuse our beautiful icon style from the homepage
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 70px;
+      height: 70px;
+      border-radius: 50%;
+      background-color: tint-color($primary, 90%);
+      color: $primary;
+      margin-bottom: 1.5rem;
+      font-size: 1.75rem;
+    }
+  }
+}
+
+// 3. The Founder's Note Section
+.founder-note {
+  .founder-photo {
+    width: 150px;
+    height: 150px;
+    object-fit: cover;
+    border-radius: 50%;
+    box-shadow: $box-shadow-lg;
+  }
+  .founder-signature {
+    font-family: 'Dancing Script', cursive; // A nice, cursive font for a personal touch
+    font-size: 2rem;
+    color: $dark;
+  }
+}

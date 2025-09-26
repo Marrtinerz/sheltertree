@@ -1,0 +1,65 @@
+// For the avatar uploader on the main onboarding page
+.profile-avatar-uploader {
+  position: relative;
+  width: 120px;
+  height: 120px;
+  margin: 0 auto;
+
+  .avatar-preview {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    // border-radius: 70%;
+    border: 4px solid #fff;
+    box-shadow: $box-shadow-sm;
+  }
+
+  .upload-button {
+    position: absolute;
+    bottom: 0;
+    right: 0;
+    width: 36px;
+    height: 36px;
+    background-color: $primary;
+    color: #fff;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.2s ease;
+
+    &:hover {
+      transform: scale(1.1);
+    }
+  }
+}
+
+// For the options inside the Avatar Picker Modal
+.avatar-option-container {
+  display: block;
+  width: 100%;
+  padding-top: 100%; // Creates a perfect square
+  position: relative;
+  // border-radius: 50%;
+  border: 3px solid transparent;
+  cursor: pointer;
+  transition: all 0.2s ease-in-out;
+  box-shadow: $box-shadow-sm;
+
+  &:hover {
+    transform: scale(1.05);
+    // border-color: $primary;
+    box-shadow: $box-shadow;
+  }
+  
+  img {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    // border-radius: 50%;
+  }
+}

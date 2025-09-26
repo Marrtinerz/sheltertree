@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+{% load i18n %}
+{% load static %}
+
+{% block title %}{% trans "Server Error (500)" %} | ShelterTree{% endblock %}
+
+{% block content %}
+<div class="error-page-container">
+    <img src="{% static 'img/brand/logo.svg' %}" alt="ShelterTree Logo" height="80" class="mb-4">
+    <h1 class="error-code">500</h1>
+    <h2 class="error-heading mt-3">{% trans "An undisturbed place of rest... is being disturbed." %}</h2>
+    <p class="error-message mt-3">
+        {% blocktrans %}
+        Our apologies. It seems something went wrong on our end. This wasn't your fault. Our technical team has been automatically notified and is working to fix the issue.
+        {% endblocktrans %}
+    </p>
+    <div class="mt-4 d-flex flex-wrap justify-content-center gap-2">
+        <a href="{% url 'reviews:home' %}" class="btn btn-primary">
+            <i class="fas fa-home me-2"></i>{% trans "Go to Homepage" %}
+        </a>
+        <a href="{% url 'reviews:contact_us' %}" class="btn btn-outline-secondary">
+            <i class="fas fa-comment-alt me-2"></i>{% trans "Contact Support" %}
+        </a>
+    </div>
+</div>
+{% endblock %}

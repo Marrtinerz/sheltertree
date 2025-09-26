@@ -15,6 +15,7 @@ from django.urls import path, include
 from django.conf.urls.i18n import i18n_patterns
 from django.contrib.auth import views as auth_views
 from django.conf.urls.static import static
+from django.views.generic import TemplateView
 
 
 # URLs that should NOT be translated or prefixed with a language code.
@@ -36,6 +37,10 @@ urlpatterns += i18n_patterns(
     # If you add more apps in the future, you would include their URLs here too.
     # path('another-app/', include('another_app.urls')),
 )
+
+# We can use TemplateView directly because these are simple pages.
+handler404 = TemplateView.as_view(template_name='errors/404.html')
+handler500 = TemplateView.as_view(template_name='errors/500.html')
 
 
 
