@@ -1,0 +1,124 @@
+{% extends "base.html" %}
+{% load i18n %}
+{% load static %}
+
+{% block title %}{% trans "About Us" %} | ShelterTree{% endblock %}
+
+{% block content %}
+
+<!-- ==================================================================== -->
+<!-- 1. The Mission Hero                                                -->
+<!-- ==================================================================== -->
+<div class="about-hero text-center">
+    <div class="container">
+        <h1 class="display-4 fw-bold">{% trans "Everyone Deserves a Peaceful Home." %}</h1>
+        <p class="lead mt-3 fs-4">{% trans "This simple belief is why ShelterTree exists." %}</p>
+    </div>
+</div>
+
+
+<div class="container my-5 py-5">
+    <!-- ==================================================================== -->
+    <!-- 2. "Our Promise" (THE NEW SECTION - The "Why")                       -->
+    <!-- This section is now placed first to set the emotional foundation.    -->
+    <!-- It reuses the elegant styles from your homepage.                     -->
+    <!-- ==================================================================== -->
+    <section class="mission-section mb-5 py-5">
+        <div class="row">
+            <div class="col-lg-8 mx-auto text-center">
+                <div>
+                    <i class="fas fa-star text-primary display-5"></i>
+                </div>
+                <h2 class="display-5 fw-bold">{% trans "Our North Star" %}</h2>
+                <p class="mission-text lead mt-4">
+                    {% blocktrans %}
+                    "At ShelterTree, we believe that everyone deserves to live in peaceful dwelling places, in secure homes, in undisturbed places of rest."
+                    {% endblocktrans %}
+                </p>
+                <p class="commitment-text text-muted mt-3">
+                    {% blocktrans %}
+                    This is our guiding principle. We are dedicated to bringing honesty, clarity, and ease to one of life's most important decisions: the place you call home.
+                    {% endblocktrans %}
+                </p>
+            </div>
+        </div>
+    </section>
+
+    <!-- ==================================================================== -->
+    <!-- 3. Our Core Values (The "How")                                     -->
+    <!-- ==================================================================== -->
+    <section class="values-section">
+        <div class="row text-center mb-5">
+            <div class="col-lg-8 mx-auto">
+                <h2 class="display-5 fw-bold">{% trans "How We Fulfill Our Promise" %}</h2>
+                <p class="text-muted">{% trans "Our platform is built on a foundation of three core values." %}</p>
+            </div>
+        </div>
+        <div class="row g-5">
+            <!-- Value 1: Authenticity -->
+            <div class="col-md-4">
+                <div class="value-card">
+                    <div class="icon-circle"><i class="fas fa-check-circle"></i></div>
+                    <h4 class="fw-bold">{% trans "Authenticity" %}</h4>
+                    <p class="text-muted">{% trans "We are committed to hosting genuine, unbiased reviews from real residents. Our verification system and community moderation ensure you get the honest story." %}</p>
+                </div>
+            </div>
+            <!-- Value 2: Community -->
+            <div class="col-md-4">
+                <div class="value-card">
+                    <div class="icon-circle"><i class="fas fa-users"></i></div>
+                    <h4 class="fw-bold">{% trans "Community" %}</h4>
+                    <p class="text-muted">{% trans "ShelterTree is built by you, for you. Every review, every question, and every answer helps a neighbor make one of the most important decisions of their life." %}</p>
+                </div>
+            </div>
+            <!-- Value 3: Transparency -->
+            <div class="col-md-4">
+                <div class="value-card">
+                    <div class="icon-circle"><i class="fas fa-eye"></i></div>
+                    <h4 class="fw-bold">{% trans "Transparency" %}</h4>
+                    <p class="text-muted">{% trans "We believe in shining a light. Our goal is to make the real estate landscape more transparent, empowering everyone with the information they need to find peace of mind." %}</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <hr class="my-5">
+
+    <!-- ==================================================================== -->
+    <!-- 4. A Note From the Founder                                         -->
+    <!-- ==================================================================== -->
+    <section class="founder-note">
+        <div class="row align-items-center g-5">
+            <div class="col-md-4 text-center">
+                <img src="{% static 'img/avatars/founder.jpg' %}" class="founder-photo" alt="Founder of ShelterTree">
+            </div>
+            <div class="col-md-8">
+                <h2 class="fw-bold">{% trans "A Message From Our Founder" %}</h2>
+                <p class="lead">{% blocktrans %}
+                "I started ShelterTree because I've seen firsthand how difficult it is to find the truth about a place before you move in. A home should be a sanctuary. My promise is that we will always be dedicated to building the tools and the community that help you find yours."
+                {% endblocktrans %}</p>
+                <p class="founder-signature mt-3">- Martins</p>
+            </div>
+        </div>
+    </section>
+</div>
+
+<!-- ==================================================================== -->
+<!-- 5. Final Call to Action (Unchanged)                                -->
+<!-- ==================================================================== -->
+<div class="final-cta-section py-5">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 mx-auto text-center">
+                <h2 class="display-5 fw-bold">{% trans "Join Our Community" %}</h2>
+                <p class="lead text-muted mt-3">{% trans "Become a member to share your experience and help us build a more transparent world." %}</p>
+                <div class="mt-4">
+                    <a href="{% url 'account_signup' %}" class="btn btn-primary btn-lg rounded-pill px-5 py-3">
+                        {% trans "Sign Up for Free" %}
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

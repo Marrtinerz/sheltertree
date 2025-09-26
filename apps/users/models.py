@@ -4,6 +4,7 @@ from django.utils.translation import gettext_lazy as _
 from apps.locations.models import Country
 from django.utils import timezone
 import random
+from django.conf import settings
 
 class CustomUser(AbstractUser):
     class UserType(models.TextChoices):
@@ -205,3 +206,28 @@ class FeatureInterest(models.Model):
 
     def __str__(self):
         return f"{self.email or self.phone_number} interested in {self.feature_name}"
+    
+
+class Feedback(models.Model):
+    class FeedbackCategory(models.TextChoices):
+        GENERAL = 'GENERAL', _('General Feedback')
+        IDEA = 'IDEA', _('I have an idea for a new feature')
+        BUG = 'BUG', _('I found a bug or incorrect information')
+        PARTNER = 'PARTNER', _('I am a property manager or owner')
+        OTHER = 'OTHER', _('Something else')
+
+    # Link to the user if they are logged in, but allow anonymous feedback.
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.SET_NULL, null=True, blank=True)
+    
+    # User-provided data
+    email = models.EmailField()
+    phone_number = models.CharField(max_length=30, blank=True, verbose_name=_("WhatsApp Number (Optional)"))
+    category = models.CharField(max_length=20, choices=FeedbackCategory.choices, default=FeedbackCategory.GENERAL)
+    message = models.TextField()
+    
+    # Admin tracking fields
+    created_at = models.DateTimeField(auto_now_add=True)
+    is_resolved = models.BooleanField(default=False)
+
+    def __str__(self):
+        return f"Feedback ({self.get_category_display()}) from {self.email}"

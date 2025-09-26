@@ -1,7 +1,7 @@
 # apps/users/forms.py
 from django import forms
 from allauth.account.forms import SignupForm, LoginForm
-from .models import CustomUser, Country, FeatureInterest
+from .models import CustomUser, Country, FeatureInterest, Feedback
 from django.utils.translation import gettext_lazy as _
 import phonenumbers
 from django.core.exceptions import ValidationError
@@ -260,3 +260,20 @@ class FeatureInterestForm(forms.ModelForm):
             )
         
         return cleaned_data
+
+
+class FeedbackForm(forms.ModelForm):
+    
+    honeypot = forms.CharField(required=False, widget=forms.HiddenInput(), label="Leave this field blank")
+    
+    class Meta:
+        model = Feedback
+        fields = ['email', 'phone_number', 'category', 'message']
+        widgets = {
+            'message': forms.Textarea(attrs={'rows': 5}),
+        }
+    def clean_honeypot(self):
+        # If this field has ANY value, it was filled out by a bot.
+        if self.cleaned_data['honeypot']:
+            raise forms.ValidationError("Spam detected.")
+        return self.cleaned_data['honeypot']

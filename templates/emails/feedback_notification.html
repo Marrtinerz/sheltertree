@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>New ShelterTree Feedback</title>
+    <style>
+        /* Basic styles for email clients */
+        body { font-family: sans-serif; background-color: #f4f4f4; color: #333; }
+        .container { max-width: 600px; margin: 20px auto; background-color: #fff; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+        .header { background-color: #21b576; color: #fff; padding: 20px; text-align: center; border-radius: 8px 8px 0 0; }
+        .content { padding: 30px; }
+        .message-box { background-color: #f9f9f9; border: 1px solid #eee; padding: 15px; border-radius: 5px; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h2>New ShelterTree Feedback!</h2>
+        </div>
+        <div class="content">
+            <p>A new feedback submission has been received.</p>
+            <hr>
+            <h3>Details:</h3>
+            <ul>
+                <li><strong>Category:</strong> {{ category }}</li>
+                <li><strong>User Email:</strong> <a href="mailto:{{ email }}">{{ email }}</a></li>
+                <li><strong>WhatsApp Number:</strong> {{ phone|default:"Not provided" }}</li>
+            </ul>
+            <hr>
+            <h3>Message:</h3>
+            <div class="message-box">
+                <p style="white-space: pre-wrap;">{{ message }}</p>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

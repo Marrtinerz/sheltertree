@@ -1,0 +1,17 @@
+New Feedback Received on ShelterTree
+====================================
+
+A new feedback submission has been received.
+
+Details:
+------------------------------------
+Category: {{ category }}
+User Email: {{ email }}
+WhatsApp Number: {{ phone|default:"Not provided" }}
+------------------------------------
+
+Message:
+{{ message }}
+
+---
+This is an automated notification.

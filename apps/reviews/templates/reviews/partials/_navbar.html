@@ -96,6 +96,10 @@
                                 <li><a class="dropdown-item" href="{% url 'account_profile' %}">{% trans "My Profile & Settings" %}</a></li>
                                 <li><a class="dropdown-item" href="{% url 'my_contributions' %}">{% trans "My Contributions" %}</a></li>
                                 <li><hr class="dropdown-divider"></li>
+                                
+                                <li><a class="dropdown-item" href="{% url 'core:contact_us' %}">{% trans "Drop Feedback" %}</a></li>
+                                <li><hr class="dropdown-divider"></li>
+                                
                                 <li>
                                     <form method="post" action="{% url 'account_logout' %}" class="d-inline">
                                         {% csrf_token %}
