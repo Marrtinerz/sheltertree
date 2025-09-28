@@ -1,0 +1,13 @@
+{% load i18n %}
+Hi {{ user.get_short_name|default:user.username }},
+
+{% blocktrans %}Your verification code is:{% endblocktrans %}
+
+------------------------------------
+{{ code }}
+------------------------------------
+
+{% blocktrans %}This code will expire in a few minutes. If you did not request this, please ignore this email.{% endblocktrans %}
+
+{% trans "Welcome to the community," %}
+{% trans "The ShelterTree Team" %}

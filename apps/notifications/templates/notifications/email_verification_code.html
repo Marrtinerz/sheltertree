@@ -1,0 +1,18 @@
+{% extends "notifications/base_email.html" %}
+{% load i18n %}
+
+{% block content %}
+    <p>{% blocktrans with name=user.get_short_name|default:user.username %}Hi {{ name }},{% endblocktrans %}</p>
+    <p>{% blocktrans %}Here is your verification code to activate your ShelterTree account. Please enter it on the page you were just on.{% endblocktrans %}</p>
+
+    <!-- The most important part of the email -->
+    <div style="background-color: #f0f2f5; border-radius: 8px; text-align: center; padding: 20px; margin: 30px 0;">
+        <p style="margin: 0; font-size: 32px; font-weight: bold; letter-spacing: 8px; color: #2B3F4C;">
+            {{ code }}
+        </p>
+    </div>
+
+    <p style="font-size: 0.9em; color: #888;">{% blocktrans %}This code will expire shortly. If you did not request this, please ignore this email.{% endblocktrans %}</p>
+    
+    <p>{% trans "Welcome to the community," %}<br><strong>{% trans "The ShelterTree Team" %}</strong></p>
+{% endblock %}
