@@ -1,0 +1,16 @@
+{% extends "notifications/base_email.html" %}
+{% load i18n %}
+
+{% block content %}
+    <p>{% blocktrans with name=user.get_short_name|default:user.username %}Hi {{ name }},{% endblocktrans %}</p>
+
+    <p>{% blocktrans %}Your review for <strong>{{ property_display_name }} - {{ unit_identifier }}</strong> has been approved and is now live on ShelterTree!{% endblocktrans %}</p>
+
+    <p>{% blocktrans %}You are an invaluable part of our community, and your contribution will promote transparency while helping others find a peaceful home.{% endblocktrans %}</p>
+
+    <div class="button-container">
+        <a href="https://{{ domain }}{{ review.unit.property.get_absolute_url }}" class="button">{% trans "See Your Review in Action" %}</a>
+    </div>
+
+    <p>{% trans "Thank you for sharing," %}<br><strong>{% trans "The ShelterTree Team" %}</strong></p>
+{% endblock %}

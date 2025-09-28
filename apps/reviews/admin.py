@@ -5,7 +5,7 @@ from django.urls import reverse
 from django.utils.html import format_html
 from django.utils.translation import ngettext
 from django.utils.translation import gettext_lazy as _
-
+from apps.notifications.services import notification_service
 from .models import Property, PropertyUnit, Review, PropertyStatus, ReviewStatus, Vote
 
 # A constant list of review statuses that are considered "active" and
@@ -41,6 +41,14 @@ class PropertyAdmin(admin.ModelAdmin):
 
     @admin.action(description=_('Approve selected properties'))
     def make_approved(self, request, queryset):
+        
+        # --- THE WORLD-CLASS FIX ---
+        # We iterate through the queryset *before* updating to send emails.
+        for prop in queryset:
+            # We only send a notification if the status is actually changing.
+            if prop.status != PropertyStatus.APPROVED:
+                notification_service.send_property_approved_email(prop)
+        
         updated_count = queryset.update(status=PropertyStatus.APPROVED)
         reviews_to_promote = Review.objects.filter(
             unit__property__in=queryset,
@@ -55,6 +63,13 @@ class PropertyAdmin(admin.ModelAdmin):
 
     @admin.action(description=_('Reject selected properties'))
     def make_rejected(self, request, queryset):
+        # --- THE WORLD-CLASS FIX ---
+        for prop in queryset:
+            if prop.status != PropertyStatus.REJECTED:
+                # For a rejection, it's best practice to provide a generic reason for bulk actions.
+                reason = "This submission did not meet our content guidelines."
+                notification_service.send_property_rejected_email(prop, reason)
+        
         updated_count = queryset.update(status=PropertyStatus.REJECTED)
         reviews_to_reject = Review.objects.filter(
             unit__property__in=queryset,
@@ -97,6 +112,9 @@ class PropertyAdmin(admin.ModelAdmin):
 
         # Case 1: Property just approved
         if original_status != PropertyStatus.APPROVED and new_status == PropertyStatus.APPROVED:
+            # --- THE WORLD-CLASS FIX ---
+            notification_service.send_property_approved_email(obj)
+            
             reviews_to_promote = Review.objects.filter(unit__property=obj, status=ReviewStatus.PENDING_PROPERTY_APPROVAL)
             promoted_review_count = reviews_to_promote.update(status=ReviewStatus.PENDING_CONTENT_REVIEW)
             self.message_user(request, ngettext(
@@ -106,7 +124,13 @@ class PropertyAdmin(admin.ModelAdmin):
             ) % promoted_review_count, messages.SUCCESS)
 
         # Case 2: Property just rejected
-        elif original_status != PropertyStatus.REJECTED and new_status == PropertyStatus.REJECTED:
+        elif original_status != PropertyStatus.REJECTED and new_status == PropertyStatus.REJECTED:            
+            # --- THE WORLD-CLASS FIX ---
+            # In an individual save, you could have a field to type a reason.
+            # For now, we'll use a standard reason.
+            reason = "This submission did not meet our content guidelines. Please review our policies for more details."
+            notification_service.send_property_rejected_email(obj, reason)
+
             reviews_to_reject = Review.objects.filter(unit__property=obj, status__in=ACTIVE_REVIEW_STATUSES)
             rejected_review_count = reviews_to_reject.update(status=ReviewStatus.PROPERTY_REJECTED)
             self.message_user(request, ngettext(
@@ -153,6 +177,12 @@ class ReviewAdmin(admin.ModelAdmin):
 
     @admin.action(description=_('Approve selected reviews (content checked)'))
     def approve_reviews(self, request, queryset):
+        
+        # --- THE WORLD-CLASS FIX ---
+        for review in queryset:
+            if review.status != ReviewStatus.APPROVED:
+                notification_service.send_review_approved_email(review)
+                
         updated_count = queryset.update(status=ReviewStatus.APPROVED)
         self.message_user(request, ngettext(
             '%d review was successfully approved and is now public.',
@@ -162,12 +192,50 @@ class ReviewAdmin(admin.ModelAdmin):
 
     @admin.action(description=_('Reject selected reviews (content issue)'))
     def reject_reviews(self, request, queryset):
+        # --- THE WORLD-CLASS FIX ---
+        for review in queryset:
+            if review.status != ReviewStatus.REJECTED:
+                reason = "This review did not meet our content guidelines for clarity and respectfulness."
+                notification_service.send_review_rejected_email(review, reason)
+        
         updated_count = queryset.update(status=ReviewStatus.REJECTED)
         self.message_user(request, ngettext(
             '%d review was rejected.',
             '%d reviews were rejected.',
             updated_count,
         ) % updated_count, messages.WARNING)
+        
+    
+    def save_model(self, request, obj, form, change):
+        """
+        Overrides the default save behavior to trigger notifications for
+        individual review moderation actions.
+        """
+        original_status = None
+        # 'change' is True if this is an update, False if it's a new object
+        if change:
+            try:
+                # Get the review's status from the database *before* we save the change.
+                original_status = Review.objects.get(pk=obj.pk).status
+            except Review.DoesNotExist:
+                pass # Should not happen in a change view, but good to be safe
+
+        # Save the object first to commit the status change.
+        super().save_model(request, obj, form, change)
+        new_status = obj.status
+
+        # Case 1: Review was just approved
+        if original_status != ReviewStatus.APPROVED and new_status == ReviewStatus.APPROVED:
+            notification_service.send_review_approved_email(obj)
+            self.message_user(request, "The review was approved, and a notification has been sent to the user.")
+
+        # Case 2: Review was just rejected
+        elif original_status != ReviewStatus.REJECTED and new_status == ReviewStatus.REJECTED:
+            # You could add a field to the admin form for a custom reason.
+            # For now, we use a standard, helpful reason.
+            reason = "This review did not meet our content guidelines for clarity and respectfulness."
+            notification_service.send_review_rejected_email(obj, reason)
+            self.message_user(request, "The review was rejected, and a notification has been sent to the user.", level=messages.WARNING)
 
 
 @admin.register(PropertyUnit)

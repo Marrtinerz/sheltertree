@@ -13,4 +13,5 @@ urlpatterns = [
     path('about/', TemplateView.as_view(template_name='core/about_us.html'), name='about_us'),
     path('contact/', views.FeedbackCreateView.as_view(), name='contact_us'),
     path('contact/success/', TemplateView.as_view(template_name='core/contact_success.html'), name='contact_success'),
+    path('content-guidelines/', TemplateView.as_view(template_name='core/content_guidelines.html'), name='content_guidelines'),
 ]

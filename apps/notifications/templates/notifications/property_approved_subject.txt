@@ -1,0 +1,1 @@
+{% load i18n %}{% blocktrans with property_name=email_subject_name %}Great News! '{{ property_name }}' has been Approved{% endblocktrans %}

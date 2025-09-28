@@ -1,0 +1,38 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block subject %}{% endblock %}</title>
+    <style>
+        /* Basic styles for excellent email client compatibility */
+        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; line-height: 1.6; color: #343a40; background-color: #f8f9fa; margin: 0; padding: 0; }
+        .wrapper { width: 100%; background-color: #f8f9fa; padding: 20px 0; }
+        .container { max-width: 600px; margin: 0 auto; background-color: #ffffff; border: 1px solid #dee2e6; border-radius: 8px; overflow: hidden; }
+        .header { text-align: center; padding: 20px; border-bottom: 1px solid #dee2e6; }
+        .content { padding: 30px; }
+        .button-container { text-align: center; margin: 30px 0; }
+        .button { display: inline-block; padding: 12px 24px; background-color: #21b576; color: #ffffff !important; text-decoration: none; border-radius: 5px; font-weight: bold; }
+        .footer { margin-top: 20px; padding: 20px; font-size: 0.8em; color: #888; text-align: center; }
+        strong { color: #2B3F4C; }
+    </style>
+</head>
+<body>
+    <div class="wrapper">
+        <div class="container">
+            <div class="header">
+                <!-- IMPORTANT: Ensure your logo is accessible via a public URL -->
+                <img src="https://{{ domain }}{% static 'img/brand/logo.svg' %}" alt="{{ site_name }} Logo" height="60">
+            </div>
+            <div class="content">
+                {% block content %}{% endblock %}
+            </div>
+            <div class="footer">
+                <p>&copy; {% now "Y" %} {{ site_name }}. All Rights Reserved.</p>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

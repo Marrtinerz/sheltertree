@@ -1,0 +1,14 @@
+{% load i18n %}
+Hi {{ user.get_short_name|default:user.username }},
+
+{% blocktrans %}Your review for "{{ property_display_name }} - {{ unit_identifier }}" has been approved and is now live on ShelterTree!{% endblocktrans %}
+
+{% blocktrans %}You are an invaluable part of our community, and your contribution will promote transparency while helping others find a peaceful home.{% endblocktrans %}
+
+------------------------------------
+{% trans "See Your Live Review" %}:
+https://{{ domain }}{{ review.unit.property.get_absolute_url }}
+------------------------------------
+
+{% trans "Thank you for sharing," %}
+{% trans "The ShelterTree Team" %}

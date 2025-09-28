@@ -169,17 +169,36 @@ class Property(models.Model):
         The definitive method for generating a clean display name FOR THE ADMIN.
         If the name is missing, it provides a clean, truncated version of the address.
         """
-        if self.name and self.name.strip(): # Check that the name is not just whitespace
+        if self.name and self.name.strip():
             return self.name
         
-        # Fallback to the address
         if self.address and len(self.address) > max_length:
             return f"{self.address[:max_length].strip()}..."
         elif self.address:
             return self.address
         
-        # Absolute fallback in case both are missing for some reason
         return f"Property #{self.pk}"
+
+    def get_email_subject_name(self, max_length=20):
+        """
+        A new, dedicated, and high-precision method for generating a
+        very short name specifically for email subject lines,
+        perfectly enforcing the character limit.
+        """
+        # --- THE DEFINITIVE, CORRECT LOGIC ---
+        
+        # First, determine the source string: the name if it exists, otherwise the address.
+        source_string = self.name.strip() if self.name and self.name.strip() else self.address
+        
+        # If there is no source string at all, fall back to the PK.
+        if not source_string:
+            return f"Prop #{self.pk}"
+            
+        # Now, apply the truncation logic to the chosen source string.
+        if len(source_string) > max_length:
+            return f"{source_string[:max_length].strip()}..."
+        
+        return source_string
 
     # --- THIS IS THE CORRECTED __str__ METHOD ---
     def __str__(self):

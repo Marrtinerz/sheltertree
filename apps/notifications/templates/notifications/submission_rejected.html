@@ -1,0 +1,25 @@
+{% extends "notifications/base_email.html" %}
+{% load i18n %}
+
+{% block content %}
+    <p>{% blocktrans with name=user.get_short_name|default:user.username %}Hi {{ name }},{% endblocktrans %}</p>
+
+    <p>{% blocktrans %}Our moderation team has reviewed your recent submission for <strong>{{ property_display_name }}</strong> and couldn't approve it in its current form.{% endblocktrans %}
+    </p>
+
+    <div style="border-left: 3px solid #F0AD4E; padding-left: 15px; margin: 20px 0;">
+        <p style="margin: 0;"><strong>{% trans "Reason provided by moderator:" %}</strong></p>
+        <p style="margin: 0; font-style: italic;">
+            "{{ reason|default:'This submission did not meet our content guidelines for detail and clarity.' }}"
+        </p>
+    </div>
+
+    <p>{% blocktrans %}We deeply value every contribution, and a rejection is often just a request for a little more detail to make the content as helpful as possible for the whole community. We strongly encourage you to review our content guidelines and resubmit.{% endblocktrans %}</p>
+
+    <div class="button-container">
+        <!-- In the future, this could link directly to an "edit and resubmit" page -->
+        <a href="https://{{ domain }}/path/to/content-guidelines/" class="button">{% trans "Review Our Guidelines" %}</a>
+    </div>
+
+    <p>{% trans "We're here to help if you have any questions," %}<br><strong>{% trans "The ShelterTree Team" %}</strong></p>
+{% endblock %}
