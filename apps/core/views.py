@@ -44,15 +44,15 @@ class FeedbackCreateView(CreateView):
             'message': feedback.message,
         }
         # Render the text and HTML versions of the email
-        email_body = render_to_string('emails/feedback_notification.txt', email_context)
-        html_email_body = render_to_string('emails/feedback_notification.html', email_context)
+        email_body = render_to_string('account/email/feedback_notification.txt', email_context)
+        html_email_body = render_to_string('account/email/feedback_notification.html', email_context)
 
         # Send the email
         send_mail(
             subject=f"New ShelterTree Feedback: {feedback.get_category_display()}",
             message=email_body,
             from_email=settings.DEFAULT_FROM_EMAIL,
-            recipient_list=['your_admin_email@sheltertree.com'], # IMPORTANT: Change this
+            recipient_list=['support@mysheltertree.com'], # IMPORTANT: Change this
             html_message=html_email_body,
             fail_silently=False, # We want to know if email sending fails
         )

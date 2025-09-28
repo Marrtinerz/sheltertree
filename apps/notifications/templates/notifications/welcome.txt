@@ -1,0 +1,33 @@
+{% load i18n %}
+Hi {{ user.get_short_name|default:user.username }},
+
+My name is Martins, and I'm the founder of ShelterTree. I wanted to personally welcome you to our community.
+
+I started ShelterTree after my own difficult search for a new home. I remember the anxiety, the uncertainty, and the endless questions: "Will they actually refund my caution/deposit? Does it flood during the raining season? What are the neighbors upstairs *really* like?"
+
+These are the details that turn a property into a peaceful home. They're also the details that are impossible to find in a standard property listing.
+
+That's why we're here. ShelterTree is a community built on the simple idea that by sharing our honest experiences, we can help each other find those undisturbed places of rest we all deserve.
+
+
+Thank you for becoming a vital part of this mission. You can get started right away—what would you like to do first?
+
+------------------------------------
+FIND INFORMATION
+Explore reviews in your city.
+https://{{ domain }}{% url 'reviews:property-list' %}
+------------------------------------
+
+------------------------------------
+SHARE YOUR EXPERIENCE
+Sharing the story of your home.
+https://{{ domain }}{% url 'reviews:search' %}?intent=review
+------------------------------------
+
+
+Thank you again for believing in this. We're so glad you're here.
+
+Warmly,
+
+Martins
+Founder, ShelterTree

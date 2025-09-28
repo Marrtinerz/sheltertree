@@ -1,0 +1,1 @@
+{% load i18n %}{% blocktrans with name=user.get_short_name|default:user.username %}Welcome to ShelterTree, {{ name }}{% endblocktrans %}

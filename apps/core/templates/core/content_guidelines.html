@@ -1,0 +1,95 @@
+{% extends "base.html" %}
+{% load i18n %}
+
+{% block title %}{% trans "Content Guidelines" %} | ShelterTree{% endblock %}
+
+{% block content %}
+<div class="container my-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+
+            <!-- 1. The Header: Sets the tone and connects to the "Why" -->
+            <div class="static-page-header text-center">
+                <h1 class="display-5 fw-bold">{% trans "Our Community Guidelines" %}</h1>
+                <p class="lead text-muted">
+                    {% trans "A shared commitment to creating a trustworthy and helpful resource for everyone." %}
+                </p>
+            </div>
+
+            <!-- 2. The Mission Statement: The foundation of the rules -->
+            <div class="guideline-section">
+                <p class="mission-quote-block">
+                    {% blocktrans %}
+                    Our mission is built on the belief that everyone deserves to live in peaceful dwelling places, in secure homes, in undisturbed places of rest. These guidelines are designed to protect that mission and ensure every review on ShelterTree is helpful, honest, and safe.
+                    {% endblocktrans %}
+                </p>
+            </div>
+
+            <!-- 3. The Guiding Principles (The "Do's") -->
+            <div class="guideline-section">
+                <h3 class="fw-bold mb-4">{% trans "Our Guiding Principles" %}</h3>
+                
+                <div class="guideline-item">
+                    <div class="guideline-icon bg-success"><i class="fas fa-check"></i></div>
+                    <div class="guideline-content">
+                        <h5>{% trans "Be Specific & Detailed" %}</h5>
+                        <p>{% trans "Go beyond 'good security'. Mention specifics like 'keycard access at all gates' or '24/7 guard patrols'. The details are what make a review truly valuable." %}</p>
+                    </div>
+                </div>
+
+                <div class="guideline-item">
+                    <div class="guideline-icon bg-success"><i class="fas fa-check"></i></div>
+                    <div class="guideline-content">
+                        <h5>{% trans "Be Balanced & Honest" %}</h5>
+                        <p>{% trans "The most trusted reviews share both the good and the bad. Highlighting both pros and cons provides a realistic picture and builds immense trust with the community." %}</p>
+                    </div>
+                </div>
+
+                <div class="guideline-item">
+                    <div class="guideline-icon bg-success"><i class="fas fa-check"></i></div>
+                    <div class="guideline-content">
+                        <h5>{% trans "Be Respectful & Kind" %}</h5>
+                        <p>{% trans "Focus on the property and your experience, not on personal attacks. Criticize ideas and situations, not people. We are a community of neighbors." %}</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 4. What to Avoid (The "Don'ts") -->
+            <div class="guideline-section">
+                <h3 class="fw-bold mb-4">{% trans "What to Avoid" %}</h3>
+
+                <div class="guideline-item">
+                    <div class="guideline-icon bg-danger"><i class="fas fa-times"></i></div>
+                    <div class="guideline-content">
+                        <h5>{% trans "Personal Information" %}</h5>
+                        <p>{% trans "For your safety and the privacy of others, do not include full names, phone numbers, email addresses, or any other private information in your reviews." %}</p>
+                    </div>
+                </div>
+
+                <div class="guideline-item">
+                    <div class="guideline-icon bg-danger"><i class="fas fa-times"></i></div>
+                    <div class="guideline-content">
+                        <h5>{% trans "Discrimination or Hate Speech" %}</h5>
+                        <p>{% trans "Content that promotes discrimination, bigotry, or harm against any group or individual will be removed immediately. ShelterTree is a safe space for everyone." %}</p>
+                    </div>
+                </div>
+
+                <div class="guideline-item">
+                    <div class="guideline-icon bg-danger"><i class="fas fa-times"></i></div>
+                    <div class="guideline-content">
+                        <h5>{% trans "Spam & Advertising" %}</h5>
+                        <p>{% trans "Promotional content, commercial links, or repetitive, off-topic messages are not allowed. Reviews must be genuine personal experiences." %}</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 5. The Moderation Process (Transparency) -->
+            <div class="guideline-section">
+                <h3 class="fw-bold mb-4">{% trans "How Moderation Works" %}</h3>
+                <p class="text-muted">{% trans "To maintain the quality of our platform, all submissions are reviewed by our moderation team. We also rely on our community to flag content that may violate these guidelines. If a submission doesn't meet our standards, we will notify you with the reason and, where possible, provide an opportunity to edit and resubmit. Our goal is always to help you share your valuable experience." %}</p>
+            </div>
+
+        </div>
+    </div>
+</div>
+{% endblock %}

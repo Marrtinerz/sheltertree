@@ -1,0 +1,52 @@
+// static/scss/pages/_static-page.scss
+
+.static-page-header {
+  background-color: $light;
+  border-radius: $border-radius-lg;
+  padding: 3rem 2rem;
+  border: 1px solid $border-color;
+  margin-bottom: 3rem;
+}
+
+.guideline-section {
+  margin-bottom: 3rem;
+}
+
+// A beautiful, modern list style for our guidelines
+.guideline-item {
+  display: flex;
+  align-items: flex-start;
+  margin-bottom: 1.5rem;
+
+  .guideline-icon {
+    flex-shrink: 0;
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #fff;
+    margin-right: 1rem;
+  }
+
+  .guideline-content {
+    h5 {
+      font-weight: 600;
+      margin-bottom: 0.25rem;
+    }
+    p {
+      color: $secondary;
+      margin-bottom: 0;
+    }
+  }
+}
+
+// A style for our brand's mission statement
+.mission-quote-block {
+  border-left: 4px solid $primary;
+  padding-left: 1.5rem;
+  font-style: italic;
+  font-size: 1.1rem;
+  color: $secondary;
+}

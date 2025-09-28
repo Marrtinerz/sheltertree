@@ -1,0 +1,50 @@
+{% extends "notifications/base_email.html" %}
+{% load i18n %}
+
+{% block content %}
+    <p style="font-size: 1.2em;"><strong>{% blocktrans with name=user.get_short_name|default:user.username %}Hi {{ name }},{% endblocktrans %}</strong></p>
+
+    <p>{% blocktrans %}My name is Martins, and I'm the founder of ShelterTree. I wanted to personally welcome you to our community.{% endblocktrans %}</p>
+
+    <p>{% blocktrans %}I started ShelterTree after my own difficult search for a new home. I remember the anxiety, the uncertainty, and the endless questions: "<em>Will they actually refund my caution/deposit? Does it flood during the raining season? What are the neighbors upstairs REALLY like?</em>"{% endblocktrans %}</p>
+
+    <p>{% blocktrans %}These are the details that turn a property into a peaceful home. They're also the details that are impossible to find in a standard listing.{% endblocktrans %}</p>
+    
+    <p><strong>{% blocktrans %}That's why we're here.{% endblocktrans %}</strong> {% blocktrans %}ShelterTree is a community built on the simple idea that by sharing our honest experiences, we can help each other find those undisturbed places of rest we all deserve.{% endblocktrans %}</p>
+
+    <p>{% blocktrans %}Thank you for becoming a vital part of this mission. You can get started right away—what would you like to do first?{% endblocktrans %}</p>
+    
+    <!-- ==================================================================== -->
+    <!-- THE NEW, WORLD-CLASS CALL TO ACTION                                  -->
+    <!-- This is a two-column, choice-driven design.                        -->
+    <!-- ==================================================================== -->
+    <table width="100%" border="0" cellspacing="0" cellpadding="0" style="margin: 30px 0; border-top: 1px solid #eee; padding-top: 20px;">
+        <tr>
+            <!-- Column 1: Get Information -->
+            <td align="center" style="padding: 10px;">
+                <h3 style="margin-top: 0;">{% trans "Find Information" %}</h3>
+                <p style="margin: 5px 0 15px; color: #555;">{% trans "Explore reviews in your city." %}</p>
+                <a href="https://{{ domain }}{% url 'reviews:property-list' %}" class="button">{% trans "Browse Properties" %}</a>
+            </td>
+        </tr>
+        <tr><td style="height: 20px;"></td></tr> <!-- Spacer for mobile -->
+        <tr>
+            <!-- Column 2: Give Information -->
+            <td align="center" style="padding: 10px;">
+                <h3 style="margin-top: 0;">{% trans "Share Your Experience" %}</h3>
+                <p style="margin: 5px 0 15px; color: #555;">{% trans "Share the story of your home." %}</p>
+                <a href="https://{{ domain }}{% url 'reviews:search' %}?intent=review" class="button">{% trans "Leave a Review" %}</a>
+            </td>
+        </tr>
+    </table>
+    
+    <p>{% blocktrans %}Thank you again for believing in this. We're so glad you're here.{% endblocktrans %}</p>
+
+    <p>{% blocktrans %}Warmly,{% endblocktrans %}</p>
+    
+    <!-- The Signature (Unchanged) -->
+    <p style="font-family: 'Cedarville Cursive', cursive; font-size: 24px; color: #2B3F4C; margin-bottom: 0;">
+        Martins
+    </p>
+    <p style="margin-top: 0; color: #888;">{% trans "Founder, ShelterTree" %}</span></p>
+{% endblock %}

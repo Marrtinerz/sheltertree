@@ -9822,14 +9822,22 @@ textarea.form-control-lg {
     color: #f5c036; }
 
 .review-guideline {
+  display: flex;
+  align-items: flex-start;
   background-color: #f4fbf8;
   border: 1px solid #d3f0e4;
   border-radius: 0.5rem;
   padding: 1rem; }
   .review-guideline .guideline-icon {
-    font-size: 1.5rem;
+    flex-shrink: 0;
+    margin-right: 1rem;
     color: #21b576;
-    opacity: 0.8; }
+    font-size: 1.25rem;
+    margin-top: 0.1rem; }
+  .review-guideline p {
+    margin-bottom: 0;
+    font-size: 0.9rem;
+    color: #45535e; }
 
 .property-gallery-header {
   background-color: #f8f9fa;
@@ -10099,6 +10107,44 @@ textarea.form-control-lg {
   color: #5A6D7C; }
   .faq-accordion .accordion-body a {
     font-weight: 500; }
+
+.static-page-header {
+  background-color: #f8f9fa;
+  border-radius: 0.8rem;
+  padding: 3rem 2rem;
+  border: 1px solid rgba(90, 109, 124, 0.25);
+  margin-bottom: 3rem; }
+
+.guideline-section {
+  margin-bottom: 3rem; }
+
+.guideline-item {
+  display: flex;
+  align-items: flex-start;
+  margin-bottom: 1.5rem; }
+  .guideline-item .guideline-icon {
+    flex-shrink: 0;
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #fff;
+    margin-right: 1rem; }
+  .guideline-item .guideline-content h5, .guideline-item .guideline-content .h5 {
+    font-weight: 600;
+    margin-bottom: 0.25rem; }
+  .guideline-item .guideline-content p {
+    color: #5A6D7C;
+    margin-bottom: 0; }
+
+.mission-quote-block {
+  border-left: 4px solid #21b576;
+  padding-left: 1.5rem;
+  font-style: italic;
+  font-size: 1.1rem;
+  color: #5A6D7C; }
 
 /* // 3. (Optional) Add any other custom site-wide styles here later.
 body {

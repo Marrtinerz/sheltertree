@@ -141,6 +141,20 @@ class NotificationService:
             context=context,
             recipient_list=[user.email] if user else None
         )
+        
+    
+    # --- NEW: ONBOARDING & ENGAGEMENT NOTIFICATIONS ---
+
+    def send_welcome_email(self, user):
+        """
+        Sends a personal welcome email to a new user after they verify.
+        """
+        context = {'user': user}
+        self._send_email(
+            template_base_name='welcome',
+            context=context,
+            recipient_list=[user.email]
+        )
 
 # Create a single, reusable instance of the service
 notification_service = NotificationService()

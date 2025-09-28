@@ -18,7 +18,7 @@
                     <!-- Contextual Information Block -->
                     <div class="property-context mb-4 text-center">
                         <p class="mb-1 small text-muted">{% trans "You are reviewing:" %}</p>
-                        <h4 class="h5 mb-0">{{ property.name }}</h4>
+                        <h4 class="h5 mb-0">{{ property.get_admin_display_name }}</h4>
                     </div>
 
                     <form method="post" novalidate>
@@ -79,15 +79,21 @@
                             <!-- ==================================================================== -->
                             <!-- ADD THIS ENTIRE "review-guideline" BLOCK                           -->
                             <!-- ==================================================================== -->
-                            <div class="review-guideline d-flex align-items-start mb-4">
-                                <div class="guideline-icon me-3">
+                            <div class="review-guideline mb-4">
+                                <div class="guideline-icon">
                                     <i class="fas fa-lightbulb"></i>
                                 </div>
                                 <div>
-                                    {% comment %} <h6 class="fw-bold mb-1">{% trans "A Note on Helpful Reviews" %}</h6> {% endcomment %}
-                                    <p class="small text-muted mb-0">
-                                        {% blocktrans %}
-                                        The most helpful reviews are clear, honest, and respectful. Remember to be kind! 😊
+                                    <p class="small mb-0">
+                                        <!--
+                                            THE CRITICAL FIX:
+                                            1. We use the powerful `.
+                                            2. We pre-calculate the URL and pass it in as a variable `guidelines_url`.
+                                            3. We can then safely use that variable inside the block.
+                                        -->
+                                        {% url 'core:content_guidelines' as guidelines_url %}
+                                        {% blocktrans with guidelines_url=guidelines_url %}
+                                        The most helpful reviews are clear, honest, and respectful. Before writing, please review our <a href="{{ guidelines_url }}" target="_blank">Content Guidelines</a>. Remember to be kind! 😊
                                         {% endblocktrans %}
                                     </p>
                                 </div>
