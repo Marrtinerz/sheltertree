@@ -30,11 +30,29 @@ TWILIO_SMS_FROM_NUMBER = config('TWILIO_FROM_NUMBER', default=None)
 TWILIO_WHATSAPP_FROM_NUMBER = config('TWILIO_WHATSAPP_FROM_NUMBER', default=None)
 
 
-AFRICASTALKING_API_KEY = config('AFRICASTALKING_API_KEY', default=None)
-AFRICASTALKING_USERNAME = config('AFRICASTALKING_USERNAME', default=None)
-AFRICASTALKING_SENDER_ID = config('AFRICASTALKING_SENDER_ID', default=None)
-AFRICASTALKING_WHATSAPP_NUMBER = config('AFRICASTALKING_WHATSAPP_NUMBER', default=None)
+# AFRICASTALKING_API_KEY = config('AFRICASTALKING_API_KEY', default=None)
+# AFRICASTALKING_USERNAME = config('AFRICASTALKING_USERNAME', default=None)
+# AFRICASTALKING_SENDER_ID = config('AFRICASTALKING_SENDER_ID', default=None)
+# AFRICASTALKING_WHATSAPP_NUMBER = config('AFRICASTALKING_WHATSAPP_NUMBER', default=None)
 
+
+## Zeptoemail provider
+# --- EMAIL CONFIGURATION (World-Class Standard) ---
+# In production, this should be True to use an encrypted connection.
+EMAIL_USE_TLS = True
+
+# These settings are loaded securely from your .env file.
+EMAIL_HOST = config('EMAIL_HOST')
+EMAIL_PORT = config('EMAIL_PORT', cast=int)
+EMAIL_HOST_USER = config('EMAIL_HOST_USER')
+EMAIL_HOST_PASSWORD = config('EMAIL_HOST_PASSWORD')
+
+# This is the "From" name and address that users will see.
+DEFAULT_FROM_EMAIL = config('DEFAULT_FROM_EMAIL')
+
+# For development, you can still use the console backend to avoid sending real emails.
+# To test ZeptoMail, comment this line out.
+# EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend' 
 
 
 # --- Logging ---

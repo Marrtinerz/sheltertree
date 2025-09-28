@@ -15,7 +15,23 @@ SECRET_KEY = config('SECRET_KEY')
 ALLOWED_HOSTS = ['localhost', '127.0.0.1']
 
 
-EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+# EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+
+
+
+# --- EMAIL CONFIGURATION (World-Class Standard) ---
+# In production, this should be True to use an encrypted connection.
+EMAIL_USE_TLS = True
+
+# These settings are loaded securely from your .env file.
+EMAIL_HOST = config('EMAIL_HOST')
+EMAIL_PORT = config('EMAIL_PORT', cast=int)
+EMAIL_HOST_USER = config('EMAIL_HOST_USER')
+EMAIL_HOST_PASSWORD = config('EMAIL_HOST_PASSWORD')
+
+# This is the "From" name and address that users will see.
+DEFAULT_FROM_EMAIL = config('DEFAULT_FROM_EMAIL')
+
 
 # Optional: Add Django Debug Toolbar for a huge development boost
 # INSTALLED_APPS += ['debug_toolbar']
