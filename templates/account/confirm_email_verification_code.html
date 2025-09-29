@@ -1,0 +1,54 @@
+{% extends "base_auth.html" %}
+{% load i18n %}
+{% load widget_tweaks %}
+
+{% block title %}{% trans "Confirm Your Email" %} | ShelterTree {% endblock %}
+
+{% block auth_branding %}
+    <h1 class="display-4 fw-bold">{% trans "One Final Step." %}</h1>
+    <p class="lead mt-3 fs-4">{% trans "Enter the code we sent to your email to secure your account and join the community." %}</p>
+{% endblock %}
+
+{% block auth_form %}
+    <h2 class="fw-bold mb-3">{% trans "Confirm Your Email" %}</h2>
+    <p class="text-muted">
+        {% blocktrans with email=email %}
+        We've sent a 6-digit verification code to <strong>{{ email }}</strong>. Please enter it below.
+        {% endblocktrans %}
+    </p>
+
+    <!-- The 'form' variable is passed by the allauth view -->
+    <form method="post" action="{% url 'account_email_verification_sent' %}" class="mt-4">
+        {% csrf_token %}
+        
+        <div class="mb-3">
+            <label for="{{ form.code.id_for_label }}" class="form-label visually-hidden">{% trans "Verification Code" %}</label>
+            {{ form.code|attr:"class:form-control form-control-lg text-center"|attr:"autocomplete:one-time-code"|attr:"inputmode:numeric"|attr:"pattern:[0-9]*"|attr:"maxlength:6"|attr:"placeholder: • • • • • •" }}
+            
+            {% for error in form.code.errors %}
+                <div class="invalid-feedback d-block text-center">{{ error }}</div>
+            {% endfor %}
+        </div>
+
+        {% if form.non_field_errors %}
+            <div class="alert alert-danger mt-3">{{ form.non_field_errors }}</div>
+        {% endif %}
+
+        <div class="d-grid mt-4">
+            <button type="submit" name="action" value="verify" class="btn btn-primary">{% trans "Confirm & Complete Signup" %}</button>
+        </div>
+    </form>
+
+    <hr class="my-4">
+
+    <div class="text-center">
+        <small class="text-muted">
+            {% trans "Didn't receive a code?" %}
+            <!-- This second form is used for the 'resend' action -->
+            <form method="post" action="{% url 'account_email_verification_sent' %}" class="d-inline">
+                {% csrf_token %}
+                <button type="submit" name="action" value="resend" class="btn btn-link btn-sm p-0 m-0 align-baseline">{% trans "Resend code" %}</button>.
+            </form>
+        </small>
+    </div>
+{% endblock %}

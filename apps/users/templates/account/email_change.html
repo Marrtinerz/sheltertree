@@ -1,0 +1,90 @@
+{% extends "base.html" %}
+{% load i18n %}
+{% load widget_tweaks %}
+
+{% block title %}{% trans "Change Email Address" %}{% endblock %}
+
+{% block content %}
+<div class="container my-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-7">
+            <div class="card shadow-lg">
+                <div class="card-header text-center py-5">
+                    <h1 class="mb-1 h2">{% trans "Change Your Email Address" %}</h1>
+                    <p class="mb-0 opacity-75">{% trans "A verification email will be sent to the new address." %}</p>
+                </div>
+
+                <div class="card-body p-4 p-md-5">
+                    
+                    <!-- ==================================================================== -->
+                    <!-- SECTION 1: Current and Pending Status                              -->
+                    <!-- This section displays the current state of the user's email.       -->
+                    <!-- ==================================================================== -->
+                    <fieldset class="border rounded-3 p-3 mb-4">
+                        <legend class="float-none w-auto px-2 h6">{% trans "Current Status" %}</legend>
+                        
+                        <!-- The user's current primary email -->
+                        <div class="mb-3">
+                            <label for="current_email" class="form-label">{% trans "Current Primary Email" %}</label>
+                            <input type="email" id="current_email" class="form-control" value="{{ user.email }}" disabled readonly>
+                        </div>
+
+                        <!-- 
+                            THE CRITICAL FIX IS HERE:
+                            This block will now correctly appear when `new_emailaddress` is in the context.
+                        -->
+                        {% if new_emailaddress %}
+                            <hr>
+                            <div class="alert alert-info mb-0">
+                                <h6 class="alert-heading fw-bold"><i class="fas fa-hourglass-half me-2"></i>{% trans "Verification Pending" %}</h6>
+                                <p class="mb-2">
+                                    {% blocktrans with email=new_emailaddress.email %}
+                                    Your request to change your email to <strong>{{ email }}</strong> is pending. Please check your inbox.
+                                    {% endblocktrans %}
+                                </p>
+                                <!-- This is a SEPARATE form for managing the pending email -->
+                                <form id="pending-email-form" method="post" action="{% url 'account_email' %}" class="d-flex gap-2">
+                                    {% csrf_token %}
+                                    <input type="hidden" name="email" value="{{ new_emailaddress.email }}">
+                                    <button class="btn btn-sm btn-outline-secondary" type="submit" name="action_send">{% trans "Re-send Verification" %}</button>
+                                    <button class="btn btn-sm btn-outline-danger" type="submit" name="action_remove">{% trans "Cancel Change" %}</button>
+                                </form>
+                            </div>
+                        {% endif %}
+                    </fieldset>
+
+                    <!-- ==================================================================== -->
+                    <!-- SECTION 2: The Form to Add a New Email Address                     -->
+                    <!-- This form is only for the 'add' action.                            -->
+                    <!-- ==================================================================== -->
+                    {% if not new_emailaddress %}
+                        <form method="post" action="{% url 'account_email' %}">
+                            {% csrf_token %}
+                            <fieldset class="border rounded-3 p-3">
+                                <legend class="float-none w-auto px-2 h6">{% trans "Request a Change" %}</legend>
+                                
+                                <!-- Display any non-field errors first -->
+                                {% if form.non_field_errors %}
+                                    <div class="alert alert-danger">{{ form.non_field_errors }}</div>
+                                {% endif %}
+
+                                <div class="mb-3">
+                                    <label for="{{ form.email.id_for_label }}" class="form-label fw-bold">{{ form.email.label }}</hlabel>
+                                    {{ form.email|attr:"class:form-control"|attr:"placeholder:you@example.com" }}
+                                    {% for error in form.email.errors %}
+                                        <div class="invalid-feedback d-block">{{ error }}</div>
+                                    {% endfor %}
+                                </div>
+
+                                <div class="d-grid mt-2">
+                                    <button name="action_add" type="submit" class="btn btn-primary">{% trans "Request Email Change" %}</button>
+                                </div>
+                            </fieldset>
+                        </form>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

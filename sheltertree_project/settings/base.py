@@ -8,7 +8,7 @@ import os
 from pathlib import Path
 from decouple import config
 from django.utils.translation import gettext_lazy as _
-
+from sheltertree_project.configuration.username_blacklist import BLACKLIST as USERNAME_BLACKLIST
 # --- Core Paths ---
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent.parent
@@ -139,7 +139,7 @@ STATIC_URL = '/static/'
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles') # For production 'collectstatic'
 STATICFILES_DIRS = [os.path.join(BASE_DIR, 'static')] # For development assets
 
-STATIC_ROOT = BASE_DIR / 'staticfiles'
+# STATIC_ROOT = BASE_DIR / 'staticfiles'
 STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
 MEDIA_URL = '/media/'
@@ -182,9 +182,19 @@ ACCOUNT_SIGNUP_FIELDS = ['username*', 'email*', 'password1*', 'password2*']
 # --- EMAIL VERIFICATION ---
 ACCOUNT_EMAIL_VERIFICATION = 'mandatory'
 
+# This one line changes the entire verification behavior of the platform.
+ACCOUNT_EMAIL_VERIFICATION_BY_CODE_ENABLED = True
+
+ACCOUNT_EMAIL_VERIFICATION_SUPPORTS_RESEND = True
+
+ACCOUNT_UNIQUE_EMAIL = True
+
+# We can also configure the code's length for a better UX
+ACCOUNT_EMAIL_VERIFICATION_CODE_LENGTH = 6
+
 # --- REDIRECTS ---
 LOGIN_URL = 'account_login'
-LOGIN_REDIRECT_URL = '/'
+# LOGIN_REDIRECT_URL = '/'
 ACCOUNT_LOGOUT_REDIRECT_URL = '/'
 ACCOUNT_AUTHENTICATED_LOGIN_REDIRECTS = False
 
@@ -193,13 +203,19 @@ ACCOUNT_SESSION_REMEMBER = True
 # This still correctly points to our minimal form for Stage 1.
 ACCOUNT_FORMS = {
     'login': 'apps.users.forms.CustomLoginForm', # Use our new custom login form
-    # 'signup': 'apps.users.forms.MinimalSignupForm',
+    'signup': 'apps.users.forms.MinimalSignupForm',
     }
+
+ACCOUNT_EMAIL_SUBJECT_PREFIX = None
+
+ACCOUNT_CHANGE_EMAIL = True
 
 ACCOUNT_LOGIN_ON_EMAIL_CONFIRMATION = True
 # ACCOUNT_CONFIRM_EMAIL_ON_GET = True
 
 ACCOUNT_ADAPTER = 'apps.users.adapter.MyAccountAdapter'
+
+ACCOUNT_USERNAME_BLACKLIST = USERNAME_BLACKLIST
 
 # --- ShelterTree Business Logic Settings ---
 
@@ -210,8 +226,6 @@ REVIEW_VERIFICATION_GRACE_PERIOD_HOURS = 48
 
 # --- Media Files Configuration (User-uploaded content) ---
 # The absolute filesystem path to the directory that will hold user-uploaded files.
-MEDIA_ROOT = BASE_DIR / 'media'
-
-# URL that handles the media served from MEDIA_ROOT.
+# MEDIA_ROOT = BASE_DIR / 'media'
 MEDIA_URL = '/media/'
-
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
