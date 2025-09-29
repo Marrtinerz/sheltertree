@@ -33,22 +33,22 @@ class MyAccountAdapter(DefaultAccountAdapter):
     #     # If our session variable wasn't there, fall back to the default behavior.
     #     return super().get_login_redirect_url(request)
     
-    def get_password_change_redirect_url(self, request):
-        """
-        --- THE CRITICAL FIX ---
-        The method signature has been corrected to (self, request), which matches
-        the parent class in django-allauth. The 'user' argument has been removed.
+    # def get_password_change_redirect_url(self, request):
+    #     """
+    #     --- THE CRITICAL FIX ---
+    #     The method signature has been corrected to (self, request), which matches
+    #     the parent class in django-allauth. The 'user' argument has been removed.
         
-        This method is called by allauth after a password is successfully changed.
-        We override it to redirect to the user's profile hub.
-        """
-        # We can still access the user via request.user if needed, but it's not required here.
+    #     This method is called by allauth after a password is successfully changed.
+    #     We override it to redirect to the user's profile hub.
+    #     """
+    #     # We can still access the user via request.user if needed, but it's not required here.
         
-        # Add a success message that will be displayed on the destination page.
-        # messages.success(request, _("Your password has been changed successfully."))
+    #     # Add a success message that will be displayed on the destination page.
+    #     # messages.success(request, _("Your password has been changed successfully."))
         
-        # Return the URL of the profile hub.
-        return reverse('account_profile')
+    #     # Return the URL of the profile hub.
+    #     return reverse('account_profile')
     
     def generate_email_verification_code(self):
         """

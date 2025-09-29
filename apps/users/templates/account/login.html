@@ -32,6 +32,9 @@
     <form class="login" method="post" action="{% url 'account_login' %}">
         {% csrf_token %}
 
+        {% comment %} Hidden field for passing the next parameter {% endcomment %}
+        <input type="hidden" name="next" value="{{ request.GET.next }}" />
+        
         <!-- Username or Email Field -->
         <div class="form-floating mb-3">
             <!-- 
