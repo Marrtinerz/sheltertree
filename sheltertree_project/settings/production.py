@@ -12,7 +12,7 @@ SECRET_KEY = config('DJANGO_SECRET_KEY')
 # After: We tell decouple to look for the EXACT environment variable named 'DJANGO_ALLOWED_HOSTS'.
 ALLOWED_HOSTS = config('DJANGO_ALLOWED_HOSTS', cast=lambda v: [s.strip() for s in v.split(',')])
 
-
+DATABASE_URL = config('DATABASE_URL')
 
 # --- DATABASE CONFIGURATION ---
 # Use dj-database-url to parse the DATABASE_URL from the environment (e.g., from Render).
