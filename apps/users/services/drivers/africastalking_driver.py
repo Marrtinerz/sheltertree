@@ -7,15 +7,15 @@ import logging # Import the logging library
 logger = logging.getLogger(__name__)
 
 # --- SMS Initialization (This remains the same) ---
-try:
-    africastalking.initialize(
-        username=settings.AFRICASTALKING_USERNAME,
-        api_key=settings.AFRICASTALKING_API_KEY
-    )
-    sms_service = africastalking.SMS
-except Exception as e:
-    sms_service = None
-    logger.error(f"Error initializing AfricasTalking SMS SDK: {e}")
+# try:
+#     africastalking.initialize(
+#         username=settings.AFRICASTALKING_USERNAME,
+#         api_key=settings.AFRICASTALKING_API_KEY
+#     )
+#     sms_service = africastalking.SMS
+# except Exception as e:
+#     sms_service = None
+#     logger.error(f"Error initializing AfricasTalking SMS SDK: {e}")
 
 
 def send_sms(to_number, message):
