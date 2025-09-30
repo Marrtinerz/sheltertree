@@ -29,7 +29,6 @@ COPY . .
 
 # Run collectstatic. This will gather all Django static files and
 # also trigger django-sass-processor to compile your SASS into CSS.
-RUN DJANGO_SECRET_KEY='this-is-a-dummy-key-for-the-build-process-only'
 RUN DJANGO_SETTINGS_MODULE=sheltertree_project.settings.production python manage.py collectstatic --noinput
 
 # ====================================================================
