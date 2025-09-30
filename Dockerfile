@@ -23,14 +23,7 @@ COPY . .
 # --- THE DEFINITIVE FIX IS HERE ---
 # We provide temporary, non-secret dummy values for ALL variables that Django
 # needs just to initialize itself for the collectstatic command.
-RUN DJANGO_SECRET_KEY='dummy-build-key' \
-    DJANGO_ALLOWED_HOSTS='localhost,sheltertree.onrender.com' \
-    DATABASE_URL='postgres://user:pass@localhost:5432/db' \
-    AWS_ACCESS_KEY_ID='dummy' \
-    AWS_SECRET_ACCESS_KEY='dummy' \
-    AWS_STORAGE_BUCKET_NAME='dummy' \
-    AWS_S3_REGION_NAME='us-east-1' \
-    DJANGO_SETTINGS_MODULE=sheltertree_project.settings.production \
+RUN DJANGO_SETTINGS_MODULE=sheltertree_project.settings.production \
     python manage.py collectstatic --noinput
 
 # ====================================================================
