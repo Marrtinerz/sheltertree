@@ -8,7 +8,7 @@ import dj_database_url
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = config('DEBUG', default=False, cast=bool)
 
-SECRET_KEY = config('DJANGO_SECRET_KEY', default='this-is-a-dummy-key-for-the-build-process-only')
+SECRET_KEY = config('DJANGO_SECRET_KEY')
 # After: We tell decouple to look for the EXACT environment variable named 'DJANGO_ALLOWED_HOSTS'.
 ALLOWED_HOSTS = config('DJANGO_ALLOWED_HOSTS', cast=lambda v: [s.strip() for s in v.split(',')])
 

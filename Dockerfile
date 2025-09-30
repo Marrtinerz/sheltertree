@@ -16,17 +16,20 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     zlib1g-dev
 
 COPY requirements.txt .
-# Use --prefix=/install to isolate packages, making them easier to copy
-RUN pip install --no-cache-dir --prefix=/install -r requirements.txt
+RUN pip install --no-cache-dir -r requirements.txt
 
 COPY . .
 
-# IMPORTANT: Set the DJANGO_SETTINGS_MODULE for the collectstatic command
-# This was already correct in your file.
-RUN DJANGO_SETTINGS_MODULE=sheltertree_project.settings.production /install/bin/python manage.py collectstatic --noinput
+# --- THE DEFINITIVE FIX IS HERE ---
+# We provide temporary, non-secret dummy values for ALL variables that Django
+# needs just to initialize itself for the collectstatic command.
+RUN DJANGO_SECRET_KEY='dummy-build-key' \
+    DJANGO_ALLOWED_HOSTS='localhost' \
+    DJANGO_SETTINGS_MODULE=sheltertree_project.settings.production \
+    python manage.py collectstatic --noinput
 
 # ====================================================================
-# STAGE 2: The "Runner" Stage
+# STAGE 2: The "Runner" Stage (No changes needed here)
 # ====================================================================
 FROM python:3.11-slim
 
@@ -44,16 +47,11 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 
 RUN addgroup --system app && adduser --system --group app
 
-# Copy installed packages from the builder stage
-COPY --from=builder /install /usr/local
-
-# Copy the application code from the builder stage
-# This includes the staticfiles directory created by collectstatic
-COPY --from=builder /app /app
+COPY --from=builder /usr/local/lib/python3.11/site-packages /usr/local/lib/python3.11/site-packages
+COPY --from=builder /app/staticfiles /app/staticfiles/
+COPY . .
 
 RUN chown -R app:app /app
-
 USER app
 
-# The command to run the application using Gunicorn
 CMD ["gunicorn", "--bind", "0.0.0.0:8000", "sheltertree_project.wsgi:application"]
