@@ -9,6 +9,7 @@ from pathlib import Path
 from decouple import config
 from django.utils.translation import gettext_lazy as _
 from sheltertree_project.configuration.username_blacklist import BLACKLIST as USERNAME_BLACKLIST
+import dj_database_url
 # --- Core Paths ---
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent.parent

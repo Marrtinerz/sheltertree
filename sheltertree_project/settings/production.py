@@ -1,7 +1,6 @@
 # sheltertree_project/settings/production.py
 from .base import *
 from decouple import config
-import dj_database_url
 
 # --- Production-Specific Settings ---
 
@@ -19,6 +18,7 @@ DATABASE_URL = config('DATABASE_URL')
 # This is cleaner and automatically handles SSL requirements.
 DATABASES = {
     'default': dj_database_url.config(
+        default='postgres://user:password@host/db',
         conn_max_age=600,      # Keep database connections alive for 10 minutes
         ssl_require=True       # Enforce SSL connection to the database for security
     )
