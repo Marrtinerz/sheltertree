@@ -21,7 +21,7 @@ from django.views.generic import TemplateView
 # URLs that should NOT be translated or prefixed with a language code.
 # The admin interface is a primary example.
 urlpatterns = [
-    path('admin/', admin.site.urls),
+    path('tree-root/', admin.site.urls),
     path('accounts/', include('allauth.urls')),
     path('accounts/', include('apps.users.urls')),
     

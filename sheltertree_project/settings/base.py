@@ -25,6 +25,7 @@ SMS_VENDOR = config('SMS_VENDOR', default='CONSOLE')
 
 # --- Application Definition ---
 INSTALLED_APPS = [
+    'whitenoise.runserver_nostatic',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -34,6 +35,7 @@ INSTALLED_APPS = [
     # 'compressor',
     'widget_tweaks',
     'sass_processor',
+    'storages',
     
     # Our app - using the 'apps' prefix is a good practice for clarity.
     'apps.reviews',
@@ -138,9 +140,6 @@ TIME_ZONE = 'UTC'
 STATIC_URL = '/static/'
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles') # For production 'collectstatic'
 STATICFILES_DIRS = [os.path.join(BASE_DIR, 'static')] # For development assets
-
-# STATIC_ROOT = BASE_DIR / 'staticfiles'
-STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media') # For user-uploaded files
