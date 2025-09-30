@@ -20,12 +20,6 @@ RUN pip install --no-cache-dir -r requirements.txt
 
 COPY . .
 
-# --- THE DEFINITIVE FIX IS HERE ---
-# We provide temporary, non-secret dummy values for ALL variables that Django
-# needs just to initialize itself for the collectstatic command.
-RUN DJANGO_SETTINGS_MODULE=sheltertree_project.settings.production \
-    python manage.py collectstatic --noinput
-
 # ====================================================================
 # STAGE 2: The "Runner" Stage (No changes needed here)
 # ====================================================================
