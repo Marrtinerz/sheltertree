@@ -65,6 +65,9 @@ class NotificationService:
     # These public methods remain beautifully simple. They are unchanged.
 
     def send_property_approved_email(self, property_obj):
+        if settings.SKIP_APPROVAL_EMAIL_SEND:
+            return
+        
         user = property_obj.added_by
         
         # --- THE CRITICAL FIX IS HERE ---
@@ -107,6 +110,9 @@ class NotificationService:
     # --- REVIEW MODERATION NOTIFICATIONS ---
 
     def send_review_approved_email(self, review_obj):
+        if settings.SKIP_REVIEW_EMAIL_SEND:
+            return
+        
         user = review_obj.author
         email_subject_name = review_obj.unit.property.get_email_subject_name()
         property_display_name = review_obj.unit.property.get_display_name(truncate_address=True)

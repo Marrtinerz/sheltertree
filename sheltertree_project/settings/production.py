@@ -76,8 +76,11 @@ EMAIL_HOST_USER = config('EMAIL_HOST_USER')
 EMAIL_HOST_PASSWORD = config('EMAIL_HOST_PASSWORD')
 
 # This is the "From" name and address that users will see.
-DEFAULT_FROM_EMAIL = config('DEFAULT_FROM_EMAIL') 
+DEFAULT_FROM_EMAIL = config('DEFAULT_FROM_EMAIL')
 
+#An easy way to skip email sending when the team is adding many properties at our early stages
+SKIP_APPROVAL_EMAIL_SEND = config('SKIP_APPROVAL_EMAIL_SEND')
+SKIP_REVIEW_EMAIL_SEND = config('SKIP_REVIEW_EMAIL_SEND')
 
 # --- Logging ---
 # A basic logging setup that prints to the console, ideal for Docker/containerized environments.
