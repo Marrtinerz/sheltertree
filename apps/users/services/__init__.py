@@ -6,7 +6,7 @@ class NotificationService:
     def send_verification_code(self, user, method='whatsapp'):
         phone_number = user.phone_number
         code = user.phone_verification_code
-        message = f"Your ShelterTree verification code is: {code}"
+        message = f"{code} is your verification code."
 
         # --- THE MIGRATION LOGIC ---
         # The service now intelligently selects the correct driver based on settings.
