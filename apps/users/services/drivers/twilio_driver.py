@@ -8,7 +8,7 @@ logger = logging.getLogger(__name__)
 
 def send_sms(to_number, message):
     """Sends an SMS using the Twilio API."""
-    if not all([settings.TWILIO_ACCOUNT_SID, settings.TWILIO_AUTH_TOKEN, settings.TWILIO_MESSAGING_SERVICE_SID, settings.TWILIO_SMS_FROM_NUMBER]):
+    if not all([settings.TWILIO_ACCOUNT_SID, settings.TWILIO_AUTH_TOKEN, settings.TWILIO_SMS_FROM_NUMBER]):
         logger.error("Twilio SMS settings are not fully configured.")
         return False, "service_misconfigured"
 
@@ -17,7 +17,6 @@ def send_sms(to_number, message):
         client.messages.create(
             body=message,
             from_=settings.TWILIO_SMS_FROM_NUMBER,
-            messaging_service_sid=settings.TWILIO_MESSAGING_SERVICE_SID,
             to=to_number
         )
         logger.info(f"Twilio SMS sent successfully to {to_number}")
@@ -31,7 +30,7 @@ def send_sms(to_number, message):
 
 def send_whatsapp(to_number, message):
     """Sends a WhatsApp message using the Twilio API."""
-    if not all([settings.TWILIO_ACCOUNT_SID, settings.TWILIO_AUTH_TOKEN, settings.TWILIO_MESSAGING_SERVICE_SID, settings.TWILIO_WHATSAPP_FROM_NUMBER]):
+    if not all([settings.TWILIO_ACCOUNT_SID, settings.TWILIO_AUTH_TOKEN, settings.TWILIO_WHATSAPP_FROM_NUMBER]):
         logger.error("Twilio WhatsApp settings are not fully configured.")
         return False, "service_misconfigured"
         
@@ -40,7 +39,6 @@ def send_whatsapp(to_number, message):
         client.messages.create(
             body=message,
             from_=f"whatsapp:{settings.TWILIO_WHATSAPP_FROM_NUMBER}",
-            messaging_service_sid=settings.TWILIO_MESSAGING_SERVICE_SID,
             to=f"whatsapp:{to_number}"
         )
         logger.info(f"Twilio WhatsApp message sent successfully to {to_number}")
