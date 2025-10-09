@@ -25,7 +25,6 @@ urlpatterns = [
     
     
     # --- PROPERTY & REVIEW ACTIONS ---
-    
     path('property/<int:pk>/', views.PropertyDetailView.as_view(), name='property-detail'),
     path('property/add/', views.AddPropertyView.as_view(), name='add-property'),
     path('property/add/success/<int:pk>/', views.add_property_success, name='add-property-success'),

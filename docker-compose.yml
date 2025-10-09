@@ -1,24 +1,30 @@
 # docker-compose.yml
+# This is the BASE configuration, shared by all environments.
+# It defines the services and their relationship but leaves out
+# development-specific settings like port mapping and volume mounts.
 
 services:
   web:
-    build: .
-    command: python manage.py runserver 0.0.0.0:8000
-    volumes:
-      - .:/app  # Mount current directory into /app in the container
-    ports:
-      - "8000:8000"
-    env_file:
-      - ./.env # Load environment variables from .env file
+    build:
+      context: .
+      # This points to our world-class, multi-stage production Dockerfile.
+      dockerfile: Dockerfile
+    # The CMD to run the server (Gunicorn) is now inside the Dockerfile.
+    # We no longer map ports or mount volumes here; that is a development
+    # concern that will be handled in the override file.
     depends_on:
       - db
 
   db:
-    image: postgres:latest
+    # It's a best practice to pin to a specific major version for consistency.
+    image: postgres:17
     volumes:
+      # This ensures your local database data persists between runs.
       - postgres_data:/var/lib/postgresql/data/
+    # The environment variables will be loaded from the .env.dev file
+    # when you run your development environment via the override file.
     env_file:
-      - ./.env # Load environment variables from .env file
+      - .env.dev
 
 volumes:
   postgres_data:

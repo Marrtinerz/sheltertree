@@ -50,8 +50,7 @@ INSTALLED_APPS = [
     'allauth',
     'allauth.account',
     'allauth.socialaccount',
-    # Optional - we will configure this in Day 7(b) or (c)
-    # 'allauth.socialaccount.providers.google',
+    'allauth.socialaccount.providers.google',
 ]
 
 MIDDLEWARE = [
@@ -167,6 +166,22 @@ AUTHENTICATION_BACKENDS = [
     'django.contrib.auth.backends.ModelBackend',
     'allauth.account.auth_backends.AuthenticationBackend',
 ]
+
+
+
+SOCIALACCOUNT_PROVIDERS = {
+    'google': {
+        'SCOPE': ['profile', 'email'],
+        'AUTH_PARAMS': {'access_type': 'online'},
+        'VERIFIED_EMAIL': True # A great setting for added trust
+    }
+}
+
+# UX Improvements
+SOCIALACCOUNT_SIGNUP_FORM_CLASS = 'apps.users.forms.CustomSocialSignupForm'
+SOCIALACCOUNT_AUTO_SIGNUP=False # Automatically sign up new social users
+
+
 
 # --- LOGIN & SIGNUP ---
 # NEW: Replaces ACCOUNT_AUTHENTICATION_METHOD. Users can log in with username or email.

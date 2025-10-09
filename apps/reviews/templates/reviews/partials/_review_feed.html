@@ -81,30 +81,31 @@
 
 
 <!-- The Intelligent Call to Action (Unchanged) -->
-<div class="review-cta p-4 text-center mt-4">
-    {% if unit %}
-        <h5 class="fw-bold">{% trans "Is this your unit?" %}</h5>
-        <p class="mb-3">{% trans "Help the community by sharing your experience for" %} <strong>{{ unit.unit_identifier }}</strong>.</p>
+
+{% if unit %}
+    <div class="review-cta p-4 text-center mt-4">
+            <h5 class="fw-bold">{% trans "Is this your unit?" %}</h5>
+            <p class="mb-3">{% trans "Help the community by sharing your experience for" %} <strong>{{ unit.unit_identifier }}</strong>.</p>
+            
+            <!-- THE FIX: Wrap the buttons in a flex container -->
+            <div class="d-flex justify-content-center flex-wrap gap-3">
+                <!-- The `me-2` is now removed from this button -->
+                <a href="{% url 'reviews:add-review-to-unit' unit_pk=unit.pk %}" class="btn btn-primary">
+                    {% trans "Review this Unit" %}
+                </a>
+                <a href="{% url 'reviews:add-unit-and-review' property_pk=unit.property.pk %}" class="btn btn-outline-secondary">
+                    {% trans "My unit isn't listed" %}
+                </a>
+            </div>
+
+        {% comment %} {% else %}
+            <!-- The CTA for properties with no units (Unchanged) -->
+            <h5 class="fw-bold">{% trans "Be the First to Review This Property" %}</h5>
+            <p class="mb-3">{% trans "No units have been added to this property yet. Add yours now to get the conversation started." %}</p>
+            <a href="{% url 'reviews:add-unit-and-review' property_pk=property.pk %}" class="btn btn-primary">
+                <i class="fas fa-plus-circle me-2"></i>{% trans "Add Your Unit & Review" %}
+            </a> {% endcomment %}
         
-        <!-- THE FIX: Wrap the buttons in a flex container -->
-        <div class="d-flex justify-content-center flex-wrap gap-3">
-            <!-- The `me-2` is now removed from this button -->
-            <a href="{% url 'reviews:add-review-to-unit' unit_pk=unit.pk %}" class="btn btn-primary">
-                {% trans "Review this Unit" %}
-            </a>
-            <a href="{% url 'reviews:add-unit-and-review' property_pk=unit.property.pk %}" class="btn btn-outline-secondary">
-                {% trans "My unit isn't listed" %}
-            </a>
-        </div>
-
-    {% else %}
-        <!-- The CTA for properties with no units (Unchanged) -->
-        <h5 class="fw-bold">{% trans "Be the First to Review This Property" %}</h5>
-        <p class="mb-3">{% trans "No units have been added to this property yet. Add yours now to get the conversation started." %}</p>
-        <a href="{% url 'reviews:add-unit-and-review' property_pk=property.pk %}" class="btn btn-primary">
-            <i class="fas fa-plus-circle me-2"></i>{% trans "Add Your Unit & Review" %}
-        </a>
-    {% endif %}
-</div>
-
+    </div>
+{% endif %}
 <!-- The scroll button script is no longer needed and can be deleted -->

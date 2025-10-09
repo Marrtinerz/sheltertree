@@ -34,6 +34,25 @@
 {% block auth_form %}
     <h2 class="fw-bold mb-4">{% trans "Create Your Account" %}</h2>
 
+    <!-- Social Accounts Section -->
+    <div class="socialaccount_ballot">
+        {% comment %} <h5 class="separator my-4">{% trans "or" %}</h5> {% endcomment %}
+        <div class="socialaccount_providers">
+            {% get_providers as socialaccount_providers %}
+            {% for provider in socialaccount_providers %}
+                {% if provider.id == 'google' %}
+                    <form action="{% provider_login_url 'google' process='signup' %}" method="post">
+                        {% csrf_token %}
+                        <button type="submit" class="btn btn-outline-primary w-100">
+                            <i class="fab fa-google me-2"></i> {% trans "Sign Up with Google" %}
+                        </button>
+                    </form>
+                {% endif %}
+            {% endfor %}
+        </div>
+        <h5 class="separator my-4">{% trans "or" %}</h5>
+    </div>
+
     <form class="signup" id="signup_form" method="post" action="{% url 'account_signup' %}">
         {% csrf_token %}
 
@@ -105,17 +124,6 @@
             <button type="submit" class="btn btn-primary">{% trans "Create Account & Verify Email" %}</button>
         </div>
     </form>
-
-    <!-- Social Accounts Section -->
-    {% get_providers as socialaccount_providers %}
-    {% if socialaccount_providers %}
-        <div class="separator my-4">{% trans "or" %}</div>
-        <div class="d-grid">
-            <a href="{% provider_login_url 'google' %}" class="btn btn-outline-secondary">
-                <i class="fab fa-google me-2"></i> {% trans "Sign Up with Google" %}
-            </a>
-        </div>
-    {% endif %}
     
     <!-- Link to Log In Page -->
     <p class="text-center mt-4 text-muted">

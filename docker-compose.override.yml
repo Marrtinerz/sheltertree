@@ -1,0 +1,34 @@
+# docker-compose.override.yml
+# This file contains DEVELOPMENT-ONLY settings.
+# It is automatically merged with docker-compose.yml when you run 'docker-compose up'.
+# It will NEVER be used in production.
+
+services:
+  web:
+    # --- Development-Specific Overrides for the 'web' service ---
+
+    # 1. Override the Command to use the Django Development Server
+    # This provides crucial features like auto-reloading on code changes and
+    # detailed error pages (when DEBUG=True).
+    command: python manage.py runserver 0.0.0.0:8000
+
+    # 2. Mount the Local Code Directory into the Container
+    # This is the key to live-reloading. Any file you save in your editor
+    # on your local machine is instantly reflected inside the container.
+    volumes:
+      - .:/app
+
+    # 3. Map Ports to Your Local Machine
+    # This exposes the container's port 8000 to your local machine's port 8000,
+    # so you can access the site in your browser at http://localhost:8000.
+    ports:
+      - "8000:8000"
+
+    # 4. Specify the Environment File for Development
+    # This tells the 'web' service to load its environment variables (like
+    # DJANGO_SETTINGS_MODULE and database credentials) from our .env.dev file.
+    env_file:
+      - .env.dev
+
+  # The 'db' service is fully inherited from the base docker-compose.yml file
+  # and does not require any development-specific overrides.

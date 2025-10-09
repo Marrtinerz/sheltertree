@@ -1,7 +1,7 @@
 # ====================================================================
 # STAGE 1: The "Builder" Stage
 # ====================================================================
-FROM python:3.11-slim as builder
+FROM python:3.12-slim AS builder
 
 WORKDIR /app
 
@@ -23,7 +23,7 @@ COPY . .
 # ====================================================================
 # STAGE 2: The "Runner" Stage (No changes needed here)
 # ====================================================================
-FROM python:3.11-slim
+FROM python:3.12-slim
 
 WORKDIR /app
 
@@ -39,7 +39,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 
 RUN addgroup --system app && adduser --system --group app
 
-COPY --from=builder /usr/local/lib/python3.11/site-packages /usr/local/lib/python3.11/site-packages
+COPY --from=builder /usr/local/lib/python3.12/site-packages /usr/local/lib/python3.12/site-packages
 COPY --from=builder /usr/local/bin /usr/local/bin
 
 COPY --from=builder /app/staticfiles /app/staticfiles/

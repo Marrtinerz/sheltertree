@@ -45,6 +45,11 @@ class CustomUser(AbstractUser):
         help_text=_("Indicates if the user has completed the second stage of onboarding.")
     )
     
+    welcome_email_sent = models.BooleanField(
+        default=False,
+        help_text=_("Indicates if the welcome email has been sent to the user.") 
+                                             )
+    
     # --- NEW, SIMPLER AVATAR FIELD ---
     # We only need to store the path to the chosen static SVG file.
     avatar = models.CharField(

@@ -1,5 +1,6 @@
 # .gitignore
 .env
+.env.dev
 env/
 db.sqlite3
 __pycache__/
@@ -16,3 +17,4 @@ motivation.md
 /static/vendor/
 
 /future/
+future.md

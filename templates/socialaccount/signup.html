@@ -1,0 +1,81 @@
+{% extends "base_auth.html" %}
+{% load i18n %}
+{% load widget_tweaks %}
+
+{% block title %}{% trans "Complete Your Signup" %} | ShelterTree{% endblock %}
+
+{% comment %}
+<!-- ==================================================================== -->
+<!-- BLOCK 1: THE BRANDING SIDE (LEFT COLUMN ON DESKTOP)                  -->
+<!-- The copy here is specifically designed to be reassuring and          -->
+<!-- explain why the user is on this page.                                -->
+<!-- ==================================================================== -->
+{% endcomment %}
+{% block auth_branding %}
+    <h1 class="display-4 fw-bold">{% trans "You're Almost In." %}</h1>
+    <p class="lead mt-3 fs-4">
+        {% blocktrans %}
+        We've successfully connected with your account. We just need a few final details to create your unique ShelterTree profile.
+        {% endblocktrans %}
+    </p>
+{% endblock %}
+
+
+{% comment %}
+<!-- ==================================================================== -->
+<!-- BLOCK 2: THE FORM SIDE (RIGHT COLUMN ON DESKTOP)                     -->
+<!-- This form is intelligent. `allauth` will only show the fields that   -->
+<!-- are missing and required (e.g., 'username').                         -->
+<!-- ==================================================================== -->
+{% endcomment %}
+{% block auth_form %}
+    <h2 class="fw-bold mb-4">{% trans "Enter Your Username" %}</h2>
+
+    <form class="signup" method="post" action="{% url 'socialaccount_signup' %}">
+        {% csrf_token %}
+
+
+         {# This line is the key. It renders the email field as a hidden input, #}
+        {# so its value is submitted with the form without being visible. #}
+        {{ form.email.as_hidden }}
+
+        <!-- 
+            This robust loop uses widget_tweaks to render any fields that
+            `allauth` requires. For our Google flow, this will primarily
+            be the 'username' field.
+        -->
+        <div class="form-floating mb-3">
+            {{ form.username|attr:"class:form-control"|attr:"placeholder:" }}
+            <label for="{{ form.username.id_for_label }}">{{ form.username.label }}</label>
+            
+            <!-- The new, cheerful, and informative help text -->
+            <div class="form-text mt-2 text-start px-1">
+                <i class="fas fa-info-circle me-1"></i>
+                {% blocktrans %}
+                Choose a fun, anonymous username! This will be your public name across ShelterTree, and it cannot be changed.
+                {% endblocktrans %}
+            </div>
+            
+            {% for error in form.username.errors %}
+                <div class="invalid-feedback d-block">{{ error }}</div>
+            {% endfor %}
+        </div>
+
+        <!-- allauth uses this hidden field to manage redirects -->
+        {{ redirect_field }}
+        
+        {% if form.non_field_errors %}
+            <div class="alert alert-danger mt-3">
+                {% for error in form.non_field_errors %}{{ error }}{% endfor %}
+            </div>
+        {% endif %}
+
+        <div class="d-grid mt-4">
+            <button type="submit" class="btn btn-primary">{% trans "Complete Signup" %}</button>
+        </div>
+    </form>
+    
+    <p class="text-center mt-4 text-muted">
+        <a href="{% url 'account_login' %}">{% trans "Cancel" %}</a>
+    </p>
+{% endblock %}

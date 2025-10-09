@@ -9,16 +9,13 @@
 <!-- is re-rendered by HTMX when a main filter button is clicked.       -->
 <!-- ==================================================================== -->
 {% endcomment %}
-<div class="unit-filters mb-4 d-flex flex-wrap align-items-center gap-2">
+<div class="unit-filters mb-3"> <!-- Reduced bottom margin -->
     {% if units %}
         <!-- Display the first few units as prominent buttons -->
-        <!-- The 'unit_buttons' list is pre-sliced in the view -->
         {% for unit in unit_buttons %}
-            <button class="btn {% if unit.pk == active_unit.pk %}btn-primary{% else %}btn-outline-secondary{% endif %}"
+            <button class="btn btn-sm {% if unit.pk == active_unit.pk %}btn-primary{% else %}btn-outline-secondary{% endif %}"
                     hx-get="{% url 'reviews:get_unit_reviews' property_pk=property.pk unit_pk=unit.pk %}"
-                    hx-target="#review-hub-content"
-                    hx-swap="innerHTML"
-                    hx-indicator=".htmx-indicator">
+                    hx-target="#review-hub-content" hx-swap="innerHTML">
                 {{ unit.unit_identifier }}
             </button>
         {% endfor %}
@@ -58,24 +55,50 @@
             </div>
         {% endif %}
 
-        <!-- The "Add My Unit" Button, pushed to the right on desktop for a clean layout -->
-        <a href="{% url 'reviews:add-unit-and-review' property_pk=property.pk %}" class="btn btn-outline-primary ms-lg-auto">
-            <i class="fas fa-plus-circle me-2"></i>{% trans "My Unit Isn't Listed" %}
-        </a>
-
     {% else %}
         <!-- The empty state shown when a property has zero units -->
-        <p class="text-muted mb-0">{% trans "No units have been added for this property yet." %}</p>
+        <p class="text-muted">{% trans "No units have been added for this property yet." %}</p>
         <a href="{% url 'reviews:add-unit-and-review' property_pk=property.pk %}" class="btn btn-primary ms-lg-auto">
             <i class="fas fa-plus-circle me-2"></i>{% trans "Be the first to add one!" %}
         </a>
     {% endif %}
 </div>
 
-{% comment %}
 <!-- ==================================================================== -->
-<!-- 2. The Review Feed                                                 -->
-<!-- This includes our premium, vertical feed of "Insight Cards".       -->
+<!-- 2. THE NEW, WORLD-CLASS "ACTION BAR"                                 -->
+<!-- This provides clear, always-visible calls-to-action.               -->
 <!-- ==================================================================== -->
-{% endcomment %}
+
+<div class="review-cta p-4 text-center mt-4">
+    {% if active_unit %}
+        {% comment %} <h5 class="fw-bold">{% trans "Is this your unit?" %}</h5> {% endcomment %}
+        {% comment %} <p class="mb-3">{% trans "Share your experience for" %} <strong>{{ active_unit.unit_identifier }}</strong> or read the review(s) below.</p> {% endcomment %}
+        
+        <!-- THE FIX: Wrap the buttons in a flex container -->
+        <div class="d-flex justify-content-center flex-wrap gap-3">
+            <!-- The `me-2` is now removed from this button -->
+            <a href="{% url 'reviews:add-review-to-unit' unit_pk=active_unit.pk %}" class="btn btn-primary">
+               <i class="fas fa-pencil-alt me-2"></i>{% trans "Review " %} <strong>{{ active_unit.unit_identifier }}</strong>
+            </a>
+            <a href="{% url 'reviews:add-unit-and-review' property_pk=property.pk %}" class="btn btn-outline-secondary">
+                <i class="fas fa-plus-circle me-2"></i>{% trans "My unit isn't listed" %}
+            </a>
+        </div>
+
+    {% else %}
+        <!-- The CTA for properties with no units (Unchanged) -->
+        <h5 class="fw-bold">{% trans "Be the First to Review This Property" %}</h5>
+        <p class="mb-3">{% trans "No units have been added to this property yet. Add yours now to get the conversation started." %}</p>
+        <a href="{% url 'reviews:add-unit-and-review' property_pk=property.pk %}" class="btn btn-primary">
+            <i class="fas fa-plus-circle me-2"></i>{% trans "Add Your Unit & Review" %}
+        </a>
+    {% endif %}
+</div>
+
+
+
+<!-- ==================================================================== -->
+<!-- 3. The Review Feed                                                 -->
+<!-- This part is now cleaner and no longer contains the old CTA.       -->
+<!-- ==================================================================== -->
 {% include 'reviews/partials/_review_feed.html' with reviews=reviews unit=active_unit property=property %}

@@ -6,6 +6,7 @@ from django.utils.translation import gettext_lazy as _
 import phonenumbers
 from django.core.exceptions import ValidationError
 from django.utils.safestring import mark_safe
+from allauth.socialaccount.forms import SignupForm as SocialSignupForm
 
 class MinimalSignupForm(SignupForm):
     # We only need to define the fields that are NOT already handled
@@ -14,6 +15,28 @@ class MinimalSignupForm(SignupForm):
     # This file is a placeholder for now, but is still necessary to tell allauth to use the default.
     # In Day 7(b), we will create a DIFFERENT form for the Stage 2 profile completion.
     pass
+
+
+class CustomSocialSignupForm(SocialSignupForm):
+    """
+    A custom signup form for users signing up via a social account.
+    This form's only purpose is to ask for a username.
+    """
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        # Make the username field explicitly required
+        self.fields['username'].required = True
+
+    class Meta:
+        model = CustomUser
+        # We only want to ask the user for their username.
+        # Email, first_name, last_name are provided by Google.
+        fields = ['username']
+
+    def save(self, request):
+        # Ensure that the user is saved correctly
+        user = super().save(request)
+        return user
 
 class CustomLoginForm(LoginForm):
     """

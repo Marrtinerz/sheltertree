@@ -17,6 +17,8 @@ ALLOWED_HOSTS = ['localhost', '127.0.0.1']
 
 EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 
+SKIP_APPROVAL_EMAIL_SEND = config('SKIP_APPROVAL_EMAIL_SEND', default=False, cast=bool)
+SKIP_REVIEW_EMAIL_SEND = config('SKIP_REVIEW_EMAIL_SEND', default=False, cast=bool)
 
 
 # --- EMAIL CONFIGURATION (World-Class Standard) ---

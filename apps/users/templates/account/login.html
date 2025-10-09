@@ -29,6 +29,27 @@
 {% block auth_form %}
     <h2 class="fw-bold mb-4">{% trans "Log In" %}</h2>
 
+
+    <!-- Social Accounts Section -->
+    <div class="socialaccount_ballot">
+        {% comment %} <h5 class="separator my-3">{% trans "Or" %}</h5> {% endcomment %}
+        <div class="socialaccount_providers mt-4">
+            {% get_providers as socialaccount_providers %}
+            {% for provider in socialaccount_providers %}
+                {% if provider.id == 'google' %}
+                    {# By removing the <ul> and <li>, the bullet point is gone. #}
+                    <form action="{% provider_login_url 'google' process='login' %}" method="post">
+                        {% csrf_token %}
+                        <button type="submit" class="btn btn-outline-primary w-100">
+                            <i class="fab fa-google me-2"></i> {% trans "Login with Google" %}
+                        </button>
+                    </form>
+                {% endif %}
+            {% endfor %}
+        </div>
+        <h5 class="separator text-center my-3">{% trans "or" %}</h5>
+    </div>
+
     <form class="login" method="post" action="{% url 'account_login' %}">
         {% csrf_token %}
 
@@ -74,17 +95,6 @@
             <button type="submit" class="btn btn-primary">{% trans "Log In" %}</button>
         </div>
     </form>
-
-    <!-- Social Accounts Section -->
-    {% get_providers as socialaccount_providers %}
-    {% if socialaccount_providers %}
-        <div class="separator my-4">{% trans "or" %}</div>
-        <div class="d-grid">
-            <a href="{% provider_login_url 'google' %}" class="btn btn-outline-secondary">
-                <i class="fab fa-google me-2"></i> {% trans "Continue with Google" %}
-            </a>
-        </div>
-    {% endif %}
     
     <!-- Link to Sign Up Page -->
     <p class="text-center mt-4 text-muted">

@@ -87,6 +87,7 @@ class OnboardingView(LoginRequiredMixin, UpdateView):
         as this is new information not present on the user object itself.
         """
         initial = super().get_initial()
+        user = self.request.user
         
         # Check if the country is not already set on the user instance
         if not self.object.country:
@@ -106,6 +107,8 @@ class OnboardingView(LoginRequiredMixin, UpdateView):
                 # If the IP lookup fails for any reason (e.g., local IP, GeoIP DB missing),
                 # we just don't pre-fill the field. The user can select it manually.
                 pass
+        initial['first_name'] = user.first_name
+        initial['last_name'] = user.last_name
                 
         return initial
     
