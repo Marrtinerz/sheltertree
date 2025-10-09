@@ -11,10 +11,13 @@
             <p class="text-muted">{% trans "Last Updated: October 9, 2025" %}</p>
             <hr>
 
-            <p class="lead">{% blocktrans %}Your privacy is the foundation of the trust you place in our community. At ShelterTree, our mission is to help everyone find a peaceful and secure home. This policy explains what information we collect, how we use it to fulfill that mission, and the choices you have.{% endblocktrans %}</p>
+            <!-- ==================================================================== -->
+            <!-- THE CRITICAL UPDATE: Defining the Legal Data Controller              -->
+            <!-- ==================================================================== -->
+            <p class="lead">{% blocktrans %}This Privacy Policy describes how <strong>ShelterTree Limited</strong> ("ShelterTree," "we," "us," or "our") collects, uses, and shares your information when you use our platform and services (collectively, the "Service"). Your privacy is the foundation of the trust you place in our community, and our mission is to help everyone find a peaceful and secure home. This policy explains our commitment to protecting your data.{% endblocktrans %}</p>
 
             <h4 class="mt-4">{% trans "1. Information We Collect" %}</h4>
-            <p>{% trans "To provide our service, we collect information in a few different ways." %}</p>
+            <p>{% trans "To provide our Service, we collect information in a few different ways." %}</p>
             
             <p><strong>A. Information You Provide Directly</strong></p>
             <ul>
@@ -49,7 +52,7 @@
 
 
             <h4 class="mt-4">{% trans "2. How We Use Your Information" %}</h4>
-            <p>{% trans "We use your information to operate, improve, and secure our platform." %}</p>
+            <p>{% blocktrans %}We use your information to operate, improve, and secure our platform.{% endblocktrans %}</p>
             <ul>
                 <li><strong>{% trans "To Provide and Maintain the Service:" %}</strong> {% blocktrans %}To display your reviews and profile, allow you to log in, and operate the core features of ShelterTree.{% endblocktrans %}</li>
                 <li><strong>{% trans "To Secure Your Account:" %}</strong> {% blocktrans %}To verify your identity through email confirmation and optional phone number verification.{% endblocktrans %}</li>
@@ -59,7 +62,7 @@
 
 
             <h4 class="mt-4">{% trans "3. How We Share Your Information" %}</h4>
-            <p>{% trans "We only share your information in limited circumstances." %}</p>
+            <p>{% blocktrans %}We only share your information in limited circumstances.{% endblocktrans %}</p>
             <ul>
                 <li><strong>{% trans "Publicly on ShelterTree:" %}</strong> {% blocktrans %}Your public content, including your reviews, questions, answers, username, and chosen avatar, is visible to anyone who visits our site.{% endblocktrans %}</li>
                 <li><strong>{% trans "With Service Providers:" %}</strong> {% blocktrans %}We work with trusted third-party companies to help us operate, such as cloud hosting providers (like AWS or Google Cloud) and communication services (like Twilio or AfricasTalking to send verification codes). They are contractually obligated to protect your data.{% endblocktrans %}</li>
@@ -95,10 +98,13 @@
 
             <h4 class="mt-4">{% trans "8. Contact Us" %}</h4>
             
+            <!-- ==================================================================== -->
+            <!-- UPDATED SECTION: Specifying the legal entity for contact             -->
+            <!-- ==================================================================== -->
             {% url 'core:contact_us' as contact_url %}
             <p>
                 {% blocktrans %}
-                If you have any questions about this Privacy Policy, please don't hesitate to <a href="{{ contact_url }}">contact us</a>.
+                If you have any questions about this Privacy Policy or our data practices, please don't hesitate to contact <strong>ShelterTree Limited</strong> by <a href="{{ contact_url }}">using our contact form</a>.
                 {% endblocktrans %}
             </p>
         </div>

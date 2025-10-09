@@ -11,10 +11,13 @@
             <p class="text-muted">{% trans "Last Updated: October 9, 2025" %}</p>
             <hr>
 
-            <p class="lead">{% blocktrans %}Welcome to ShelterTree. This agreement governs your use of our platform and services ("Service"). By creating an account or using our Service, you agree to be bound by these Terms of Service ("Terms") and our Privacy Policy. This is a binding legal agreement, so please read it carefully.{% endblocktrans %}</p>
+            <!-- ==================================================================== -->
+            <!-- THE CRITICAL UPDATE: Defining the Legal Parties                      -->
+            <!-- ==================================================================== -->
+            <p class="lead">{% blocktrans %}Welcome to ShelterTree. This is a binding legal agreement ("Terms") between you and <strong>ShelterTree Limited</strong> ("ShelterTree," "we," "us," or "our"). These Terms govern your use of the ShelterTree website, platform, and associated services (collectively, the "Service"). By creating an account or using our Service, you agree to be bound by these Terms and our Privacy Policy.{% endblocktrans %}</p>
 
             <h4 class="mt-4">{% trans "1. Our Service" %}</h4>
-            <p>{% blocktrans %}ShelterTree is a community platform designed to help people find peaceful and secure homes through honest, user-generated reviews, ratings, and community discussions ("Content"). Our service allows you to contribute by adding properties and sharing your experiences.{% endblocktrans %}</p>
+            <p>{% blocktrans %}ShelterTree is a community platform designed to help people find peaceful and secure homes through honest, user-generated reviews, ratings, and community discussions ("Content"). Our Service allows you to contribute by adding properties and sharing your experiences.{% endblocktrans %}</p>
 
             <h4 class="mt-4">{% trans "2. Your Account" %}</h4>
             <p>{% blocktrans %}You need an account to post Content on ShelterTree. You are responsible for safeguarding your password and for all activities that occur under your account. You must be at least 16 years of age to use our Service.{% endblocktrans %}</p>
@@ -24,16 +27,10 @@
             
             <p><strong>A. You Own Your Content:</strong> {% blocktrans %}You retain all ownership rights to the text and information you submit to the Service.{% endblocktrans %}</p>
 
-            <!-- ==================================================================== -->
-            <!-- REVISED SECTION: Stronger legal protection for the platform          -->
-            <!-- ==================================================================== -->
-            <p><strong>B. Your Responsibility for Your Content:</strong> {% blocktrans %}You are solely responsible for the Content you post. You agree to indemnify and hold harmless ShelterTree from any claim or demand made by any third party due to or arising out of your Content.{% endblocktrans %}</p>
+            <p><strong>B. Your Responsibility for Your Content:</strong> {% blocktrans %}You are solely responsible for the Content you post. You agree to indemnify and hold harmless <strong>ShelterTree Limited</strong> from any claim or demand made by any third party due to or arising out of your Content.{% endblocktrans %}</p>
 
             <p><strong>C. Our License to Your Content:</strong> {% blocktrans %}By posting Content to ShelterTree, you grant us a perpetual, irrevocable, worldwide, non-exclusive, royalty-free, and sublicensable license to use, display, reproduce, modify, adapt, publish, create derivative works from, and distribute your Content. We need these rights to operate, improve, and promote the Service. For example, we need the right to display your review on a property page, feature it on our homepage, or use it in an anonymized data report.{% endblocktrans %}</p>
 
-            <!-- ==================================================================== -->
-            <!-- REVISED SECTION: More specific and robust community rules          -->
-            <!-- ==================================================================== -->
             <p><strong>D. Community Rules:</strong> {% blocktrans %}You agree not to post Content that:{% endblocktrans %}</p>
             <ul>
                 <li><strong>{% trans "Is fake or biased." %}</strong> {% trans "This includes posting inauthentic reviews, whether positive or negative, reviews written in exchange for payment, or reviews posted by property owners or managers on their own properties." %}</li>
@@ -56,12 +53,9 @@
             </ul>
 
             <h4 class="mt-4">{% trans "5. Disclaimers and Limitation of Liability" %}</h4>
-            <p><strong>{% blocktrans %}THE SERVICE IS PROVIDED "AS IS." ShelterTree makes no warranties, express or implied, regarding the Service and disclaims all warranties to the fullest extent permitted by law.{% endblocktrans %}</strong></p>
-            <p><strong>{% blocktrans %}ShelterTree is a platform for opinions. We are not a real estate brokerage, agent, or property manager. We do not verify the accuracy of all user-generated content, and we are not a party to any transaction or agreement you may enter into with a landlord, agent, or seller. You are responsible for your own decisions and due diligence. We are not liable for any damages or losses related to your use of the Service.{% endblocktrans %}</strong></p>
+            <p><strong>{% blocktrans %}THE SERVICE IS PROVIDED "AS IS." <strong>ShelterTree Limited</strong> makes no warranties, express or implied, regarding the Service and disclaims all warranties to the fullest extent permitted by law.{% endblocktrans %}</strong></p>
+            <p><strong>{% blocktrans %}ShelterTree is a platform for opinions. We are not a real estate brokerage, agent, or property manager. We do not verify the accuracy of all user-generated content, and we are not a party to any transaction or agreement you may enter into with a landlord, agent, or seller. You are responsible for your own decisions and due diligence. In no event shall <strong>ShelterTree Limited</strong> be liable for any damages or losses related to your use of the Service.{% endblocktrans %}</strong></p>
 
-            <!-- ==================================================================== -->
-            <!-- REVISED SECTION: Clearer language on termination and content survival -->
-            <!-- ==================================================================== -->
             <h4 class="mt-4">{% trans "6. Termination" %}</h4>
             <p>{% blocktrans %}You can close your account at any time by contacting us. We may suspend or terminate your account at any time, without notice, if we believe you have violated these Terms. Upon termination, your right to use the Service will immediately cease. Your personal information will be handled as described in our Privacy Policy. The perpetual license you grant us for your Content survives the termination of your account, and your anonymized contributions will remain on the platform to continue helping the community.{% endblocktrans %}</p>
 
@@ -72,7 +66,7 @@
             <p>{% blocktrans %}We may revise these Terms from time to time. The most current version will always be on this page. If a revision is material, we will notify you by email or by a notice on the Service.{% endblocktrans %}</p>
             
             {% url 'core:contact_us' as contact_url %}
-            <p>{% blocktrans %}If you have any questions about these Terms, please <a href="{{ contact_url }}">contact us</a>.{% endblocktrans %}</p>
+            <p>{% blocktrans %}If you have any questions about these Terms, please contact <strong>ShelterTree Limited</strong> at <a href="{{ contact_url }}">this link</a>.{% endblocktrans %}</p>
 
         </div>
     </div>
