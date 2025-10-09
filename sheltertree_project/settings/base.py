@@ -167,7 +167,7 @@ AUTHENTICATION_BACKENDS = [
     'allauth.account.auth_backends.AuthenticationBackend',
 ]
 
-
+SOCIALACCOUNT_ADAPTER = 'apps.users.adapter.CustomSocialAccountAdapter'
 
 SOCIALACCOUNT_PROVIDERS = {
     'google': {

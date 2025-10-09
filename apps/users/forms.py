@@ -7,6 +7,7 @@ import phonenumbers
 from django.core.exceptions import ValidationError
 from django.utils.safestring import mark_safe
 from allauth.socialaccount.forms import SignupForm as SocialSignupForm
+from django.urls import reverse
 
 class MinimalSignupForm(SignupForm):
     # We only need to define the fields that are NOT already handled
@@ -21,20 +22,17 @@ class CustomSocialSignupForm(SocialSignupForm):
     """
     A custom signup form for users signing up via a social account.
     This form's only purpose is to ask for a username.
+    The email collision logic is now handled by the SocialAccountAdapter.
     """
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        # Make the username field explicitly required
         self.fields['username'].required = True
 
     class Meta:
         model = CustomUser
-        # We only want to ask the user for their username.
-        # Email, first_name, last_name are provided by Google.
         fields = ['username']
 
     def save(self, request):
-        # Ensure that the user is saved correctly
         user = super().save(request)
         return user
 

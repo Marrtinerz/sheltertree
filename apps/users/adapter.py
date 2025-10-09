@@ -6,6 +6,10 @@ from django.contrib import messages
 from django.utils.translation import gettext_lazy as _
 import random
 from django.utils.encoding import force_str
+from allauth.socialaccount.adapter import DefaultSocialAccountAdapter
+from allauth.core.exceptions import ImmediateHttpResponse
+from django.shortcuts import redirect
+from django.contrib.auth import get_user_model
 
 class MyAccountAdapter(DefaultAccountAdapter):
 
@@ -65,3 +69,34 @@ class MyAccountAdapter(DefaultAccountAdapter):
         # The default adapter adds a "[Site Name]" prefix.
         # Our new, world-class version simply returns the subject as-is.
         return force_str(subject)
+    
+
+class CustomSocialAccountAdapter(DefaultSocialAccountAdapter):
+    def pre_social_login(self, request, sociallogin):
+        """
+        This method is called right after a user successfully authenticates
+        with a social provider, but before the login process is finalized.
+        It's our chance to intervene.
+        """
+        user = sociallogin.user
+
+        if user.pk:
+            return
+
+        try:
+            # --- CORRECTED CALL ---
+            # We call the imported get_user_model() function directly, not as a method of self.
+            User = get_user_model()
+            existing_user = User.objects.get(email__iexact=user.email)
+
+            # If we find an existing user, we stop the signup process.
+            messages.error(request, _(
+                "An account with this email address already exists. "
+                "Please log in with your password to connect your Google account."
+            ))
+            raise ImmediateHttpResponse(redirect(reverse('account_login')))
+
+        # --- CORRECTED CALL ---
+        except get_user_model().DoesNotExist:
+            # If no user with this email exists, the signup can proceed as normal.
+            pass
