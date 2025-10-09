@@ -8,7 +8,7 @@
     <div class="row">
         <div class="col-lg-8 mx-auto">
             <h1 class="mb-3">{% trans "Privacy Policy" %}</h1>
-            <p class="text-muted">{% trans "Last Updated: September 21, 2025" %}</p>
+            <p class="text-muted">{% trans "Last Updated: October 9, 2025" %}</p>
             <hr>
 
             <p class="lead">{% blocktrans %}Your privacy is the foundation of the trust you place in our community. At ShelterTree, our mission is to help everyone find a peaceful and secure home. This policy explains what information we collect, how we use it to fulfill that mission, and the choices you have.{% endblocktrans %}</p>
@@ -32,7 +32,18 @@
 
             <p><strong>C. Information from Third Parties</strong></p>
             <ul>
-                <li><strong>{% trans "Social Login:" %}</strong> {% blocktrans %}If you sign up using a third-party service like Google, we will receive information from that service as permitted by your privacy settings with them, such as your name and email address.{% endblocktrans %}</li>
+                <li>
+                    <strong>{% trans "Google Sign-In:" %}</strong>
+                    {% blocktrans %}
+                    If you choose to sign up or log in using your Google account, we securely receive a limited set of information from Google, as permitted by your Google privacy settings. This includes:
+                    <ul>
+                        <li>Your primary <strong>email address</strong> (which we use as the unique identifier for your ShelterTree account).</li>
+                        <li>Your <strong>first and last name</strong> (which we use to pre-fill your optional profile fields for your convenience).</li>
+                        <li>Your <strong>profile picture URL</strong> (which we may use as your initial default avatar on ShelterTree).</li>
+                    </ul>
+                    At no point do we ever receive or store your Google password. Your use of Google Sign-In is also subject to <a href="https://policies.google.com/privacy" target="_blank" rel="noopener noreferrer">Google's Privacy Policy</a>.
+                    {% endblocktrans %}
+                </li>
                 <li><strong>{% trans "Property Data:" %}</strong> {% blocktrans %}When you add a new property, we use the Google Places API to help autofill details like the address and coordinates. We store the permanent Google Place ID as a reference.{% endblocktrans %}</li>
             </ul>
 
@@ -60,7 +71,12 @@
             <p>{% trans "You are in control of your personal information." %}</p>
             <ul>
                 <li><strong>{% trans "Access and Update:" %}</strong> {% blocktrans %}You can access and edit your profile information at any time through your "My Profile" page.{% endblocktrans %}</li>
-                <li><strong>{% trans "Account Deletion:" %}</strong> {% blocktrans %}You can request to delete your account by contacting us. Please note that while your personal profile information will be deleted, your anonymized reviews may be retained to continue helping the community.{% endblocktrans %}</li>
+                <li>
+                    <strong>{% trans "Account Deletion:" %}</strong>
+                    {% blocktrans %}
+                    You can request to delete your account by contacting us. When your account is deleted, your personal profile information (name, email, etc.) will be permanently removed. To maintain the integrity and value of the community resource, your anonymized reviews will be retained on the platform without your name or any identifying information.
+                    {% endblocktrans %}
+                </li>
                 <li><strong>{% trans "Marketing Opt-Out:" %}</strong> {% blocktrans %}You will have a clear option to unsubscribe from any non-essential marketing emails we send.{% endblocktrans %}</li>
             </ul>
 
@@ -79,11 +95,6 @@
 
             <h4 class="mt-4">{% trans "8. Contact Us" %}</h4>
             
-            <!-- 
-                THE WORLD-CLASS FIX:
-                1. We use `{% url ... as contact_url %}` to generate the URL and store it in a variable.
-                2. We can then safely use the `{{ contact_url }}` variable inside the `blocktrans` tag.
-            -->
             {% url 'core:contact_us' as contact_url %}
             <p>
                 {% blocktrans %}
