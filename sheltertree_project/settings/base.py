@@ -181,7 +181,10 @@ SOCIALACCOUNT_PROVIDERS = {
 SOCIALACCOUNT_SIGNUP_FORM_CLASS = 'apps.users.forms.CustomSocialSignupForm'
 SOCIALACCOUNT_AUTO_SIGNUP=False # Automatically sign up new social users
 
-
+ENABLE_CONSENT_BANNER=config('ENABLE_CONSENT_BANNER', default=False, cast=bool)
+GOOGLE_MAPS_API_KEY=config('GOOGLE_MAPS_API_KEY')
+MAPBOX_ACCESS_TOKEN=config('MAPBOX_ACCESS_TOKEN')
+GOOGLE_ANALYTICS_ID=config('GOOGLE_ANALYTICS_ID', default=None)
 
 # --- LOGIN & SIGNUP ---
 # NEW: Replaces ACCOUNT_AUTHENTICATION_METHOD. Users can log in with username or email.

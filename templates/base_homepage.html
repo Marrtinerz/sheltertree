@@ -48,15 +48,24 @@
     <link href='https://api.mapbox.com/mapbox-gl-js/v2.9.1/mapbox-gl.css' rel='stylesheet' />
 
 
+    {% if ENABLE_CONSENT_BANNER %}
+        <!-- Cookie Consent Library CSS (only loaded if flag is on) -->
+        <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/cookieconsent@3/build/cookieconsent.min.css" />
+    {% endif %}
+
+    <!-- Google Analytics 4 -->
     {% if GOOGLE_ANALYTICS_ID %}
-        <!-- Google tag (gtag.js) -->
-        <script async src="https://www.googletagmanager.com/gtag/js?id={{ GOOGLE_ANALYTICS_ID }}"></script>
         <script>
-          window.dataLayer = window.dataLayer || [];
-          function gtag(){dataLayer.push(arguments);}
-          gtag('js', new Date());
-          gtag('config', '{{ GOOGLE_ANALYTICS_ID }}');
+          // This function will be called either by the consent banner or directly
+          function fireGoogleAnalytics() {
+              window.dataLayer = window.dataLayer || [];
+              function gtag(){dataLayer.push(arguments);}
+              gtag('js', new Date());
+              gtag('config', '{{ GOOGLE_ANALYTICS_ID }}');
+              console.log("Analytics Fired.");
+          }
         </script>
+        <script async src="https://www.googletagmanager.com/gtag/js?id={{ GOOGLE_ANALYTICS_ID }}"></script>
     {% endif %}
 
     {% block extra_head %}{% endblock %}
@@ -123,6 +132,30 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
     <!-- Mapbox JS -->
     <script src='https://api.mapbox.com/mapbox-gl-js/v2.9.1/mapbox-gl.js'></script>
+    
+    
+
+    <!-- Cookie Consent & Analytics Logic -->
+    {% if ENABLE_CONSENT_BANNER %}
+        <!-- If the banner is enabled, we use the consent-first logic -->
+        <script src="https://cdn.jsdelivr.net/npm/cookieconsent@3/build/cookieconsent.min.js" data-cfasync="false"></script>
+        <script>
+        window.addEventListener("load", function(){
+            window.cookieconsent.initialise({
+              // ... your full cookieconsent configuration ...
+              onStatusChange: function(status) { if (this.hasConsented()) fireGoogleAnalytics(); },
+              onInitialise: function(status) { if (this.hasConsented()) fireGoogleAnalytics(); }
+            });
+        });
+        </script>
+    {% else %}
+        <!-- If the banner is DISABLED, we fire analytics directly on every page load -->
+        <script>
+            if (typeof fireGoogleAnalytics === 'function') {
+                fireGoogleAnalytics();
+            }
+        </script>
+    {% endif %}
     
     {% block extra_js %}{% endblock %}
 
