@@ -142,12 +142,42 @@
         <script>
         window.addEventListener("load", function(){
             window.cookieconsent.initialise({
-              // ... your full cookieconsent configuration ...
-              onStatusChange: function(status) { if (this.hasConsented()) fireGoogleAnalytics(); },
-              onInitialise: function(status) { if (this.hasConsented()) fireGoogleAnalytics(); }
-            });
+            "palette": {
+                "popup": { "background": "#005A31", "text": "#ffffff" },
+                "button": { "background": "#ffffff", "text": "#005A31" }
+            },
+            "theme": "classic",
+            "position": "bottom-right",
+            "content": {
+                "message": "{% trans 'At ShelterTree, your trust is our foundation. We use cookies to understand how our site is used and to improve your experience. This helps us build a better, more helpful community for everyone.' %}",
+                "dismiss": "{% trans 'Got it!' %}",
+                "deny": "{% trans 'Decline' %}",
+                "link": "{% trans 'Learn More' %}",
+                "href": "/privacy-policy/" // IMPORTANT: You need a privacy policy page.
+            },
+
+            // --- This is the magic that connects consent to analytics ---
+            onStatusChange: function(status, chosenBefore) {
+                if (this.hasConsented()) {
+                    // If the user has consented, fire the analytics tag.
+                    if (typeof fireGoogleAnalytics === 'function') {
+                        fireGoogleAnalytics();
+                    }
+                }
+            },
+            onInitialise: function(status) {
+                if (this.hasConsented()) {
+                    // If the user has *already* consented on a previous visit,
+                    // fire the analytics tag immediately on page load.
+                    if (typeof fireGoogleAnalytics === 'function') {
+                        fireGoogleAnalytics();
+                    }
+                }
+            }
+            })
         });
         </script>
+
     {% else %}
         <!-- If the banner is DISABLED, we fire analytics directly on every page load -->
         <script>
