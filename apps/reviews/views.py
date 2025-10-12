@@ -461,10 +461,7 @@ class AddUnitAndReviewView(LoginRequiredMixin, TemplateView):
         
         # --- The trigger for the core value tracking in GA ---
         bus = EventBus(self.request)
-        bus.push_event('submit_review', {
-            'property_id': review.unit.property.pk,
-            'rating': review.get_overall_rating() # Add valuable event data!
-        })
+        bus.push_event('submit_review')
 
 
         # Store the newly created review on the view instance so get_success_url can access it.
@@ -540,11 +537,7 @@ class AddReviewView(LoginRequiredMixin, CreateView):
         bus = EventBus(self.request)
 
         # 2. Push the event with rich, valuable data.
-        bus.push_event('submit_review', {
-            'property_id': self.object.unit.property.pk,
-            'unit_id': self.object.unit.pk,
-            'rating': self.object.get_overall_rating()
-        })
+        bus.push_event('submit_review')
         
         # Let the parent class handle the final HTTP response (which will be a redirect)
         return super().form_valid(form)

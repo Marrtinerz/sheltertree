@@ -20,7 +20,7 @@ def handle_first_email_confirmation(sender, request, email_address, **kwargs):
         
         # the trigger for the signup funnel in GA.
         bus = EventBus(request)
-        bus.push_event('sign_up', {'method': 'email'})
+        bus.push_event('sign_up')
         
         # This is the crucial step: update the user's "memory".
         user.welcome_email_sent = True
