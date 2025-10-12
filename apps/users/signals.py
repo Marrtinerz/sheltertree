@@ -1,6 +1,7 @@
 from allauth.account.signals import email_confirmed, user_signed_up
 from django.dispatch import receiver
 from apps.notifications.services import notification_service
+from apps.core.event_bus import EventBus
 
 # --- THE NEW, WORLD-CLASS HANDLER ---
 @receiver(email_confirmed)
@@ -16,6 +17,10 @@ def handle_first_email_confirmation(sender, request, email_address, **kwargs):
     if not user.welcome_email_sent:
         print(f"INFO: First email confirmation for {user.username}. Sending welcome email.")
         notification_service.send_welcome_email(user)
+        
+        # the trigger for the signup funnel in GA.
+        bus = EventBus(request)
+        bus.push_event('sign_up', {'method': 'email'})
         
         # This is the crucial step: update the user's "memory".
         user.welcome_email_sent = True

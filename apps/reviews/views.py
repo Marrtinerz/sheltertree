@@ -17,6 +17,7 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from apps.users.forms import FeatureInterestForm
 from apps.users.models import FeatureInterest
 from django.db.models.functions import Coalesce
+from apps.core.event_bus import EventBus
 
 # --- READ-ONLY VIEWS (for the public) ---
 
@@ -457,6 +458,14 @@ class AddUnitAndReviewView(LoginRequiredMixin, TemplateView):
         
         # The Review's save() method handles the is_author_phone_verified snapshot.
         review.save()
+        
+        # --- The trigger for the core value tracking in GA ---
+        bus = EventBus(self.request)
+        bus.push_event('submit_review', {
+            'property_id': review.unit.property.pk,
+            'rating': review.get_overall_rating() # Add valuable event data!
+        })
+
 
         # Store the newly created review on the view instance so get_success_url can access it.
         self.object = review
@@ -525,6 +534,17 @@ class AddReviewView(LoginRequiredMixin, CreateView):
         # The save() method on the Review model will handle the verification flag.
         # We need to save the object here to get its primary key (pk) for the redirect.
         self.object = form.save()
+        
+        # --- THE WORLD-CLASS FIX ---
+        # 1. Instantiate the Event Bus.
+        bus = EventBus(self.request)
+
+        # 2. Push the event with rich, valuable data.
+        bus.push_event('submit_review', {
+            'property_id': self.object.unit.property.pk,
+            'unit_id': self.object.unit.pk,
+            'rating': self.object.get_overall_rating()
+        })
         
         # Let the parent class handle the final HTTP response (which will be a redirect)
         return super().form_valid(form)

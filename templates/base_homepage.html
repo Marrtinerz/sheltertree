@@ -1,6 +1,7 @@
 {% load static %}
 {% load i18n %}
 {% load sass_tags %}
+{% load event_tags %}
 
 <!DOCTYPE html>
 <html lang="{{ request.LANGUAGE_CODE|default:'en' }}" class="h-100">
@@ -188,6 +189,8 @@
     {% endif %}
     
     {% block extra_js %}{% endblock %}
+
+    {% render_analytics_events %}
 
 </body>
 </html>
