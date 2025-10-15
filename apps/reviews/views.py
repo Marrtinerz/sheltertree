@@ -18,6 +18,7 @@ from apps.users.forms import FeatureInterestForm
 from apps.users.models import FeatureInterest
 from django.db.models.functions import Coalesce
 from apps.core.event_bus import EventBus
+from django.db.models import Count
 
 # --- READ-ONLY VIEWS (for the public) ---
 
@@ -306,8 +307,10 @@ class PropertyDetailView(LoginRequiredMixin, DetailView):
 
         # --- Logic from your previous version (preserved and correct) ---
         
-        # 1. Get ALL units for this property to power the filter buttons.
-        all_units = PropertyUnit.objects.filter(property=property_obj)
+        # 1. Get ALL units for this property to power the filter buttons, ordered by the number of reviews.
+        all_units = PropertyUnit.objects.filter(property=property_obj) \
+                                    .annotate(review_count=Count('reviews')) \
+                                    .order_by('-review_count', 'unit_identifier')
         
         # --- THE CRITICAL FIX ---
         # Prepare the two lists directly in the view using Python's powerful slicing.
