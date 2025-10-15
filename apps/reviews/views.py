@@ -151,15 +151,21 @@ class PropertyListView(ListView):
 
         if query:
             # If there is a search query, use our powerful search engine.
-            queryset = find_properties(query)
+            base_queryset = find_properties(query)
         else:
-            # If there is no search, just show the latest approved properties.
-            queryset = Property.objects.filter(status=PropertyStatus.APPROVED).order_by('-created_at')
+            # If there is no search, we apply our new, engagement-first sorting.
+            # --- THE WORLD-CLASS FIX IS HERE ---
+            # 1. Start with all approved properties.
+            # 2. Use our manager to add the `review_count` annotation.
+            # 3. Order by review_count DESC, then by created_at DESC.
+            base_queryset = Property.objects.filter(status=PropertyStatus.APPROVED) \
+                                            .with_reputation_data() \
+                                            .order_by('-review_count', '-created_at')
 
         # --- THE FIX ---
         # Replace the manual annotation with the manager method.
         # This guarantees that only APPROVED reviews are counted and averaged.
-        return queryset.with_reputation_data()
+        return base_queryset
 
     def get_context_data(self, **kwargs):
         """
