@@ -221,8 +221,8 @@ class ReviewForm(forms.ModelForm):
         # We define the widget TYPE here. Presentation (like rows/placeholders)
         # is best handled in the template with widget_tweaks for consistency.
         widgets = {
-            'pros': forms.Textarea(attrs={'rows': 5, 'placeholder': _('e.g., The water is very clean...')}),
-            'cons': forms.Textarea(attrs={'rows': 5, 'placeholder': _('e.g., Taking a walk is dangerous...')}),
+            'pros': forms.Textarea(attrs={'rows': 5, 'placeholder': _('Share the good and amazing things...')}),
+            'cons': forms.Textarea(attrs={'rows': 5, 'placeholder': _('Share the bad or things that need to be improved...')}),
         }
 
         # User-friendly labels are a world-class detail. These are perfect.
