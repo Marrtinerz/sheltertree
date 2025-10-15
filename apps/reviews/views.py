@@ -182,7 +182,9 @@ def get_unit_reviews(request, property_pk, unit_pk):
     # --- THE NEW SEARCH LOGIC ---
     unit_query = request.GET.get('unit_q', '') # Get the search query from the URL
     
-    all_units = PropertyUnit.objects.filter(property=property_obj)
+    all_units = PropertyUnit.objects.filter(property=property_obj) \
+                                    .annotate(review_count=Count('reviews')) \
+                                    .order_by('-review_count', 'unit_identifier')
     
     if unit_query:
         # If there's a search, filter the units by the identifier
