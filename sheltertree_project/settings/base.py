@@ -252,6 +252,6 @@ MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
 
 
-#Paystack settings
-PAYSTACK_PUBLIC_KEY = config('PAYSTACK_PUBLIC_KEY')
-PAYSTACK_SECRET_KEY = config('PAYSTACK_SECRET_KEY')
+# #Paystack settings
+# PAYSTACK_PUBLIC_KEY = config('PAYSTACK_PUBLIC_KEY')
+# PAYSTACK_SECRET_KEY = config('PAYSTACK_SECRET_KEY')
