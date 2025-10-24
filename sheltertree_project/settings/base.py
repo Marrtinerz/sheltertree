@@ -104,9 +104,9 @@ TEMPLATES = [
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': config('POSTGRES_DB'),
-        'USER': config('POSTGRES_USER'),
-        'PASSWORD': config('POSTGRES_PASSWORD'),
+        'NAME': config('POSTGRES_DB', default='sheltertree_dev'),
+        'USER': config('POSTGRES_USER', default='your_local_username'),
+        'PASSWORD': config('POSTGRES_PASSWORD', default=''),
         'HOST': config('DATABASE_HOST', default='db'),
         'PORT': config('DATABASE_PORT', default='5432'),
     }
