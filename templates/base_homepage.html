@@ -1,6 +1,5 @@
 {% load static %}
 {% load i18n %}
-{% load sass_tags %}
 {% load event_tags %}
 
 <!DOCTYPE html>
@@ -8,7 +7,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{% block title %}ShelterTree{% endblock %}</title>
+    <title>{% block title %}ShelterTree{% endblock %} - {%  trans "Everyone Deserves a Peaceful Dwelling Place" %}</title>
 
     <!-- ==================================================================== -->
     <!-- FAVICON & BRANDING (This is the new section)                         -->
@@ -40,10 +39,10 @@
     <!-- STYLESHEETS & LIBRARIES                                              -->
     <!-- ==================================================================== -->
     <!-- Your Custom SCSS-generated CSS -->
-    <link href="{% sass_src 'scss/main.scss' %}" rel="stylesheet" type="text/css" />
+    <link href="{% static 'css/main.css' %}" rel="stylesheet" type="text/css" />
 
     <!-- Font Awesome for Icons -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" integrity="sha512-DTOQO9RWCH3ppGqcWaEA1BIZOC6xxalwEsw9c2QQeAIftl+Vegovlnee1c9QX4TctnWMn13TZye+giMm8e2LwA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
     
     <!-- Mapbox CSS -->
     <link href='https://api.mapbox.com/mapbox-gl-js/v2.9.1/mapbox-gl.css' rel='stylesheet' />
@@ -76,17 +75,6 @@
     <header>
         {% include 'reviews/partials/_navbar.html' %}
     </header>
-
-    <div class="flex-shrink-0">
-        <!-- Live Search Results Container -->
-        <div class="container d-none">
-            <div class="row justify-content-center">
-                <div class="col-md-6" style="position: relative;">
-                    <div id="live-search-results"></div>
-                    <div class="htmx-indicator">Loading...</div>
-                </div>
-            </div>
-        </div>
 
         <!-- Main Content Block -->
         <main>

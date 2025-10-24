@@ -42,7 +42,7 @@ RUN addgroup --system app && adduser --system --group app
 COPY --from=builder /usr/local/lib/python3.12/site-packages /usr/local/lib/python3.12/site-packages
 COPY --from=builder /usr/local/bin /usr/local/bin
 
-COPY --from=builder /app/staticfiles /app/staticfiles/
+#COPY --from=builder /app/staticfiles /app/staticfiles/
 COPY . .
 
 RUN chown -R app:app /app

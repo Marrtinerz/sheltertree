@@ -1,20 +1,63 @@
-# .gitignore
-.env
-.env.dev
-env/
+# ===================================================================
+# ShelterTree Definitive .gitignore
+# ===================================================================
+
+# Secrets - These must NEVER be committed to version control.
+# Catches .env, .env.dev, .env.prod, etc. in any directory.
+**/.env*
+
+# Local Databases
 db.sqlite3
+*.sqlite3
+
+# Python Artifacts
 __pycache__/
 *.pyc
+*.pyo
+*.pyd
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+share/python-wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+MANIFEST
+
+# Virtual Environments
+env/
+venv/
+.venv/
+
+# Frontend Dependencies - The build artifacts, not the blueprint.
+node_modules/
+
+# Static & Media Files
+# These are generated or user-uploaded. They do not belong in Git.
+/staticfiles/
+/mediafiles/
+
+# IDE / Editor & OS Files
+.vscode/
+.idea/
+*.swp
+*~
+.DS_Store
+Thumbs.db
+
+# Project-specific cruft (from your list)
 helper.py
 helper.md
 motivation.md
-
-# Frontend Dependencies
-/node_modules/
-
-# --- ADD THIS LINE ---
-# Manually-managed vendor libraries
-/static/vendor/
-
-/future/
+future/
 future.md

@@ -1,0 +1,25 @@
+/*
+    File: static/scss/components/_footer.scss
+*/
+
+.footer {
+    .footer-logo {
+        // Control the logo size by its height. The width will scale automatically.
+        // height: 40px; // Adjust this value to match your design
+        width: auto;
+    }
+
+    .footer-links {
+        a {
+            // Start with the default muted color and add a transition
+            color: $secondary; // Using your brand variable for slate gray
+            text-decoration: none;
+            transition: color 0.2s ease-in-out;
+
+            &:hover {
+                // On hover, transition to the primary brand color
+                color: $primary; 
+            }
+        }
+    }
+}

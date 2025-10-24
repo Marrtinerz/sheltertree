@@ -1,0 +1,107 @@
+/*
+    File: static/scss/components/_careers.scss
+    Purpose: Styles for the careers pages. (Brand Aligned)
+*/
+
+.careers-hero-clean {
+    // Using our established brand variable for light backgrounds.
+    background-color: $light; 
+}
+
+.values-section {
+    .value-card {
+        transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+
+        &:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.1) !important;
+        }
+
+        .icon-circle {
+            // These Bootstrap utility classes will automatically use our $primary variable.
+            // No custom code needed here, as long as Bootstrap is imported after our variables.
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 70px;
+            height: 70px;
+            border-radius: 50%;
+        }
+
+        h4 {
+            // Using our brand's dark color for headings for consistency.
+            color: $dark;
+        }
+
+        p {
+            // Explicitly using our secondary gray for body text in these cards.
+            color: $secondary;
+        }
+    }
+}
+
+.open-positions-section {
+    // Explicitly set the background color using our brand variable.
+    background-color: $light;
+}
+
+.job-listing-card {
+    transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out, border-color 0.2s ease-in-out;
+    border: 1px solid transparent;
+
+    &:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.1) !important;
+        
+        // Use our brand's primary color for the hover effect.
+        border-color: $primary; 
+
+        i {
+            transform: scale(1.1);
+        }
+    }
+
+    .card-title {
+        color: $dark;
+    }
+
+    .card-subtitle {
+        color: $secondary;
+    }
+
+    i {
+        transition: transform 0.2s ease-in-out;
+        // Use the Bootstrap text-primary utility, which is powered by our $primary variable.
+    }
+}
+
+
+/* ============================================ */
+/* JOB DETAIL PAGE STYLES */
+/* ============================================ */
+.job-description {
+    // General typography improvements remain here
+    h3 {
+        margin-top: 2rem;
+        margin-bottom: 1rem;
+        font-weight: 600;
+    }
+    ul, ol {
+        padding-left: 1.5rem;
+        margin-bottom: 1rem;
+    }
+    li {
+        margin-bottom: 0.5rem;
+    }
+
+    // --- THE DEFINITIVE FIX ---
+    // This rule targets ANY link within the job description.
+    a {
+        // Modern, preferred property. It will break the word at any point to prevent overflow.
+        overflow-wrap: break-word;
+        
+        // This is a more aggressive property that also works. It tells the browser
+        // it can break the line anywhere within the word.
+        word-break: break-all;
+    }
+}

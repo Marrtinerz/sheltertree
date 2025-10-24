@@ -1,17 +1,61 @@
 {% load i18n %}
+{% load static %}
 
-<footer class="footer mt-auto py-4 bg-light border-top">
-    <div class="container text-center">
-        <!-- THE FIX: Use the new, correct URL names -->
-        <nav class="nav justify-content-center mb-2">
-            <a href="{% url 'core:contact_us' %}" class="nav-link px-2 text-muted">{% translate "Contact Us" %}</a>
-            <a href="{% url 'core:terms_of_service' %}" class="nav-link px-2 text-muted">{% translate "Terms of Service" %}</a>
-            <a href="{% url 'core:privacy_policy' %}" class="nav-link px-2 text-muted">{% translate "Privacy Policy" %}</a>
-            <a href="{% url 'core:help_center' %}" class="nav-link px-2 text-muted">{% translate "Help & Support" %}</a>
-            <a href="{% url 'core:about_us' %}" class="nav-link px-2 text-muted">{% translate "About ShelterTree" %}</a>
-            <a href="{% url 'core:content_guidelines' %}" class="nav-link px-2 text-muted">{% translate "Content Guidelines" %}</a>
-            <a href="{% url 'core:contact_us' %}" class="nav-link px-2 text-muted">{% translate "Suggest a Feature" %}</a>
-        </nav>
-        <p class="mb-0 text-muted small">© {% now "Y" %} ShelterTree Limited. {% translate "All Rights Reserved." %}</p>
+<footer class="footer mt-auto py-5 bg-light border-top">
+    <div class="container">
+        <!-- ============================================ -->
+        <!-- 1. Main Footer Content -->
+        <!-- ============================================ -->
+        <div class="row">
+            <!-- Column 1: Brand & Mission -->
+            <div class="col-lg-4 mb-4 mb-lg-0 text-center text-lg-start">
+                {% comment %}
+                    The h5 text is now replaced with our world-class logo implementation.
+                    It links to the homepage, uses the static tag, and has a crucial alt tag.
+                {% endcomment %}
+                <a href="{% url 'reviews:home' %}" class="footer-logo-link mb-3 d-inline-block">
+                    <img src="{% static 'img/brand/logo.svg' %}" alt="ShelterTree Logo" class="footer-logo", style="height: 100px;">
+                </a>
+                <p class="text-muted small">
+                    {% trans "Everyone deserves to live in peaceful dwelling places, in secure homes, in undisturbed places of rest." %}
+                </p>
+            </div>
+
+            <!-- Column 2: Platform Links -->
+            <div class="col-lg-4 col-md-6 mb-4 mb-lg-0 text-center text-lg-start">
+                <h6 class="fw-bold mb-3">{% trans "Platform" %}</h6>
+                <ul class="list-unstyled footer-links">
+                    <li class="mb-2"><a href="{% url 'intelligence:landing-page' %}">{% trans "ShelterTree Intelligence" %}</a></li>
+                    <li class="mb-2"><a href="{% url 'reviews:property-list' %}">{% trans "Browse Properties" %}</a></li>
+                    <li class="mb-2"><a href="{% url 'reviews:search' %}?intent=review">{% trans "Leave a Review" %}</a></li>
+                    <li class="mb-2"><a href="{% url 'core:content_guidelines' %}">{% trans "Content Guidelines" %}</a></li>
+                </ul>
+            </div>
+
+            <!-- Column 3: Company Links -->
+            <div class="col-lg-4 col-md-6 mb-4 mb-lg-0 text-center text-lg-start">
+                <h6 class="fw-bold mb-3">{% trans "Company" %}</h6>
+                <ul class="list-unstyled footer-links">
+                    <li class="mb-2"><a href="{% url 'core:about_us' %}">{% trans "About Us" %}</a></li>
+                    <li class="mb-2"><a href="{% url 'careers:job_list' %}">{% trans "Careers" %}</a></li>
+                    <li class="mb-2"><a href="{% url 'core:contact_us' %}">{% trans "Contact & Feedback" %}</a></li>
+                    <li class="mb-2"><a href="{% url 'core:terms_of_service' %}">{% trans "Terms of Service" %}</a></li>
+                    <li class="mb-2"><a href="{% url 'core:privacy_policy' %}">{% trans "Privacy Policy" %}</a></li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- ============================================ -->
+        <!-- 2. Bottom Bar (Copyright) -->
+        <!-- ============================================ -->
+        {% comment %}
+            This new row is outside the main content grid. It will always appear
+            at the bottom, on both mobile and desktop, ensuring consistency.
+        {% endcomment %}
+        <div class="row pt-4 mt-4 border-top">
+            <div class="col-12 text-center">
+                <p class="mb-0 text-muted small">© {% now "Y" %} ShelterTree Limited. {% trans "All Rights Reserved." %}</p>
+            </div>
+        </div>
     </div>
 </footer>

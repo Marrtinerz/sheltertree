@@ -10,6 +10,8 @@ services:
     # 1. Override the Command to use the Django Development Server
     # This provides crucial features like auto-reloading on code changes and
     # detailed error pages (when DEBUG=True).
+    user: "${UID}:${GID}"
+    
     command: python manage.py runserver 0.0.0.0:8000
 
     # 2. Mount the Local Code Directory into the Container

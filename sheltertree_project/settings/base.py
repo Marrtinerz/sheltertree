@@ -35,8 +35,8 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     # 'compressor',
     'widget_tweaks',
-    'sass_processor',
     'storages',
+    'django.contrib.humanize',
     
     # Our app - using the 'apps' prefix is a good practice for clarity.
     'apps.reviews',
@@ -44,6 +44,8 @@ INSTALLED_APPS = [
     'apps.users.apps.UsersConfig',
     'apps.core.apps.CoreConfig',
     'apps.notifications',
+    'apps.intelligence',
+    'apps.careers',
     
     #allauth apps
     'django.contrib.sites', # Required by allauth
@@ -148,11 +150,10 @@ MEDIA_ROOT = os.path.join(BASE_DIR, 'media') # For user-uploaded files
 STATICFILES_FINDERS = [
     'django.contrib.staticfiles.finders.FileSystemFinder',
     'django.contrib.staticfiles.finders.AppDirectoriesFinder',
-    'sass_processor.finders.CssFinder',
 ]
 
-
 SASS_PRECISION = 8
+
 
 # --- Default primary key field type ---
 # https://docs.djangoproject.com/en/5.2/ref/settings/#default-auto-field
@@ -246,3 +247,11 @@ REVIEW_VERIFICATION_GRACE_PERIOD_HOURS = 48
 # MEDIA_ROOT = BASE_DIR / 'media'
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+
+
+
+
+
+#Paystack settings
+PAYSTACK_PUBLIC_KEY = config('PAYSTACK_PUBLIC_KEY')
+PAYSTACK_SECRET_KEY = config('PAYSTACK_SECRET_KEY')

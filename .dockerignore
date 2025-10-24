@@ -1,0 +1,43 @@
+# ===================================================================
+# ShelterTree Definitive .dockerignore
+# ===================================================================
+
+# Git & Docker files - Never needed in the build context.
+.git
+.gitignore
+.dockerignore
+Dockerfile
+docker-compose.yml
+docker-compose.override.yml
+README.md
+
+# Secrets - CRITICAL. This prevents your .env file from ever being
+# copied into the Docker build context, even for a moment.
+**/.env*
+
+# Python Artifacts
+__pycache__
+*.pyc
+*.pyo
+*.pyd
+*.egg-info
+
+# Virtual Environments
+venv
+.venv
+env
+
+# Frontend Build Artifacts - These should be generated INSIDE the
+# Dockerfile, not copied from your local machine.
+node_modules
+
+# Local Databases
+db.sqlite3
+*.sqlite3
+
+# IDE / Editor & OS Files
+.vscode
+.idea
+*.swp
+*~
+.DS_Store

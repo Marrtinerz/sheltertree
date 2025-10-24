@@ -26,5 +26,19 @@ services:
     env_file:
       - .env.dev
 
+  
+  # --- ADD THIS NEW SERVICE ---
+  sass:
+    # We use a standard Node.js image
+    image: node:18
+    # We mount our project directory into the container
+    working_dir: /app
+    volumes:
+      - .:/app
+    # This is the command that runs. It first installs the dependencies from package.json,
+    # and then it runs our "watch:sass" script forever.
+    command: >
+      sh -c "npm install && npm run watch:sass"
+
 volumes:
   postgres_data:

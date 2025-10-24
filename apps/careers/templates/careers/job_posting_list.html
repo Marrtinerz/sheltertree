@@ -1,0 +1,109 @@
+{% extends "base.html" %}
+{% load i18n %}
+{% load static %}
+
+{% block title %}{% trans "Join Our Team" %} | ShelterTree{% endblock %}
+
+{% block content %}
+<!-- ============================================ -->
+<!-- CAREERS HERO SECTION (CLEAN & MINIMALIST) -->
+<!-- ============================================ -->
+<section class="careers-hero-clean py-5">
+    <div class="container text-center">
+        <h1 class="display-4 fw-bold">{% trans "Help Build a World of Peaceful Homes." %}</h1>
+        <p class="lead my-4 text-muted col-lg-8 mx-auto">
+            {% trans "If you believe that everyone deserves a secure home and an undisturbed place of rest, you are in the right place. Join us in our mission to redefine living spaces across Africa and beyond." %}
+        </p>
+    </div>
+</section>
+
+
+<!-- ============================================ -->
+<!-- VALUES SECTION (ALIGNED WITH "ABOUT US") -->
+<!-- ============================================ -->
+<section class="values-section py-5">
+    <div class="container">
+        <div class="row mb-5">
+            <div class="col-lg-8 mx-auto text-center">
+                <h2 class="display-5 fw-bold">{% trans "Our Values" %}</h2>
+                <p class="lead text-muted">{% trans "Our culture is built on the same core values as our platform. This is what it means to be part of the ShelterTree team." %}</p>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-lg-10 mx-auto">
+                <div class="row g-4">
+                    <!-- Value 1: Authenticity -->
+                    <div class="col-md-4">
+                        <div class="card value-card h-100 shadow-sm border-0 p-3">
+                            <div class="card-body text-center">
+                                <div class="icon-circle bg-primary text-white mb-3">
+                                    <i class="fa-solid fa-award fs-3"></i>
+                                </div>
+                                <h4 class="fw-bold">{% trans "Authenticity" %}</h4>
+                                <p class="text-muted">{% trans "We operate with integrity, speak with honesty, and build products that our users can trust. Our work is a direct reflection of our word." %}</p>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Value 2: Community -->
+                    <div class="col-md-4">
+                        <div class="card value-card h-100 shadow-sm border-0 p-3">
+                            <div class="card-body text-center">
+                                <div class="icon-circle bg-primary text-white mb-3">
+                                    <i class="fa-solid fa-users fs-3"></i>
+                                </div>
+                                <h4 class="fw-bold">{% trans "Community" %}</h4>
+                                <p class="text-muted">{% trans "We are a tight-knit, collaborative team that supports each other. We extend that same spirit to our users, building a platform where everyone feels heard and valued." %}</p>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Value 3: Transparency -->
+                    <div class="col-md-4">
+                        <div class="card value-card h-100 shadow-sm border-0 p-3">
+                            <div class="card-body text-center">
+                                <div class="icon-circle bg-primary text-white mb-3">
+                                    <i class="fa-solid fa-eye fs-3"></i>
+                                </div>
+                                <h4 class="fw-bold">{% trans "Transparency" %}</h4>
+                                <p class="text-muted">{% trans "We believe in open communication and clear goals. We are transparent in our work and dedicated to shining a light on the real estate industry." %}</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+
+<!-- ============================================ -->
+<!-- OPEN POSITIONS SECTION -->
+<!-- ============================================ -->
+<section class="open-positions-section bg-light py-5">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 mx-auto">
+                <h2 class="display-5 fw-bold text-center mb-5">{% trans "Open Positions" %}</h2>
+                {% for job in job_postings %}
+                    <a href="{{ job.get_absolute_url }}" class="job-listing-card card shadow-sm mb-3 text-decoration-none">
+                        <div class="card-body p-4 d-flex justify-content-between align-items-center">
+                            <div>
+                                <h4 class="card-title mb-1 text-primary">{{ job.title }}</h4>
+                                <p class="card-subtitle mb-0 text-muted">{{ job.location }}</p>
+                            </div>
+                            <div class="d-none d-md-block">
+                                <i class="fa-solid fa-arrow-right-circle fs-2 text-primary"></i>
+                            </div>
+                        </div>
+                    </a>
+                {% empty %}
+                    <div class="text-center">
+                        <p class="lead">{% trans "There are currently no open positions." %}</p>
+                        <p class="text-muted">{% trans "If you believe in our North Star and are passionate about our mission, we would love to hear from you." %}</p>
+                        <a href="mailto:hello@mysheltertree.com" class="btn btn-primary mt-2">{% trans "Introduce Yourself" %}</a>
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}

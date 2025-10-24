@@ -14,7 +14,7 @@ SECRET_KEY = config('SECRET_KEY')
 # Allow requests from localhost and the Docker container's IP
 ALLOWED_HOSTS = ['localhost', '127.0.0.1']
 
-
+# INSTALLED_APPS = ['whitenoise.runserver_nostatic'] + [app for app in INSTALLED_APPS if app != 'whitenoise']
 EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 
 SKIP_APPROVAL_EMAIL_SEND = config('SKIP_APPROVAL_EMAIL_SEND', default=False, cast=bool)

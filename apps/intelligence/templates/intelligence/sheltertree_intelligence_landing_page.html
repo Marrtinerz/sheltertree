@@ -1,0 +1,438 @@
+{% extends "base_homepage.html" %}
+{% load static %}
+{% load widget_tweaks %}
+
+{% block title %}ShelterTree Intelligence{% endblock %}
+
+{% block extra_head %}
+    {# --- Premium Typography from Google Fonts --- #}
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=Inter:wght@400;500;700&display=swap" rel="stylesheet">
+    
+    {# --- Bootstrap Icons --- #}
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+{% endblock %}
+
+
+{% block content %}
+
+<!-- ============================================ -->
+<!-- HERO SECTION -->
+<!-- ============================================ -->
+<section class="hero-section-landing text-white text-center">
+    <div class="container hero-content-landing">
+        <h1 class="display-4 fw-bold">Secure Your Peace. Verify Your Investment.</h1>
+        <p class="lead my-4">
+            Introducing ShelterTree Intelligence, the definitive due diligence service for serious
+            property investors in Africa. We replace uncertainty with verifiable ground truth.
+        </p>
+        <a href="#inquiry-form" class="btn btn-primary btn-md fw-bold">
+            Request a Consultation
+        </a>
+    </div>
+</section>
+
+<!-- ============================================ -->
+<!-- PROBLEM SECTION -->
+<!-- ============================================ -->
+<section class="problem-section py-5">
+    <div class="container">
+        <!-- Section Header -->
+        <div class="row mb-5">
+            <div class="col-lg-8 mx-auto text-center">
+                <h2 class="display-5 fw-bold">The Nigerian Property Market is a Minefield of Risk</h2>
+                <p class="lead text-muted">A single bad investment can undo a lifetime of work. Title fraud, demolition orders, and undisclosed structural issues are not edge cases; they are calculated risks you must actively neutralize.</p>
+            </div>
+        </div>
+
+        <!-- Three-Column Risk Layout -->
+        <div class="row">
+            <!-- Column 1: Title Fraud -->
+            <div class="col-lg-4 d-flex align-items-stretch">
+                <div class="card shadow-sm border-0 mb-4">
+                    <div class="card-body p-4 text-center">
+                        <div class="icon-circle bg-primary-soft text-primary mb-3">
+                            <i class="bi bi-file-earmark-lock2-fill fs-3"></i>
+                        </div>
+                        <h3 class="h5 fw-bold">Title & Ownership Fraud</h3>
+                        <p class="text-muted">Is the Certificate of Occupancy authentic? Does the seller have the legal right to sell? A fraudulent title means you own nothing. We verify every claim at the source.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Column 2: Demolition Risk -->
+            <div class="col-lg-4 d-flex align-items-stretch">
+                <div class="card shadow-sm border-0 mb-4">
+                    <div class="card-body p-4 text-center">
+                        <div class="icon-circle bg-primary-soft text-primary mb-3">
+                            <i class="bi bi-exclamation-triangle-fill fs-3"></i>
+                        </div>
+                        <h3 class="h5 fw-bold">Demolition & Compliance Risk</h3>
+                        <p class="text-muted">Was the building constructed with full government approval? Non-compliance with zoning laws or building codes can lead to catastrophic demolition orders.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Column 3: Hidden Defects -->
+            <div class="col-lg-4 d-flex align-items-stretch">
+                <div class="card shadow-sm border-0 mb-4">
+                    <div class="card-body p-4 text-center">
+                        <div class="icon-circle bg-primary-soft text-primary mb-3">
+                            <i class="bi bi-house-door-fill fs-3"></i>
+                        </div>
+                        <h3 class="h5 fw-bold">Hidden Defects & Liabilities</h3>
+                        <p class="text-muted">What is the true condition of the structure? Are there outstanding land use charges or unresolved "Omo-Onile" claims waiting to surface after you've paid?</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ============================================ -->
+<!-- SOLUTION SECTION -->
+<!-- ============================================ -->
+<section class="solution-section py-5">
+    <div class="container">
+        <div class="row align-items-center">
+            <!-- Left Column: The Narrative -->
+            <div class="col-lg-6 mb-4 mb-lg-0">
+                <p class="eyebrow text-primary fw-bold text-uppercase">The ShelterTree Advantage</p>
+                <h2 class="display-5 fw-bold">The Verified Report™. <br> Your Shield Against Uncertainty.</h2>
+                <p class="lead text-muted mt-4">
+                    We built ShelterTree Intelligence to bring world-class standards of transparency to the property market. Our reports are not just data compilations; they are comprehensive, on-the-ground investigations, culminating in a clear verdict.
+                </p>
+                <p class="lead text-muted">
+                    This is the ground truth you need to invest with absolute confidence.
+                </p>
+            </div>
+
+            <!-- Right Column: The Product Mockup -->
+            <div class="col-lg-6 text-center">
+                <img src="{% static 'img/mockups/report-mockup.png' %}" 
+                     alt="Mockup of The ShelterTree Verified Report" 
+                     class="img-fluid rounded shadow-lg report-mockup">
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ============================================ -->
+<!-- TESTIMONIAL SECTION (NEW) -->
+<!-- ============================================ -->
+<section class="testimonial-section bg-dark text-white py-5">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 mx-auto text-center">
+                <i class="bi bi-quote fs-1 text-primary"></i>
+                <blockquote class="blockquote display-6 my-4">
+                    "The ShelterTree report was the most valuable money we spent in our entire property search. It saved us from a catastrophic purchase and gave us the confidence to find the right home."
+                </blockquote>
+                <footer class="blockquote-footer text-white-50">
+                    Dr. Adebayo Williams, <cite title="Source Title">Lekki Phase 1, Lagos</cite>
+                </footer>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ============================================ -->
+<!-- METHODOLOGY SECTION -->
+<!-- ============================================ -->
+<section class="methodology-section bg-light py-5">
+    <div class="container">
+        <!-- Section Header -->
+        <div class="row mb-5">
+            <div class="col-lg-8 mx-auto text-center">
+                <h2 class="display-5 fw-bold">Our Methodology: A Five-Pillar Investigation</h2>
+                <p class="lead text-muted">We leave no stone unturned. Our process is built on five pillars of exhaustive research, combining forensic data analysis with on-the-ground human intelligence.</p>
+            </div>
+        </div>
+
+        <!-- Accordion for the Five Pillars -->
+        <div class="row">
+            <div class="col-lg-10 mx-auto">
+                <div class="accordion shadow-sm" id="methodologyAccordion">
+
+                    <!-- Pillar 1: Legal Title -->
+                    <div class="accordion-item">
+                        <h2 class="accordion-header" id="headingOne">
+                            <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
+                                <i class="bi bi-patch-check-fill me-3"></i>
+                                Pillar 1: Legal Title & Ownership Verification
+                            </button>
+                        </h2>
+                        <div id="collapseOne" class="accordion-collapse collapse show" aria-labelledby="headingOne" data-bs-parent="#methodologyAccordion">
+                            <div class="accordion-body">
+                                <p class="fw-bold text-muted"><em>This section answers: "Will I actually own this property, free and clear?"</em></p>
+                                <p>Our legal review team conducts deep searches at the Land Registry, cross-references survey plans, and uncovers any hidden liens or court judgments to ensure your title is unimpeachable.</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Pillar 2: Compliance & Demolition Risk -->
+                    <div class="accordion-item">
+                        <h2 class="accordion-header" id="headingTwo">
+                            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
+                                <i class="bi bi-shield-fill-check me-3"></i>
+                                Pillar 2: Compliance & Demolition Risk Audit
+                            </button>
+                        </h2>
+                        <div id="collapseTwo" class="accordion-collapse collapse" aria-labelledby="headingTwo" data-bs-parent="#methodologyAccordion">
+                            <div class="accordion-body">
+                                <p class="fw-bold text-muted"><em>This section answers: "Is this property compliant and safe from demolition?"</em></p>
+                                <p>We are relentless in our pursuit of regulatory truth. We verify building permits, zoning compliance, tax clearance, and critically, any potential easements or environmental red flags that could jeopardize your asset.</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Pillar 3: Physical Asset -->
+                    <div class="accordion-item">
+                        <h2 class="accordion-header" id="headingThree">
+                            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseThree" aria-expanded="false" aria-controls="collapseThree">
+                                <i class="bi bi-building-fill-check me-3"></i>
+                                Pillar 3: Physical Asset & Utility Audit
+                            </button>
+                        </h2>
+                        <div id="collapseThree" class="accordion-collapse collapse" aria-labelledby="headingThree" data-bs-parent="#methodologyAccordion">
+                            <div class="accordion-body">
+                                <p class="fw-bold text-muted"><em>This section answers: "What is the actual physical condition of the property?"</em></p>
+                                <p>Our trained ShelterScouts conduct an on-site visual inspection, identifying major structural red flags, assessing the condition of essential utilities, and verifying legal and practical access to the property.</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Pillar 4: Hyper-Local Intelligence -->
+                    <div class="accordion-item">
+                        <h2 class="accordion-header" id="headingFour">
+                            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseFour" aria-expanded="false" aria-controls="collapseFour">
+                                <i class="bi bi-people-fill me-3"></i>
+                                Pillar 4: Hyper-Local & Community Intelligence
+                            </button>
+                        </h2>
+                        <div id="collapseFour" class="accordion-collapse collapse" aria-labelledby="headingFour" data-bs-parent="#methodologyAccordion">
+                            <div class="accordion-body">
+                                <p class="fw-bold text-muted"><em>This section answers: "What is it *really* like to live here?"</em></p>
+                                <p>This is our proprietary intelligence. We conduct discreet, on-the-ground inquiries to assess the security situation, uncover any "Omo-Onile" claims, and gather sentiment from the local community.</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Pillar 5: The ShelterTree Verdict -->
+                    <div class="accordion-item">
+                        <h2 class="accordion-header" id="headingFive">
+                            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseFive" aria-expanded="false" aria-controls="collapseFive">
+                                <i class="bi bi-award-fill me-3"></i>
+                                Pillar 5: The ShelterTree Verdict™
+                            </button>
+                        </h2>
+                        <div id="collapseFive" class="accordion-collapse collapse" aria-labelledby="headingFive" data-bs-parent="#methodologyAccordion">
+                            <div class="accordion-body">
+                                <p class="fw-bold text-muted"><em>The culmination of our work: Clarity at a glance.</em></p>
+                                <p>Every investigation concludes with our definitive verdict. Based on the level of verification you choose, we award a clear seal of approval—from "Title Verified" to the comprehensive "ShelterTree Verified™"—allowing you to understand the status of your potential investment instantly.</p>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ============================================ -->
+<!-- PRICING SECTION -->
+<!-- ============================================ -->
+<section class="pricing-section py-5">
+    <div class="container">
+        <!-- Section Header -->
+        <div class="row mb-5">
+            <div class="col-lg-8 mx-auto text-center">
+                <h2 class="display-5 fw-bold">Choose Your Level of Certainty</h2>
+                <p class="lead text-muted">We offer three tiers of verification to match your specific needs and risk appetite. Each report is executed with the same world-class rigor.</p>
+            </div>
+        </div>
+
+        <!-- Pricing Tiers -->
+        <div class="row">
+            <!-- Tier 1: Comprehensive (Left) -->
+            <div class="col-lg-4 d-flex align-items-stretch">
+                <div class="card pricing-card shadow-sm mb-4">
+                    <div class="card-body p-4 d-flex flex-column">
+                        <h3 class="h5 fw-bold text-uppercase">Comprehensive Verification</h3>
+                        <p class="display-6 fw-bold my-3">₦1,000,000</p>
+                        <p class="text-primary fw-bold"><i class="bi bi-award-fill me-2"></i>Awards the "ShelterTree Verified™" Seal</p>
+                        <ul class="list-unstyled feature-list my-4">
+                            <li class="included"><i class="bi bi-check-circle-fill me-2"></i>Full Legal Title & Ownership Verification</li>
+                            <li class="included"><i class="bi bi-check-circle-fill me-2"></i>Full Compliance & Demolition Risk Audit</li>
+                            <li class="included"><i class="bi bi-check-circle-fill me-2"></i>Physical Asset & Utility Audit</li>
+                            <li class="included"><i class="bi bi-check-circle-fill me-2"></i>Hyper-Local & Community Intelligence</li>
+                            <li class="included"><i class="bi bi-check-circle-fill me-2"></i>Dedicated Report Presentation Call</li>
+                        </ul>
+                        <div class="mt-auto">
+                            <p class="text-muted small">Turnaround: 10-14 Business Days</p>
+                            <a href="#inquiry-form" class="btn btn-outline-primary w-100">Request a Consultation</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tier 2: Standard (Center - Highlighted) -->
+            <div class="col-lg-4 d-flex align-items-stretch">
+                <div class="card pricing-card shadow-lg mb-4 highlighted-tier">
+                    <div class="card-header text-center fw-bold text-uppercase border-0">Most Popular</div>
+                    <div class="card-body p-4 d-flex flex-column">
+                        <h3 class="h5 fw-bold text-uppercase">Standard Verification</h3>
+                        <p class="display-6 fw-bold my-3">₦850,000</p>
+                        <p class="text-primary fw-bold"><i class="bi bi-shield-fill-check me-2"></i>Awards the "Title & Compliance Verified" Seal</p>
+                        <ul class="list-unstyled feature-list my-4">
+                            <li class="included"><i class="bi bi-check-circle-fill me-2"></i>Full Legal Title & Ownership Verification</li>
+                            <li class="included"><i class="bi bi-check-circle-fill me-2"></i>Full Compliance & Demolition Risk Audit</li>
+                            <li class="excluded"><i class="bi bi-dash-circle me-2"></i>Physical Asset & Utility Audit</li>
+                            <li class="excluded"><i class="bi bi-dash-circle me-2"></i>Hyper-Local & Community Intelligence</li>
+                            <li class="excluded"><i class="bi bi-dash-circle me-2"></i>Dedicated Report Presentation Call</li>
+                        </ul>
+                        <div class="mt-auto">
+                            <p class="text-muted small">Turnaround: 7-10 Business Days</p>
+                            <a href="#inquiry-form" class="btn btn-primary w-100">Request a Consultation</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tier 3: Essential (Right) -->
+            <div class="col-lg-4 d-flex align-items-stretch">
+                <div class="card pricing-card shadow-sm mb-4">
+                    <div class="card-body p-4 d-flex flex-column">
+                        <h3 class="h5 fw-bold text-uppercase">Essential Verification</h3>
+                        <p class="display-6 fw-bold my-3">₦500,000</p>
+                        <p class="text-primary fw-bold"><i class="bi bi-patch-check-fill me-2"></i>Awards the "Title Verified" Seal</p>
+                        <ul class="list-unstyled feature-list my-4">
+                            <li class="included"><i class="bi bi-check-circle-fill me-2"></i>Full Legal Title & Ownership Verification</li>
+                            <li class="excluded"><i class="bi bi-dash-circle me-2"></i>Full Compliance & Demolition Risk Audit</li>
+                            <li class="excluded"><i class="bi bi-dash-circle me-2"></i>Physical Asset & Utility Audit</li>
+                            <li class="excluded"><i class="bi bi-dash-circle me-2"></i>Hyper-Local & Community Intelligence</li>
+                            <li class="excluded"><i class="bi bi-dash-circle me-2"></i>Dedicated Report Presentation Call</li>
+                        </ul>
+                        <div class="mt-auto">
+                            <p class="text-muted small">Turnaround: 5-7 Business Days</p>
+                            <a href="#inquiry-form" class="btn btn-outline-primary w-100">Request a Consultation</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Add-on Section -->
+        <div class="row mt-5">
+            <div class="col-lg-8 mx-auto text-center">
+                <div class="card bg-light border-0">
+                    <div class="card-body">
+                        <h4 class="fw-bold">Searching for Multiple Properties?</h4>
+                        <p class="text-muted">Add <b>**Multi-Property Search Protection**</b> to your first order. For a one-time fee of ₦150,000, you unlock a <b>**30% discount**</b> on up to <b>**three**</b> additional verifications within 6 months. Secure your peace of mind for your entire property search journey.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ============================================ -->
+<!-- CALL TO ACTION (INQUIRY FORM) SECTION -->
+<!-- ============================================ -->
+<section class="cta-section bg-light py-5" id="inquiry-form">
+    <div class="container">
+        <!-- Section Header -->
+        <div class="row mb-5">
+            <div class="col-lg-8 mx-auto text-center">
+                <h2 class="display-5 fw-bold">Begin Your Verification Process Today</h2>
+                <p class="lead text-muted">Take the first step towards a secure investment. Fill out the form below, and our specialist team will contact you within 2 business hours.</p>
+            </div>
+        </div>
+
+        <!-- Inquiry Form -->
+        <div class="row">
+            <div class="col-lg-8 mx-auto">
+                <div class="card shadow-sm border-0">
+                    <div class="card-body p-4 p-md-5">
+                        <form action="" method="post" novalidate>
+                            {% csrf_token %}
+                            {% load widget_tweaks %}
+
+                            <!-- This is our invisible honeypot field -->
+                            <div class="d-none">
+                                {{ form.honeypot.label_tag }}
+                                {{ form.honeypot }}
+                            </div>
+
+                            <!-- This hidden field will store the tier selection -->
+                            {{ form.selected_tier }}
+
+                            <!-- Visible Fields -->
+                            <div class="form-floating mb-3">
+                                {% render_field form.name class="form-control" %}
+                                <label for="{{ form.name.id_for_label }}">{{ form.name.label }}</label>
+                            </div>
+                            <div class="row g-2 mb-3">
+                                <div class="col-md">
+                                    <div class="form-floating">
+                                        {% render_field form.email class="form-control" %}
+                                        <label for="{{ form.email.id_for_label }}">{{ form.email.label }}</label>
+                                    </div>
+                                </div>
+                                <div class="col-md">
+                                    <div class="form-floating">
+                                        {% render_field form.phone_number class="form-control" %}
+                                        <label for="{{ form.phone_number.id_for_label }}">{{ form.phone_number.label }}</label>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-floating mb-4">
+                                {% render_field form.property_details class="form-control" style="height: 120px" %}
+                                <label for="{{ form.property_details.id_for_label }}">{{ form.property_details.label }}</label>
+                                <div class="form-text mt-2">{{ form.property_details.help_text }}</div>
+                            </div>
+                            <div class="form-check mb-4 p-3 bg-white border rounded">
+                                {% render_field form.add_search_protection class="form-check-input" %}
+                                <label class="form-check-label" for="{{ form.add_search_protection.id_for_label }}">
+                                    {{ form.add_search_protection.label }}
+                                </label>
+                            </div>
+                            <div class="d-grid">
+                                <button type="submit" class="btn btn-primary btn-lg fw-bold">Request a Consultation</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}
+{% block extra_js %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Find all consultation buttons and the hidden tier input
+    const consultButtons = document.querySelectorAll('a[href="#inquiry-form"], .pricing-card .btn');
+    const selectedTierInput = document.querySelector('input[name="selected_tier"]');
+
+    consultButtons.forEach(button => {
+        button.addEventListener('click', function(event) {
+            // Find the closest parent pricing card to determine the tier
+            const pricingCard = event.target.closest('.pricing-card');
+            if (pricingCard) {
+                const tierTitle = pricingCard.querySelector('h3').textContent.trim();
+                if (tierTitle.includes('Comprehensive')) {
+                    selectedTierInput.value = 'COMPREHENSIVE';
+                } else if (tierTitle.includes('Standard')) {
+                    selectedTierInput.value = 'STANDARD';
+                } else if (tierTitle.includes('Essential')) {
+                    selectedTierInput.value = 'ESSENTIAL';
+                }
+            }
+        });
+    });
+});
+</script>
+{% endblock %}

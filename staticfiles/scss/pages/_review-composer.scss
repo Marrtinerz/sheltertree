@@ -74,16 +74,41 @@
 }
 }
 
-// --- NEW: Style for the review guideline notice ---
+// // --- NEW: Style for the review guideline notice ---
+// .review-guideline {
+//   background-color: tint-color($primary, 95%); // A very light, on-brand green/teal
+//   border: 1px solid tint-color($primary, 80%);
+//   border-radius: $border-radius;
+//   padding: 1rem;
+
+//   .guideline-icon {
+//     font-size: 1.5rem;
+//     color: $primary;
+//     opacity: 0.8;
+//   }
+// }
+
+// --- NEW: The World-Class Guideline Notice ---
 .review-guideline {
+  display: flex;
+  align-items: flex-start; // Aligns the icon with the top of the text block
   background-color: tint-color($primary, 95%); // A very light, on-brand green/teal
   border: 1px solid tint-color($primary, 80%);
   border-radius: $border-radius;
   padding: 1rem;
 
   .guideline-icon {
-    font-size: 1.5rem;
+    flex-shrink: 0; // Prevents the icon from being squished on small screens
+    margin-right: 1rem;
     color: $primary;
-    opacity: 0.8;
+    font-size: 1.25rem;
+    margin-top: 0.1rem; // Tiny adjustment for perfect visual alignment
+  }
+
+  p {
+    margin-bottom: 0; // Remove default paragraph margin
+    font-size: 0.9rem;
+    color: darken($secondary, 10%); // Slightly darker for better readability
   }
 }
+

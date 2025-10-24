@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+{% load i18n %}
+{% load markdown_filter %}
+
+
+{% block title %}{{ job.title }} | ShelterTree{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row">
+        <div class="col-lg-8 mx-auto">
+            <div class="mb-4">
+                <span class="badge bg-primary">{{ job.location }}</span>
+                <h1 class="display-5 fw-bold mt-2">{{ job.title }}</h1>
+            </div>
+
+            <div class="job-description">
+                <!-- The job.description itself comes from the DB, but any surrounding
+                     interface text would be translated. -->
+                {{ job.description|markdownify }}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

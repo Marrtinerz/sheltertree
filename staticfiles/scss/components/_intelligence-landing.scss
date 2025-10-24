@@ -1,0 +1,278 @@
+/*
+    File: static/scss/components/_intelligence-landing.scss
+    Purpose: World-class, premium styles for the ShelterTree Intelligence landing page.
+*/
+
+// ============================================
+// PREMIUM DESIGN SYSTEM & CONFIGURATION
+// ============================================
+
+// // 1. Typography
+$font-serif: 'DM Serif Display', serif;
+$font-sans: 'Inter', sans-serif;
+
+// // 2. Color Palette
+// $primary:       #005A31; // Your existing deep, trustworthy green
+// $secondary:     #E3E8E5; // A soft, elegant grey-green
+// $dark:          #121212; // A deep, rich black for text and dark backgrounds
+// $light:         #F9F9F9; // A clean, soft off-white for light backgrounds
+// $accent:        #D4AF37; // A subtle, premium gold for highlights and CTAs
+
+// A soft version of our primary color for icon backgrounds
+$primary-soft:  rgba($primary, 0.1);
+
+// 3. Helper Class
+.eyebrow {
+    letter-spacing: 1.5px;
+    font-size: 0.8rem;
+    font-weight: 700;
+}
+
+
+// ============================================
+// GLOBAL OVERRIDES FOR PREMIUM FEEL
+// ============================================
+// These styles are scoped to apply only within the context of this page if needed,
+// but they elevate the base typography and colors.
+
+body {
+    font-family: $font-family-sans-serif;
+    color: $dark;
+    background-color: #FFFFFF; // Default to a clean white
+}
+
+h1, h2, h3, h4, .display-4, .display-5, .display-6 {
+    font-family: $font-family-sans-serif;
+    letter-spacing: -1px; // Tightens up serif headlines for a modern, elegant look
+}
+
+// ============================================
+// HERO SECTION
+// ============================================
+.hero-section-landing {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 85vh;
+    padding: 4rem 0;
+    background-image: url('https://images.unsplash.com/photo-1580587771525-78b9dba3b914?q=80&w=2000');
+    background-size: cover;
+    background-position: center center;
+
+    &::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(180deg, rgba($dark, 0.7) 0%, rgba($dark, 0.5) 100%);
+    }
+}
+
+.hero-content-landing {
+    position: relative;
+    z-index: 2;
+
+    .lead {
+        max-width: 700px;
+        margin-left: auto;
+        margin-right: auto;
+        color: rgba(255, 255, 255, 0.9);
+    }
+
+    .btn-primary {
+        background-color: $accent;
+        border-color: $accent;
+        color: $dark;
+        font-weight: 700;
+        padding: 0.8rem 2.5rem;
+        border-radius: 50rem;
+        transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+
+        &:hover {
+            background-color: darken($accent, 5%);
+            border-color: darken($accent, 5%);
+            transform: scale(1.05);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.2);
+        }
+    }
+}
+
+// ============================================
+// PROBLEM SECTION
+// ============================================
+.problem-section {
+    background-color: $light;
+
+    .card {
+        border: none;
+        background-color: #FFFFFF;
+        border-radius: 8px;
+        transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+
+        &:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 0.5rem 1rem rgba($dark, 0.1) !important;
+        }
+    }
+
+    .icon-circle {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 70px;
+        height: 70px;
+        border-radius: 50%;
+        background-color: $primary-soft !important;
+        color: $primary !important;
+    }
+}
+
+// ============================================
+// SOLUTION SECTION
+// ============================================
+.solution-section {
+    background-color: #FFFFFF;
+
+    .report-mockup {
+        max-width: 450px; 
+        margin: 0 auto;
+        border: 1px solid #dee2e6;
+    }
+}
+
+// ============================================
+// TESTIMONIAL SECTION
+// ============================================
+.testimonial-section {
+    background-color: $primary;
+    
+    .blockquote {
+        font-family: $font-serif;
+        font-style: italic;
+        font-weight: 400;
+        letter-spacing: 0;
+    }
+
+    .blockquote-footer {
+        font-family: $font-sans;
+        font-size: 1rem;
+    }
+    
+    .bi-quote {
+        color: rgba($accent, 0.8);
+    }
+}
+
+// ============================================
+// METHODOLOGY SECTION
+// ============================================
+.methodology-section {
+    background-color: $light;
+    
+    .accordion-button {
+        font-family: $font-sans;
+        font-size: 1.1rem;
+        font-weight: 600;
+        
+        &:not(.collapsed) {
+            background-color: $primary;
+            color: white;
+            
+            &::after {
+                background-image: var(--bs-accordion-btn-active-icon);
+            }
+        }
+
+        &:focus {
+            box-shadow: none;
+        }
+    }
+
+    .accordion-body {
+        background-color: #FFFFFF;
+        font-size: 0.95rem;
+    }
+}
+
+// ============================================
+// PRICING SECTION
+// ============================================
+.pricing-section {
+    background-color: #FFFFFF;
+
+    .pricing-card {
+        border-radius: 8px;
+        border: 1px solid #e0e0e0;
+        transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+
+        &:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 0.5rem 1rem rgba($dark, 0.1) !important;
+        }
+
+        .feature-list {
+            li {
+                margin-bottom: 0.75rem;
+                display: flex;
+                align-items: top;
+
+                i { margin-top: 0.25rem; }
+            }
+            .included i { color: $primary; }
+            .excluded {
+                color: var(--bs-gray-500);
+                text-decoration: line-through;
+                i { color: var(--bs-gray-500); }
+            }
+        }
+    }
+
+    .highlighted-tier {
+        border: 2px solid $primary;
+        transform: scale(1.02);
+        z-index: 2;
+
+        &:hover {
+            transform: scale(1.05) translateY(-5px);
+        }
+
+        .card-header {
+            background-color: $primary;
+            color: white;
+        }
+
+        .btn-primary {
+            background-color: $accent;
+            border-color: $accent;
+            color: $dark;
+            font-weight: 700;
+            
+            &:hover {
+                background-color: darken($accent, 5%);
+                border-color: darken($accent, 5%);
+            }
+        }
+    }
+}
+
+// ============================================
+// CTA (INQUIRY FORM) SECTION
+// ============================================
+.cta-section {
+    background-color: $light;
+
+    .card {
+        border: none !important;
+        background-color: #FFFFFF;
+    }
+    
+    .form-check {
+        padding: 1rem 1.25rem;
+        background-color: $light;
+        border-radius: 0.375rem;
+        border: 1px solid #dee2e6;
+    }
+}

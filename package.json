@@ -1,0 +1,12 @@
+{
+  "name": "sheltertree",
+  "version": "1.0.0",
+  "description": "Frontend dependencies for ShelterTree",
+  "scripts": {
+    "sass": "sass static/scss/main.scss static/css/main.css",
+    "watch:sass": "sass --watch static/scss/main.scss:static/css/main.css"
+  },
+  "dependencies": {
+    "sass": "^1.77.4"
+  }
+}
