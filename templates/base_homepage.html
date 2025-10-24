@@ -26,13 +26,19 @@
     <!-- ==================================================================== -->
     <!-- SOCIAL MEDIA CARDS (Open Graph / Twitter)                            -->
     <!-- ==================================================================== -->
-    <meta property="og:title" content="ShelterTree | Honest Property Reviews">
-    <meta property="og:description" content="Find trusted reviews for apartments and estates across Africa.">
-    <!-- You need to create this image (1200x630px) and place it in 'static/img/brand/' -->
-    <meta property="og:image" content="{% static 'img/brand/sheltertree_social_card.png' %}">
+    <meta property="og:title" content="ShelterTree | Helping you Find a Home you'll Love">
+    <meta property="og:description" content="At ShelterTree, we believe everyone deserves a secure home and an undisturbed place of rest. From community-powered reviews to expert-led property verification, we bring trust and transparency to living spaces across Africa.">
+
+    <!-- CRITICAL: This image should now represent the entire brand promise. -->
+    <meta property="og:image" content="{% static 'img/brand/sheltertree_brand_social_card.png' %}">
     <meta property="og:url" content="{{ request.build_absolute_uri }}">
     <meta property="og:type" content="website">
+
+    <!-- Twitter Card -->
     <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="ShelterTree | Helping you Find a Home you'll Love">
+    <meta name="twitter:description" content="From community-powered reviews to expert-led property verification, ShelterTree brings trust and transparency to living spaces across Africa.">
+    <meta name="twitter:image" content="{% static 'img/brand/sheltertree_brand_social_card.png' %}">
 
 
     <!-- ==================================================================== -->
