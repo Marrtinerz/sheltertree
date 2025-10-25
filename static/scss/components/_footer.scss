@@ -1,25 +1,78 @@
 /*
     File: static/scss/components/_footer.scss
+    Purpose: World-class, brand-aligned styles for the ShelterTree site-wide footer.
+             UPDATED: Links now change color on hover without an underline.
 */
 
 .footer {
+    // Ensures your brand font is used. Assumes it's loaded in a base/global file.
+    font-family: 'Manrope', sans-serif;
+    
     .footer-logo {
-        // Control the logo size by its height. The width will scale automatically.
-        // height: 40px; // Adjust this value to match your design
-        width: auto;
+        width: auto; // Let the height control the size
     }
 
-    .footer-links {
+    // Your preferred link styling, now with no underline on hover.
+    .footer-links a {
+        color: var(--bs-gray-600); // Using Bootstrap's variable for muted text
+        text-decoration: none;
+        transition: color 0.2s ease-in-out;
+
+        &:hover {
+            color: var(--bs-primary); // On hover, transition to the primary brand color
+            // text-decoration: underline; // <-- THIS LINE IS NOW REMOVED
+        }
+    }
+
+    // --- Styles for Address & Socials ---
+
+    .footer-address {
+        font-style: normal; // Reset the default italic styling
+        line-height: 1.8;
+        color: var(--bs-gray-600);
+        font-size: 0.9rem; // Slightly smaller for a cleaner look
+
+        // Style the email link to match other footer links, also with no underline on hover.
         a {
-            // Start with the default muted color and add a transition
-            color: $secondary; // Using your brand variable for slate gray
+            color: var(--bs-gray-600);
             text-decoration: none;
             transition: color 0.2s ease-in-out;
 
             &:hover {
-                // On hover, transition to the primary brand color
-                color: $primary; 
+                color: var(--bs-primary);
+                // text-decoration: underline; // <-- THIS LINE IS ALSO REMOVED
             }
+        }
+    }
+
+    .social-icons {
+        .social-icon {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background-color: var(--bs-gray-200); // A lighter, more subtle background
+            color: var(--bs-gray-700);
+            font-size: 1.1rem;
+            text-decoration: none;
+            margin: 0 0.25rem; // Add margin on both sides for consistent spacing
+            transition: all 0.2s ease-in-out;
+
+            &:hover {
+                background-color: var(--bs-primary);
+                color: #FFFFFF;
+                transform: translateY(-3px);
+            }
+        }
+    }
+
+    // --- Mobile-First Centering ---
+    // On screens smaller than 'large' (992px), center-align all the text in the columns.
+    @media (max-width: 991.98px) {
+        .footer-col {
+            text-align: center;
         }
     }
 }

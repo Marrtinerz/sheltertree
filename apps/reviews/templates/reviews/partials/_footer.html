@@ -1,39 +1,53 @@
 {% load i18n %}
 {% load static %}
 
+{# Don't forget to add the Font Awesome CDN link to your base.html <head> if it's not already there #}
+{# <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" ... /> #}
+
 <footer class="footer mt-auto py-5 bg-light border-top">
     <div class="container">
         <!-- ============================================ -->
         <!-- 1. Main Footer Content -->
         <!-- ============================================ -->
         <div class="row">
-            <!-- Column 1: Brand & Mission -->
-            <div class="col-lg-4 mb-4 mb-lg-0 text-center text-lg-start">
-                {% comment %}
-                    The h5 text is now replaced with our world-class logo implementation.
-                    It links to the homepage, uses the static tag, and has a crucial alt tag.
-                {% endcomment %}
+            <!-- Column 1: Brand & Socials -->
+            <div class="col-lg-4 mb-4 mb-lg-0 footer-col">
                 <a href="{% url 'reviews:home' %}" class="footer-logo-link mb-3 d-inline-block">
-                    <img src="{% static 'img/brand/logo.png' %}" alt="ShelterTree Logo" class="footer-logo", style="height: 100px;">
+                    <img src="{% static 'img/brand/logo.png' %}" alt="ShelterTree Logo" class="footer-logo" style="height: 100px;">
                 </a>
-                <p class="text-muted small">
+                <p class="text-muted small pe-lg-5">
                     {% trans "Everyone deserves to live in peaceful dwelling places, in secure homes, in undisturbed places of rest." %}
                 </p>
+
+                {# --- Updated Social Media Links --- #}
+                <div class="social-icons mt-4">
+                    <a href="https://www.linkedin.com/company/mysheltertree/" target="_blank" class="social-icon" aria-label="LinkedIn">
+                        <i class="fab fa-linkedin-in"></i>
+                    </a>
+                    <a href="https://www.instagram.com/mysheltertree/" target="_blank" class="social-icon" aria-label="Instagram">
+                        <i class="fab fa-instagram"></i>
+                    </a>
+                    <a href="https://www.threads.com/@mysheltertree" target="_blank" class="social-icon" aria-label="Threads">
+                        <i class="fab fa-threads"></i>
+                    </a>
+                    <a href="https://www.facebook.com/share/1H8HiSShLX/?mibextid=wwXIfr" target="_blank" class="social-icon" aria-label="Facebook">
+                        <i class="fab fa-facebook-f"></i>
+                    </a>
+                </div>
             </div>
 
             <!-- Column 2: Platform Links -->
-            <div class="col-lg-4 col-md-6 mb-4 mb-lg-0 text-center text-lg-start">
+            <div class="col-lg-2 col-md-6 mb-4 mb-lg-0 footer-col">
                 <h6 class="fw-bold mb-3">{% trans "Platform" %}</h6>
                 <ul class="list-unstyled footer-links">
                     <li class="mb-2"><a href="{% url 'intelligence:landing-page' %}">{% trans "ShelterTree Intelligence" %}</a></li>
                     <li class="mb-2"><a href="{% url 'reviews:property-list' %}">{% trans "Browse Properties" %}</a></li>
                     <li class="mb-2"><a href="{% url 'reviews:search' %}?intent=review">{% trans "Leave a Review" %}</a></li>
-                    <li class="mb-2"><a href="{% url 'core:content_guidelines' %}">{% trans "Content Guidelines" %}</a></li>
                 </ul>
             </div>
 
             <!-- Column 3: Company Links -->
-            <div class="col-lg-4 col-md-6 mb-4 mb-lg-0 text-center text-lg-start">
+            <div class="col-lg-3 col-md-6 mb-4 mb-lg-0 footer-col">
                 <h6 class="fw-bold mb-3">{% trans "Company" %}</h6>
                 <ul class="list-unstyled footer-links">
                     <li class="mb-2"><a href="{% url 'core:about_us' %}">{% trans "About Us" %}</a></li>
@@ -43,15 +57,35 @@
                     <li class="mb-2"><a href="{% url 'core:privacy_policy' %}">{% trans "Privacy Policy" %}</a></li>
                 </ul>
             </div>
+
+            <!-- Column 4: Address -->
+            <div class="col-lg-3 mb-4 mb-lg-0 footer-col">
+                 <h6 class="fw-bold mb-3">{% trans "Get In Touch" %}</h6>
+                 <address class="footer-address">
+                     <!-- Address Line -->
+                     <div class="d-flex align-items-start justify-content-center justify-content-lg-start mb-3">
+                         <i class="fa-solid fa-location-dot fa-fw mt-1 me-3 text-primary"></i>
+                         <span>
+                             <strong>ShelterTree Limited</strong><br>
+                             Delight Residence, Road 2,<br>
+                             DPK District Estate,<br>
+                             Oba-Akintoye Drive,<br>
+                             Lekki Penninsula II, Lagos,<br>
+                             Nigeria
+                         </span>
+                     </div>
+                     <!-- Email Line -->
+                     <div class="d-flex align-items-center justify-content-center justify-content-lg-start">
+                         <i class="fa-solid fa-envelope fa-fw me-3 text-primary"></i>
+                         <a href="mailto:hello@mysheltertree.com">hello@mysheltertree.com</a>
+                     </div>
+                 </address>
+            </div>
         </div>
 
         <!-- ============================================ -->
         <!-- 2. Bottom Bar (Copyright) -->
         <!-- ============================================ -->
-        {% comment %}
-            This new row is outside the main content grid. It will always appear
-            at the bottom, on both mobile and desktop, ensuring consistency.
-        {% endcomment %}
         <div class="row pt-4 mt-4 border-top">
             <div class="col-12 text-center">
                 <p class="mb-0 text-muted small">© {% now "Y" %} ShelterTree Limited. {% trans "All Rights Reserved." %}</p>

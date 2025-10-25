@@ -13211,17 +13211,60 @@ h1, .h1, h2, .h2, h3, .h3, h4, .h4, .display-4, .display-5, .display-6 {
 
 /*
     File: static/scss/components/_footer.scss
+    Purpose: World-class, brand-aligned styles for the ShelterTree site-wide footer.
+             UPDATED: Links now change color on hover without an underline.
 */
+.footer {
+  font-family: "Manrope", sans-serif;
+}
 .footer .footer-logo {
   width: auto;
 }
 .footer .footer-links a {
-  color: #5A6D7C;
+  color: var(--bs-gray-600);
   text-decoration: none;
   transition: color 0.2s ease-in-out;
 }
 .footer .footer-links a:hover {
-  color: #21b576;
+  color: var(--bs-primary);
+}
+.footer .footer-address {
+  font-style: normal;
+  line-height: 1.8;
+  color: var(--bs-gray-600);
+  font-size: 0.9rem;
+}
+.footer .footer-address a {
+  color: var(--bs-gray-600);
+  text-decoration: none;
+  transition: color 0.2s ease-in-out;
+}
+.footer .footer-address a:hover {
+  color: var(--bs-primary);
+}
+.footer .social-icons .social-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background-color: var(--bs-gray-200);
+  color: var(--bs-gray-700);
+  font-size: 1.1rem;
+  text-decoration: none;
+  margin: 0 0.25rem;
+  transition: all 0.2s ease-in-out;
+}
+.footer .social-icons .social-icon:hover {
+  background-color: var(--bs-primary);
+  color: #FFFFFF;
+  transform: translateY(-3px);
+}
+@media (max-width: 991.98px) {
+  .footer .footer-col {
+    text-align: center;
+  }
 }
 
 /* // 3. (Optional) Add any other custom site-wide styles here later.
