@@ -269,7 +269,7 @@ def get_annotated_reviews_for_property(property_obj, user):
 # ====================================================================
 # 2. The Full, Corrected, and World-Class Class-Based View
 # ====================================================================
-class PropertyDetailView(LoginRequiredMixin, DetailView):
+class PropertyDetailView(DetailView):
     """
     The definitive, world-class view for the Property Dashboard.
     It is now fully context-aware, ensuring the correct users can see
@@ -362,7 +362,7 @@ class PropertyDetailView(LoginRequiredMixin, DetailView):
 
 # --- WRITE VIEWS (for logged-in users, protected by @login_required) ---
 
-class AddPropertyView(LoginRequiredMixin, CreateView):
+class AddPropertyView(CreateView):
     model = Property
     form_class = PropertyForm
     template_name = 'reviews/add_property.html'
@@ -390,7 +390,6 @@ class AddPropertyView(LoginRequiredMixin, CreateView):
         return reverse_lazy('reviews:add-property-success', kwargs={'pk': self.object.pk})
 
 
-@login_required
 def add_property_success(request, pk):
     """
     A success page shown after a property is submitted.

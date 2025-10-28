@@ -76,6 +76,7 @@
         
         <!-- THE FIX: Wrap the buttons in a flex container -->
         <div class="d-flex justify-content-center flex-wrap gap-3">
+            <p class="text-warning mb-3">{% trans "Please note that you need to be logged in to leave a review"%}</p>
             <!-- The `me-2` is now removed from this button -->
             <a href="{% url 'reviews:add-review-to-unit' unit_pk=active_unit.pk %}" class="btn btn-primary">
                <i class="fas fa-pencil-alt me-2"></i>{% trans "Review " %} <strong>{{ active_unit.unit_identifier }}</strong>
