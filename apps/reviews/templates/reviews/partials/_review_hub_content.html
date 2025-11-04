@@ -75,16 +75,31 @@
         {% comment %} <p class="mb-3">{% trans "Share your experience for" %} <strong>{{ active_unit.unit_identifier }}</strong> or read the review(s) below.</p> {% endcomment %}
         
         <!-- THE FIX: Wrap the buttons in a flex container -->
-        <div class="d-flex justify-content-center flex-wrap gap-3">
-            <p class="text-warning mb-3">{% trans "Please note that you need to be logged in to leave a review"%}</p>
-            <!-- The `me-2` is now removed from this button -->
-            <a href="{% url 'reviews:add-review-to-unit' unit_pk=active_unit.pk %}" class="btn btn-primary">
-               <i class="fas fa-pencil-alt me-2"></i>{% trans "Review " %} <strong>{{ active_unit.unit_identifier }}</strong>
-            </a>
-            <a href="{% url 'reviews:add-unit-and-review' property_pk=property.pk %}" class="btn btn-outline-secondary">
-                <i class="fas fa-plus-circle me-2"></i>{% trans "My unit isn't listed" %}
-            </a>
+        <div class="d-flex justify-content-center flex-column align-items-center gap-3">
+            {% comment %}
+                This block conditionally displays a login prompt for anonymous users.
+                It's the definitive "ShelterTree Way" to handle this UI pattern.
+            {% endcomment %}
+
+            {% if not user.is_authenticated %}
+                <p class="mb-3">
+                    <a href="{% url 'account_login' %}?next={{ request.path }}" class="nav-link text-info">
+                        {% trans "Log in or sign up to leave a review" %}
+                    </a>
+                </p>
+            {% endif %}
+            
+            {% comment %} <p class="text-info mb-0">{% trans "Log in or sign up to leave a review"%}</p> {% endcomment %}
+            <div class="d-flex flex-column flex-sm-row gap-3">
+                <a href="{% url 'reviews:add-review-to-unit' unit_pk=active_unit.pk %}" class="btn btn-primary">
+                    <i class="fas fa-pencil-alt me-2"></i>{% trans "Review " %} <strong>{{ active_unit.unit_identifier }}</strong>
+                </a>
+                <a href="{% url 'reviews:add-unit-and-review' property_pk=property.pk %}" class="btn btn-outline-secondary">
+                    <i class="fas fa-plus-circle me-2"></i>{% trans "My unit isn't listed" %}
+                </a>
+            </div>
         </div>
+
 
     {% else %}
         <!-- The CTA for properties with no units (Unchanged) -->
