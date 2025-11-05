@@ -45,7 +45,7 @@ urlpatterns += i18n_patterns(
     # Your user-facing application URLs
     path('', include('apps.core.urls')),
     path('', include('apps.reviews.urls')),
-    path('intelligence/', include('apps.intelligence.urls', namespace='intelligence')),
+    # path('intelligence/', include('apps.intelligence.urls', namespace='intelligence')),
     path('careers/', include('apps.careers.urls', namespace='careers')),
 
     # This setting is the key to removing '/en/' from your default language URLs.

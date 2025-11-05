@@ -40,9 +40,11 @@
             <div class="col-lg-2 col-md-6 mb-4 mb-lg-0 footer-col">
                 <h6 class="fw-bold mb-3">{% trans "Platform" %}</h6>
                 <ul class="list-unstyled footer-links">
-                    <li class="mb-2"><a href="{% url 'intelligence:landing-page' %}">{% trans "ShelterTree Intelligence" %}</a></li>
+                    {% comment %} <li class="mb-2"><a href="{% url 'intelligence    :landing-page' %}">{% trans "ShelterTree Intelligence" %}</a></li> {% endcomment %}
                     <li class="mb-2"><a href="{% url 'reviews:property-list' %}">{% trans "Browse Properties" %}</a></li>
                     <li class="mb-2"><a href="{% url 'reviews:search' %}?intent=review">{% trans "Leave a Review" %}</a></li>
+                    <li class="mb-2"><a href="{% url 'reviews:add-property' %}">{% trans "Add a New Property" %}</a></li>
+                    <li class="mb-2"><a href="{% url 'reviews:request_review_coming_soon' %}">{% trans "Request a Review" %}</a></li>
                 </ul>
             </div>
 
