@@ -67,10 +67,25 @@
                             {% endfor %}
                         </fieldset>
 
-                        <!-- Fieldset 3: The Details (Unchanged) -->
+
+                        <!-- Fieldset 3: For Categorical Questions -->
+                        <!-- ======================================================= -->
+                        <fieldset class="review-fieldset mb-4">
+                            <legend><i class="fas fa-clipboard-check fa-fw me-2"></i>{% trans "Key Property Conditions" %}</legend>
+
+                            <!--
+                                THE CONSISTENCY FIX:
+                                Here, the parent context variable is named 'form'. We explicitly
+                                pass it into the partial where it will also be known as 'form'.
+                                This makes our logic identical across both templates.
+                            -->
+                            {% include 'reviews/partials/_review_form_categorical_questions.html' with form=form %}
+                        </fieldset>
+                        
+
+                        <!-- Fieldset 4: The Details (Unchanged) -->
                         <fieldset class="review-fieldset">
                             <legend><i class="fas fa-feather-alt fa-fw me-2"></i>{% trans "The Details" %}</legend>
-                            
                             <!-- ==================================================================== -->
                             <!-- ADD THIS ENTIRE "review-guideline" BLOCK                           -->
                             <!-- ==================================================================== -->

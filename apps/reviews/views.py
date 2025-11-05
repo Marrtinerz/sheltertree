@@ -7,7 +7,7 @@ from django.utils.translation import gettext_lazy as _
 from django.db.models import Avg, Count, Sum, OuterRef, Subquery, Case, When, IntegerField
 from django.views.generic import TemplateView, CreateView
 from django.contrib.postgres.search import SearchQuery, SearchRank, SearchVector
-from .models import Property, PropertyUnit, Review, PropertyStatus, ReviewStatus, Vote, PropertyManager
+from .models import Property, PropertyUnit, Review, PropertyStatus, ReviewStatus, Vote, PropertyManager, FloodingSeverity
 from .forms import PropertyForm, PropertyUnitForm, ReviewForm, PropertySearchForm
 from django.db.models import Q, F
 from django.template.loader import render_to_string
@@ -356,6 +356,51 @@ class PropertyDetailView(DetailView):
         context['summary'] = summary_data
         # context['unit_query'] = '' # On initial load, the query is empty
         context['UNIT_BUTTON_DISPLAY_COUNT'] = UNIT_BUTTON_DISPLAY_COUNT
+        
+        # --- THE WORLD-CLASS ADDITION: FLOODING INSIGHT CALCULATION ---
+
+        # 1. Get the distribution of flooding responses in a single, efficient query.
+        flooding_distribution = Review.objects.filter(
+            unit__property=property_obj,
+            status=ReviewStatus.APPROVED
+        ).values('flooding_severity').annotate(count=Count('flooding_severity'))
+
+        # 2. Process this data in Python to find the most severe insight.
+        # We create a map for easy lookup.
+        counts = {item['flooding_severity']: item['count'] for item in flooding_distribution}
+        
+        flooding_insight = None
+        total_responses = sum(counts.values())
+
+        if total_responses > 0:
+            # We check in order of severity, from worst to best.
+            if FloodingSeverity.CATASTROPHIC in counts:
+                flooding_insight = {
+                    'severity': 'high',
+                    'label': 'Internal Flooding Reported',
+                    'description': f"{counts[FloodingSeverity.CATASTROPHIC]} of {total_responses} reviewers reported water entering their home."
+                }
+            elif FloodingSeverity.COMPOUND in counts:
+                flooding_insight = {
+                    'severity': 'medium',
+                    'label': 'Compound Flooding Reported',
+                    'description': f"{counts[FloodingSeverity.COMPOUND]} of {total_responses} reviewers reported water in parking/common areas."
+                }
+            elif FloodingSeverity.EXTERNAL in counts:
+                flooding_insight = {
+                    'severity': 'low',
+                    'label': 'External Flooding Reported',
+                    'description': f"{counts[FloodingSeverity.EXTERNAL]} of {total_responses} reviewers reported flooding on access roads."
+                }
+            else: # If only 'NONE' is present
+                flooding_insight = {
+                    'severity': 'safe',
+                    'label': 'No Flooding Reported',
+                    'description': f"All {total_responses} reviewers reported the property and access roads remain dry."
+                }
+        
+        context['flooding_insight'] = flooding_insight
+            
             
         return context
 

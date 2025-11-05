@@ -53,6 +53,12 @@ class ResidenceLength(models.IntegerChoices):
     ONE_TO_2_YEARS = 24, _("1 - 2 years")
     TWO_TO_4_YEARS = 48, _("2 - 4 years")
     OVER_4_YEARS = 60, _("more than 4 years")
+    
+class FloodingSeverity(models.TextChoices):
+    NONE = 'NONE', _('No Flooding: The property and access roads remain dry.')
+    EXTERNAL = 'EXTERNAL', _('External Only: Access roads flood, but the compound is fine.')
+    COMPOUND = 'COMPOUND', _('Compound Flooding: Water pools in parking/common areas, but does not enter buildings.')
+    CATASTROPHIC = 'CATASTROPHIC', _('Internal Flooding: Water enters the home/building.')
 
 
 class PropertyQuerySet(models.QuerySet):
@@ -289,6 +295,14 @@ class Review(models.Model):
     mobile_network_rating = models.IntegerField(choices=OverallRating.choices, verbose_name=_("Mobile Network Rating"))
     road_network_rating = models.IntegerField(choices=OverallRating.choices, verbose_name=_("Road Network Rating"))
     management_rating = models.IntegerField(choices=OverallRating.choices, verbose_name=_("Management Rating"))
+    
+    flooding_severity = models.CharField(
+        max_length=20,
+        choices=FloodingSeverity.choices,
+        verbose_name=_("Flooding During Heavy Rains"),
+        # The new, shorter, more effective help text
+        help_text=_("How bad is the flooding during heavy rains?")
+    )
 
     pros = models.TextField(help_text=_("What are the best things about living here?"), verbose_name=_("Pros"))
     

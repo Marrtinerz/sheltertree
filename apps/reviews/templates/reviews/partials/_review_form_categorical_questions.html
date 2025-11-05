@@ -1,0 +1,25 @@
+{% load widget_tweaks %}
+
+{% comment %}
+    This partial now renders categorical questions as dropdowns.
+    It should be included WITHIN the main <form> tag and BEFORE the pros/cons fields.
+    It expects a 'form' object in its context.
+{% endcomment %}
+<!-- ============================================ -->
+<!-- Flooding Severity Question (as Dropdown) -->
+<!-- ============================================ -->
+<div class="mb-4">
+    <label for="{{ form.flooding_severity.id_for_label }}" class="form-label fw-bold">{{ form.flooding_severity.label }}</label>
+    <p class="small text-muted mb-2">{{ form.flooding_severity.help_text }}</p>
+    
+    <!--
+        THE CRITICAL CHANGE:
+        We now render the field and apply the Bootstrap 'form-select' class,
+        which styles it as a professional dropdown.
+    -->
+    {% render_field form.flooding_severity class="form-select" %}
+    
+    {{ form.flooding_severity.errors }}
+</div>
+
+<!-- Future categorical dropdown questions can be added here -->

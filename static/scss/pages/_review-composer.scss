@@ -112,3 +112,41 @@
   }
 }
 
+
+// =================================================
+// NEW: Premium styling for categorical radio choices
+// =================================================
+// .categorical-choices {
+//   .form-check {
+//     padding: 0.75rem 1rem;
+//     border: 1px solid $border-color;
+//     border-radius: $border-radius;
+//     margin-bottom: 0.5rem;
+//     transition: background-color 0.2s ease, border-color 0.2s ease;
+//     cursor: pointer;
+
+//     &:hover {
+//       background-color: tint-color($primary, 98%);
+//       border-color: tint-color($primary, 80%);
+//     }
+
+//     // Style the label for better alignment and appearance
+//     .form-check-label {
+//       cursor: pointer;
+//       margin-left: 0.5rem; // Space between radio button and text
+//     }
+
+//     // We use the :has selector for a modern, world-class effect.
+//     // When the input inside is checked, the entire container gets a new style.
+//     &:has(input:checked) {
+//       background-color: tint-color($primary, 95%);
+//       border-color: $primary;
+//       font-weight: 600;
+//     }
+//   }
+// }
+
+.feedback-form {
+  // Add some spacing to the feedback form to differentiate it
+  padding-top: 1rem;
+}

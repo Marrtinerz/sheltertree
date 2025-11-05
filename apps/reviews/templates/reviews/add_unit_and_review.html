@@ -33,7 +33,7 @@
                         
                         <!-- Fieldset 1: The New Unit -->
                         <fieldset class="review-fieldset mb-4">
-                            <legend><i class="fas fa-door-open fa-fw me-2"></i>{% trans "Step 1: Identify Your Unit" %}</legend>
+                            <legend><i class="fas fa-door-open fa-fw me-2"></i>{% trans "Identify Your Unit" %}</legend>
                             <p class="text-muted small">{% trans "Add your specific house number or apartment identifier. This will be visible with your review." %}</p>
                             <div class="mb-3">
                                 <label for="{{ unit_form.unit_identifier.id_for_label }}" class="form-label">{{ unit_form.unit_identifier.label }}</label>
@@ -45,7 +45,7 @@
 
                         <!-- Fieldset 2: Your Stay -->
                         <fieldset class="review-fieldset mb-4">
-                            <legend><i class="fas fa-clock fa-fw me-2"></i>{% trans "Step 2: Your Stay" %}</legend>
+                            <legend><i class="fas fa-clock fa-fw me-2"></i>{% trans "Your Stay" %}</legend>
                             <div class="mb-3">
                                 <label for="{{ review_form.residence_length.id_for_label }}" class="form-label">{{ review_form.residence_length.label }}</label>
                                 {{ review_form.residence_length|attr:"class:form-select" }}
@@ -55,7 +55,7 @@
 
                         <!-- Fieldset 3: Ratings -->
                         <fieldset class="review-fieldset mb-4">
-                            <legend><i class="fas fa-star-half-alt fa-fw me-2"></i>{% trans "Step 3: Your Ratings" %}</legend>
+                            <legend><i class="fas fa-star-half-alt fa-fw me-2"></i>{% trans "Your Ratings" %}</legend>
                             <p class="text-muted small">{% trans "Rate each category from 1 (very bad) to 5 (excellent)." %}</p>
                             {% for field in review_form.visible_fields %}
                                 {% if 'rating' in field.name %}
@@ -72,10 +72,26 @@
                                 {% endif %}
                             {% endfor %}
                         </fieldset>
+                        
 
-                        <!-- Fieldset 4: The Details -->
+
+                        <!-- Fieldset 4: For Categorical Questions -->
+                        <!-- ======================================================= -->
+                        <fieldset class="review-fieldset mb-4">
+                            <legend><i class="fas fa-clipboard-check fa-fw me-2"></i>{% trans "Key Property Conditions" %}</legend>
+                            
+                            <!-- 
+                                THE DEFINITIVE FIX:
+                                We explicitly pass the 'review_form' from this template's context
+                                into the partial, where it will be known as 'form'.
+                            -->
+                            {% include 'reviews/partials/_review_form_categorical_questions.html' with form=review_form %}
+                        </fieldset>
+
+
+                        <!-- Fieldset 5: The Details -->
                         <fieldset class="review-fieldset">
-                            <legend><i class="fas fa-feather-alt fa-fw me-2"></i>{% trans "Step 4: The Details" %}</legend>
+                            <legend><i class="fas fa-feather-alt fa-fw me-2"></i>{% trans "The Details" %}</legend>
                             <!-- ==================================================================== -->
                             <!-- ADD THIS ENTIRE "review-guideline" BLOCK                           -->
                             <!-- ==================================================================== -->

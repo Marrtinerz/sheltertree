@@ -12558,6 +12558,10 @@ textarea.form-control-lg {
   color: rgb(68.5514018692, 83.023364486, 94.4485981308);
 }
 
+.feedback-form {
+  padding-top: 1rem;
+}
+
 .property-gallery-header {
   background-color: #f8f9fa;
   border-radius: 0.8rem;
@@ -12671,6 +12675,48 @@ textarea.form-control-lg {
   border-bottom: 1px solid rgba(90, 109, 124, 0.25);
   font-weight: 600;
   padding: 1.25rem;
+}
+.summary-card .insight-highlight {
+  display: flex;
+  align-items: flex-start;
+  padding: 1rem;
+  border-radius: 0.5rem;
+  border: 1px solid;
+  margin-bottom: 1.5rem;
+}
+.summary-card .insight-highlight .insight-icon {
+  flex-shrink: 0;
+  margin-right: 1rem;
+  font-size: 1.5rem;
+  margin-top: 0.1rem;
+}
+.summary-card .insight-highlight.insight-safe {
+  background-color: rgb(244.25, 250.6, 245.7);
+  border-color: rgb(212, 237.4, 217.8);
+}
+.summary-card .insight-highlight.insight-safe .insight-icon {
+  color: #28a745;
+}
+.summary-card .insight-highlight.insight-low {
+  background-color: rgb(245.95, 249.45, 253.55);
+  border-color: rgb(218.8, 232.8, 249.2);
+}
+.summary-card .insight-highlight.insight-low .insight-icon {
+  color: #4A90E2;
+}
+.summary-card .insight-highlight.insight-medium {
+  background-color: rgb(254.5, 251.85, 244.95);
+  border-color: rgb(253, 242.4, 214.8);
+}
+.summary-card .insight-highlight.insight-medium .insight-icon {
+  color: #f5c036;
+}
+.summary-card .insight-highlight.insight-high {
+  background-color: rgb(253.7, 246.1, 245.55);
+  border-color: rgb(249.8, 219.4, 217.2);
+}
+.summary-card .insight-highlight.insight-high .insight-icon {
+  color: #E54D42;
 }
 .summary-card .rating-bar-item .rating-label {
   font-weight: 500;

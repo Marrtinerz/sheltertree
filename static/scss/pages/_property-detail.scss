@@ -49,7 +49,7 @@
   // box-shadow: $box-shadow-sm;
 }
 
-// 4. The "At a Glance" Summary Card (Stage 2)
+// 4. The "At a Glance" Summary Card (Upgraded)
 // --------------------------------------------------------------------
 .summary-card {
   border: none;
@@ -63,7 +63,49 @@
     padding: 1.25rem;
   }
 
-  // Styles for the rating bar component
+  // =======================================================
+  // NEW: Key Insight Highlight Component
+  // This is the new, data-driven component for critical findings like flooding.
+  // =======================================================
+  .insight-highlight {
+    display: flex;
+    align-items: flex-start;
+    padding: 1rem;
+    border-radius: $border-radius;
+    border: 1px solid;
+    margin-bottom: 1.5rem; // Adds spacing before the detailed rating bars
+
+    .insight-icon {
+      flex-shrink: 0;
+      margin-right: 1rem;
+      font-size: 1.5rem;
+      margin-top: 0.1rem; // Fine-tune vertical alignment
+    }
+
+    // Severity Variants using your design system's variables
+    &.insight-safe {
+      background-color: tint-color($success, 95%);
+      border-color: tint-color($success, 80%);
+      .insight-icon { color: $success; }
+    }
+    &.insight-low {
+      background-color: tint-color($info, 95%);
+      border-color: tint-color($info, 80%);
+      .insight-icon { color: $info; }
+    }
+    &.insight-medium {
+      background-color: tint-color($warning, 95%);
+      border-color: tint-color($warning, 80%);
+      .insight-icon { color: $warning; }
+    }
+    &.insight-high {
+      background-color: tint-color($danger, 95%);
+      border-color: tint-color($danger, 80%);
+      .insight-icon { color: $danger; }
+    }
+  }
+
+  // Styles for the rating bar component (Unchanged)
   .rating-bar-item {
     .rating-label {
       font-weight: 500;
@@ -83,7 +125,6 @@
     }
   }
 }
-
 
 // 5. The Interactive Review Hub (Vertical Layout)
 .review-hub {

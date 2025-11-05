@@ -1,6 +1,6 @@
 from django import forms
 from django.utils.translation import gettext_lazy as _
-from .models import Property, PropertyUnit, Review, ResidenceLength, OverallRating
+from .models import Property, PropertyUnit, Review, ResidenceLength, OverallRating, FloodingSeverity
 from apps.locations.models import Country, State
 from django.urls import reverse
 from django.utils.safestring import mark_safe
@@ -214,6 +214,7 @@ class ReviewForm(forms.ModelForm):
             'management_rating',
             'road_network_rating',
             'mobile_network_rating',
+            'flooding_severity',
             'pros',
             'cons'
         ]
@@ -234,6 +235,7 @@ class ReviewForm(forms.ModelForm):
             'management_rating': _("Property Management"),
             'road_network_rating': _("Roads & Access"),
             'mobile_network_rating': _("Mobile Network"),
+            'flooding_severity': _("Flooding"),
             'pros': _("Pros"),
             'cons': _("Cons"),
         }
@@ -249,6 +251,16 @@ class ReviewForm(forms.ModelForm):
         Overrides the default __init__ to dynamically configure all rating fields.
         """
         super().__init__(*args, **kwargs)
+        
+        # 1. Get the field we want to change.
+        flooding_field = self.fields['flooding_severity']
+
+        # 2. Change its widget to a standard dropdown.
+        flooding_field.widget = forms.Select()
+
+        # 3. Prepend a user-friendly, non-selectable prompt to the choices.
+        # This is the definitive way to create a placeholder for a required dropdown.
+        flooding_field.choices = list(flooding_field.choices)
         
         for field_name, field in self.fields.items():
             if 'rating' in field_name:

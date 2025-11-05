@@ -42,7 +42,30 @@
                 </p>
             </div>
 
+            <!-- ======================================================= -->
+            <!-- NEW: Key Insights Section -->
+            <!-- ======================================================= -->
+            {% if flooding_insight %}
+            <div class="mb-4">
+                <h6 class="text-muted fw-bold small text-uppercase">Key Insights</h6>
+                <div class="insight-highlight insight-{{ flooding_insight.severity }}">
+                    <div class="insight-icon">
+                        {% if flooding_insight.severity == 'high' or flooding_insight.severity == 'medium' %}
+                            <i class="fas fa-exclamation-triangle"></i>
+                        {% else %}
+                            <i class="fas fa-check-circle"></i>
+                        {% endif %}
+                    </div>
+                    <div>
+                        <p class="fw-bold mb-0">{{ flooding_insight.label }}</p>
+                        <p class="small text-muted mb-0">{{ flooding_insight.description }}</p>
+                    </div>
+                </div>
+            </div>
+            {% endif %}
+
             <!-- Detailed Rating Bars List -->
+            <h6 class="text-muted fw-bold small text-uppercase">Detailed Ratings</h6>
             <ul class="list-unstyled">
                 {% rating_bar "Security" summary.avg_security|default:0.0 %}
                 {% rating_bar "Electricity" summary.avg_electricity|default:0.0 %}
