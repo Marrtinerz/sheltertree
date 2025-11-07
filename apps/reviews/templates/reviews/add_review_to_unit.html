@@ -23,6 +23,41 @@
                         <h4 class="h5 mb-0">{{ property.get_admin_display_name }} - {{ unit.unit_identifier }}</h4>
                     </div>
 
+                    {% comment %}
+                        This is the new, world-class "Reviewer's Checklist".
+                        It is designed to be scannable and to reinforce the most critical guidelines.
+                    {% endcomment %}
+
+                    <div class="review-guideline mb-4">
+                        <div class="guideline-icon">
+                            <i class="fas fa-lightbulb"></i>
+                        </div>
+                        <div>
+                            <h6 class="fw-bold mb-2">A Helpful Review Is:</h6>
+                            <ul class="list-unstyled small mb-0">
+                                <li class="mb-1">
+                                    <i class="fas fa-check-circle text-success me-1"></i>
+                                    <strong>From your first-hand experience.</strong>
+                                </li>
+                                <li class="mb-1">
+                                    <i class="fas fa-check-circle text-success me-1"></i>
+                                    <strong>Filled with specific details</strong> (both good and bad).
+                                </li>
+                                <li class="mb-0">
+                                    <i class="fas fa-check-circle text-success me-1"></i>
+                                    <strong>Always honest and respectful.</strong>
+                                </li>
+                            </ul>
+                            <hr class="my-2">
+                            <p class="small mb-0 text-muted">
+                                {% url 'core:content_guidelines' as guidelines_url %}
+                                {% blocktrans with guidelines_url=guidelines_url %}
+                                Before writing, please take a moment to review our full <a href="{{ guidelines_url }}" target="_blank">Content Guidelines</a>. Remember to be kind! 😊
+                                {% endblocktrans %}
+                            </p>
+                        </div>
+                    </div>
+
                     <form method="post" novalidate>
                         {% csrf_token %}
                         {% if form.non_field_errors %}
@@ -86,7 +121,7 @@
                         <!-- Fieldset 4: The Details (Unchanged) -->
                         <fieldset class="review-fieldset">
                             <legend><i class="fas fa-feather-alt fa-fw me-2"></i>{% trans "The Details" %}</legend>
-                            <!-- ==================================================================== -->
+                            {% comment %} <!-- ==================================================================== -->
                             <!-- ADD THIS ENTIRE "review-guideline" BLOCK                           -->
                             <!-- ==================================================================== -->
                             <div class="review-guideline mb-4">
@@ -97,7 +132,7 @@
                                     <p class="small mb-0">
                                         <!--
                                             THE CRITICAL FIX:
-                                            1. We use the powerful 
+                                            1. We use the powerful `.
                                             2. We pre-calculate the URL and pass it in as a variable `guidelines_url`.
                                             3. We can then safely use that variable inside the block.
                                         -->
@@ -107,7 +142,7 @@
                                         {% endblocktrans %}
                                     </p>
                                 </div>
-                            </div>
+                            </div> {% endcomment %}
                             <!-- ==================================================================== -->
 
                             <div class="mb-3">

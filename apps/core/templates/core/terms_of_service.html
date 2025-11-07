@@ -8,7 +8,7 @@
     <div class="row">
         <div class="col-lg-8 mx-auto">
             <h1 class="mb-3">{% trans "Terms of Service" %}</h1>
-            <p class="text-muted">{% trans "Last Updated: October 9, 2025" %}</p>
+            <p class="text-muted">{% trans "Last Updated: November 7, 2025" %}</p>
             <hr>
 
             <!-- ==================================================================== -->
@@ -22,27 +22,21 @@
             <h4 class="mt-4">{% trans "2. Your Account" %}</h4>
             <p>{% blocktrans %}You need an account to post Content on ShelterTree. You are responsible for safeguarding your password and for all activities that occur under your account. You must be at least 16 years of age to use our Service.{% endblocktrans %}</p>
 
-            <h4 class="mt-4">{% trans "3. Your Content & Community Guidelines" %}</h4>
-            <p>{% blocktrans %}You are the heart of our community. The content you post helps everyone. By contributing, you agree to the following:{% endblocktrans %}</p>
+            <h4 class="mt-4">{% trans "3. Your Content & Our Community Guidelines" %}</h4>
+            <p>{% blocktrans %}You are the heart of our community. The content you post helps everyone. By contributing content to ShelterTree, you agree to the following:{% endblocktrans %}</p>
             
             <p><strong>A. You Own Your Content:</strong> {% blocktrans %}You retain all ownership rights to the text and information you submit to the Service.{% endblocktrans %}</p>
 
-            <p><strong>B. Your Responsibility for Your Content:</strong> {% blocktrans %}You are solely responsible for the Content you post. You agree to indemnify and hold harmless <strong>ShelterTree Limited</strong> from any claim or demand made by any third party due to or arising out of your Content.{% endblocktrans %}</p>
+            <p><strong>B. Our License to Your Content:</strong> {% blocktrans %}By posting Content to ShelterTree, you grant us a perpetual, irrevocable, worldwide, non-exclusive, royalty-free, and sublicensable license to use, display, reproduce, modify, adapt, publish, and distribute your Content. We need these rights to operate, improve, and promote the Service.{% endblocktrans %}</p>
 
-            <p><strong>C. Our License to Your Content:</strong> {% blocktrans %}By posting Content to ShelterTree, you grant us a perpetual, irrevocable, worldwide, non-exclusive, royalty-free, and sublicensable license to use, display, reproduce, modify, adapt, publish, create derivative works from, and distribute your Content. We need these rights to operate, improve, and promote the Service. For example, we need the right to display your review on a property page, feature it on our homepage, or use it in an anonymized data report.{% endblocktrans %}</p>
+            <!-- ======================================================= -->
+            <!-- THE CRITICAL, DEFINITIVE CHANGE IS HERE -->
+            <!-- ======================================================= -->
+            <p><strong>C. You Must Follow Our Guidelines:</strong> {% url 'core:content_guidelines' as guidelines_url %} {% blocktrans %}Our <strong><a href="{{ guidelines_url }}" target="_blank">Content Guidelines</a></strong> are an integral and binding part of these Terms of Service. You agree to abide by the Guidelines and all rules contained within them. Any content you submit must adhere to these standards. **A violation of the Content Guidelines constitutes a violation of these Terms.**{% endblocktrans %}</p>
 
-            <p><strong>D. Community Rules:</strong> {% blocktrans %}You agree not to post Content that:{% endblocktrans %}</p>
-            <ul>
-                <li><strong>{% trans "Is fake or biased." %}</strong> {% trans "This includes posting inauthentic reviews, whether positive or negative, reviews written in exchange for payment, or reviews posted by property owners or managers on their own properties." %}</li>
-                <li>{% trans "Is knowingly false, dishonest, or misleading." %}</li>
-                <li>{% trans "Is unlawful, defamatory, libelous, obscene, or hateful." %}</li>
-                <li>{% trans "Contains private or personally identifiable information of others (like full names, phone numbers, or exact apartment numbers of other tenants) without their consent." %}</li>
-                <li>{% trans "Is commercial in nature, such as spam, advertising, or self-promotion." %}</li>
-                <li>{% trans "Infringes on the intellectual property rights of others." %}</li>
-                <li>{% trans "Concerns personal disputes with landlords or neighbors that are not relevant to a future resident's experience." %}</li>
-            </ul>
+            <p><strong>D. Your Responsibility for Your Content:</strong> {% blocktrans %}You are solely responsible for the Content you post. You agree to indemnify and hold harmless <strong>ShelterTree Limited</strong> from any claim or demand made by any third party due to or arising out of your Content.{% endblocktrans %}</p>
 
-            <p><strong>E. Our Right to Moderate:</strong> {% blocktrans %}ShelterTree is a curated platform. We reserve the right, but do not have the obligation, to review, edit, or remove any Content that violates these Terms or that we otherwise believe is inappropriate, without notice.{% endblocktrans %}</p>
+            <p><strong>E. Our Right to Moderate:</strong> {% blocktrans %}ShelterTree is a curated platform. We reserve the right, but do not have the obligation, to review, edit, or remove any Content that violates our Content Guidelines or these Terms, often without notice. Our decisions are final.{% endblocktrans %}</p>
 
             <h4 class="mt-4">{% trans "4. Prohibited Conduct" %}</h4>
             <p>{% blocktrans %}You agree not to engage in any of the following prohibited activities:{% endblocktrans %}</p>

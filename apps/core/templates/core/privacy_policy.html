@@ -8,7 +8,7 @@
     <div class="row">
         <div class="col-lg-8 mx-auto">
             <h1 class="mb-3">{% trans "Privacy Policy" %}</h1>
-            <p class="text-muted">{% trans "Last Updated: October 9, 2025" %}</p>
+            <p class="text-muted">{% trans "Last Updated: November 7, 2025" %}</p>
             <hr>
 
             <!-- ==================================================================== -->
@@ -22,9 +22,20 @@
             <p><strong>A. Information You Provide Directly</strong></p>
             <ul>
                 <li><strong>{% trans "Account Information:" %}</strong> {% blocktrans %}When you create an account, we collect your username, email address, and a securely hashed password.{% endblocktrans %}</li>
-                <li><strong>{% trans "Profile Information:" %}</strong> {% blocktrans %}After signing up, you have the option to provide your first name, last name, user type (Renter or Homeowner), home country, and choose a "Shelter Sprite" avatar. This information helps personalize your experience.{% endblocktrans %}</li>
-                <li><strong>{% trans "Public Content:" %}</strong> {% blocktrans %}The core of ShelterTree is community content. We collect the information you publicly post, including property details, reviews (pros, cons, and ratings), questions, and answers.{% endblocktrans %}</li>
-                <li><strong>{% trans "Communications:" %}</strong> {% blocktrans %}When you contact us through our feedback form, sign up for a feature waitlist, or communicate with us in any other way, we collect the information you provide, such as your email address and/or WhatsApp number.{% endblocktrans %}</li>
+                <li><strong>{% trans "Profile Information:" %}</strong> {% blocktrans %}After signing up, you have the option to provide your first name, user type (Renter or Homeowner), home country, and choose a "Shelter Sprite" avatar. This information helps personalize your experience.{% endblocktrans %}</li>
+                <li>
+                    <strong>{% trans "Public Content:" %}</strong> 
+                    {% blocktrans %}
+                    The core of ShelterTree is community content. We collect the information you publicly post, including property details and your reviews. A review consists of your written opinions (pros and cons), numerical star ratings, and your answers to specific questions about the property (such as flooding severity, building condition, and amenities).
+                    {% endblocktrans %}
+                </li>
+                <li>
+                    <strong>{% trans "Platform Feedback:" %}</strong>
+                    {% blocktrans %}
+                    When you use our optional feedback form, we collect the suggestions you provide so we can improve our platform.
+                    {% endblocktrans %}
+                </li>
+                <li><strong>{% trans "Communications:" %}</strong> {% blocktrans %}When you contact us, sign up for a feature waitlist, or communicate with us in any other way, we collect the information you provide.{% endblocktrans %}</li>
             </ul>
 
             <p><strong>B. Information Collected Automatically</strong></p>
@@ -38,13 +49,7 @@
                 <li>
                     <strong>{% trans "Google Sign-In:" %}</strong>
                     {% blocktrans %}
-                    If you choose to sign up or log in using your Google account, we securely receive a limited set of information from Google, as permitted by your Google privacy settings. This includes:
-                    <ul>
-                        <li>Your primary <strong>email address</strong> (which we use as the unique identifier for your ShelterTree account).</li>
-                        <li>Your <strong>first and last name</strong> (which we use to pre-fill your optional profile fields for your convenience).</li>
-                        <li>Your <strong>profile picture URL</strong> (which we may use as your initial default avatar on ShelterTree).</li>
-                    </ul>
-                    At no point do we ever receive or store your Google password. Your use of Google Sign-In is also subject to <a href="https://policies.google.com/privacy" target="_blank" rel="noopener noreferrer">Google's Privacy Policy</a>.
+                    If you choose to sign up or log in using your Google account, we securely receive a limited set of information from Google, as permitted by your Google privacy settings. This includes your primary email address, your first and last name, and your profile picture URL. At no point do we ever receive or store your Google password.
                     {% endblocktrans %}
                 </li>
                 <li><strong>{% trans "Property Data:" %}</strong> {% blocktrans %}When you add a new property, we use the Google Places API to help autofill details like the address and coordinates. We store the permanent Google Place ID as a reference.{% endblocktrans %}</li>
@@ -52,12 +57,18 @@
 
 
             <h4 class="mt-4">{% trans "2. How We Use Your Information" %}</h4>
-            <p>{% blocktrans %}We use your information to operate, improve, and secure our platform.{% endblocktrans %}</p>
+            <p>{% trans "We use your information to operate, improve, and secure our platform." %}</p>
             <ul>
                 <li><strong>{% trans "To Provide and Maintain the Service:" %}</strong> {% blocktrans %}To display your reviews and profile, allow you to log in, and operate the core features of ShelterTree.{% endblocktrans %}</li>
                 <li><strong>{% trans "To Secure Your Account:" %}</strong> {% blocktrans %}To verify your identity through email confirmation and optional phone number verification.{% endblocktrans %}</li>
+                <li>
+                    <strong>{% trans "To Protect Our Community and Prevent Fraud:" %}</strong>
+                    {% blocktrans %}
+                    To maintain the integrity of our platform, we analyze user content and technical information to detect and prevent activity that violates our Terms of Service and Content Guidelines. This may include analyzing IP addresses to identify suspicious geographic patterns and screening content to detect spam or fake reviews.
+                    {% endblocktrans %}
+                </li>
                 <li><strong>{% trans "To Communicate With You:" %}</strong> {% blocktrans %}To send you important service updates, security alerts, and, with your consent, to notify you about new features or ask for your feedback. You can opt-out of non-essential communications at any time.{% endblocktrans %}</li>
-                <li><strong>{% trans "To Improve Our Platform:" %}</strong> {% blocktrans %}By analyzing usage data, we can understand what features are popular and how to make ShelterTree better and more user-friendly.{% endblocktrans %}</li>
+                <li><strong>{% trans "To Improve Our Platform:" %}</strong> {% blocktrans %}By analyzing usage data and platform feedback, we can understand what features are popular and how to make ShelterTree better and more user-friendly.{% endblocktrans %}</li>
             </ul>
 
 
