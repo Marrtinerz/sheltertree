@@ -119,7 +119,7 @@
                         
 
                         <!-- Fieldset 4: The Details (Unchanged) -->
-                        <fieldset class="review-fieldset">
+                        <fieldset class="review-fieldset mb-4">
                             <legend><i class="fas fa-feather-alt fa-fw me-2"></i>{% trans "The Details" %}</legend>
                             {% comment %} <!-- ==================================================================== -->
                             <!-- ADD THIS ENTIRE "review-guideline" BLOCK                           -->
@@ -159,6 +159,22 @@
                             </div>
                         </fieldset>
                         
+
+                        <!-- ======================================================= -->
+                        <!-- NEW: The Platform Feedback Fieldset -->
+                        <!-- ======================================================= -->
+                        <fieldset class="review-fieldset">
+                            <legend><i class="fas fa-lightbulb fa-fw me-2"></i>{% trans "Platform Feedback (Completely Optional)" %}</legend>
+                            <div class="mb-3">
+                                <label for="{{ form.platform_feedback.id_for_label }}" class="form-label">{{ form.platform_feedback.label }}</label>
+                                {% render_field form.platform_feedback class="form-control" %}
+                                <small class="form-text text-muted">{{ form.platform_feedback.help_text }}</small>
+                                {{ form.platform_feedback.errors }}
+                            </div>
+                        </fieldset>
+
+
+
                         <div class="d-grid mt-4">
                             <button type="submit" class="btn btn-primary">
                                 <i class="fas fa-paper-plane me-2"></i>{% trans "Submit My Review" %}

@@ -5,6 +5,11 @@ from apps.users.forms import FeedbackForm
 from apps.users.models import Feedback
 from django.urls import reverse_lazy
 from django.conf import settings
+from django.shortcuts import render
+from django.views.decorators.http import require_http_methods
+from .forms import PlatformFeedbackForm
+
+
 
 class TermsOfServiceView(TemplateView):
     template_name = 'core/terms_of_service.html'
@@ -59,3 +64,16 @@ class FeedbackCreateView(CreateView):
         
         # Now, call the parent method which saves the object to the database
         return super().form_valid(form)
+    
+
+@require_http_methods(["POST"])
+def submit_feedback(request):
+    form = PlatformFeedbackForm(request.POST)
+    if form.is_valid():
+        feedback = form.save(commit=False)
+        if request.user.is_authenticated:
+            feedback.user = request.user
+        feedback.source_url = request.META.get('HTTP_REFERER', 'unknown')
+        feedback.save()
+    # The success partial can live in the 'core' app's templates
+    return render(request, 'core/partials/feedback_success.html')

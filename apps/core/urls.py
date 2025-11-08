@@ -1,7 +1,7 @@
 from django.urls import path
 from . import views
 from django.views.generic import TemplateView
-
+from .views import submit_feedback
 
 # This makes it easy to reference these URLs from any app, e.g., 'core:terms_of_service'
 app_name = 'core'
@@ -14,4 +14,5 @@ urlpatterns = [
     path('contact/', views.FeedbackCreateView.as_view(), name='contact_us'),
     path('contact/success/', TemplateView.as_view(template_name='core/contact_success.html'), name='contact_success'),
     path('content-guidelines/', TemplateView.as_view(template_name='core/content_guidelines.html'), name='content_guidelines'),
+    path('feedback/submit/', submit_feedback, name='submit-feedback'),
 ]

@@ -158,8 +158,8 @@ class ReviewAdmin(admin.ModelAdmin):
     list_filter = ('status',)
     search_fields = ('unit__property__name', 'unit__unit_identifier', 'author__username', 'pros', 'cons')
     raw_id_fields = ('unit', 'author')
-    readonly_fields = ('created_at', 'get_property_link', 'pros', 'cons', 'author', 'security_rating', 'electricity_rating', 'water_rating', 'mobile_network_rating', 'road_network_rating', 'management_rating')
-    fields = ('unit', 'get_property_link', 'author', 'security_rating', 'electricity_rating', 'water_rating', 'mobile_network_rating', 'road_network_rating', 'management_rating', 'pros', 'cons', 'is_author_phone_verified', 'status', 'created_at')
+    readonly_fields = ('created_at', 'get_property_link', 'pros', 'cons', 'author', 'security_rating', 'electricity_rating', 'water_rating', 'mobile_network_rating', 'road_network_rating', 'management_rating', 'flooding_severity')
+    fields = ('unit', 'get_property_link', 'author', 'security_rating', 'electricity_rating', 'water_rating', 'mobile_network_rating', 'road_network_rating', 'management_rating', 'pros', 'cons', 'is_author_phone_verified', 'flooding_severity', 'status', 'created_at')
 
     
     @admin.display(description=_('Parent Property'), ordering='unit__property__name')

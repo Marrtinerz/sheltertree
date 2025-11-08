@@ -203,6 +203,16 @@ class ReviewForm(forms.ModelForm):
     necessary foundation for the custom star-rating UI in the template.
     """
     
+    # --- THE WORLD-CLASS ADDITION ---
+    # This is a standard form field, NOT a ModelChoiceField. It does not
+    # touch the Review model. It's a temporary container for the feedback text.
+    platform_feedback = forms.CharField(
+        label=_("Any Feedback or Suggestions for ShelterTree?"),
+        help_text=_("Your suggestions on how we can improve our platform are invaluable."),
+        required=False, # CRITICAL: This must be optional.
+        widget=forms.Textarea(attrs={'rows': 3})
+    )
+    
     class Meta:
         model = Review
         # The 'unit', 'author', and 'status' are correctly set in the view, not the form.
