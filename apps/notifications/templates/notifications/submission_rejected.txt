@@ -10,7 +10,7 @@ Hi {{ user.get_short_name|default:user.username }},
 
 ------------------------------------
 {% trans "Review Our Guidelines" %}:
-https://{{ domain }}/path/to/content-guidelines/
+https://{{ domain }}/content-guidelines/
 ------------------------------------
 
 {% trans "We're here to help if you have any questions," %}
