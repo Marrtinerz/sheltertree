@@ -21,7 +21,7 @@
                         <h4 class="h5 mb-0">{{ property.get_admin_display_name }}</h4>
                     </div>
 
-                    <form method="post" novalidate>
+                    <form method="post" novalidate id="review-submission-form">
                         {% csrf_token %}
                         <!-- Display any non-field errors from both forms -->
                         {{ unit_form.non_field_errors }}

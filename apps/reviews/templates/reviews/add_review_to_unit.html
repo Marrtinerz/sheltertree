@@ -58,7 +58,7 @@
                         </div>
                     </div>
 
-                    <form method="post" novalidate>
+                    <form method="post" novalidate id="review-submission-form">
                         {% csrf_token %}
                         {% if form.non_field_errors %}
                             <div class="alert alert-danger">{{ form.non_field_errors }}</div>
