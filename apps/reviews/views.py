@@ -410,7 +410,7 @@ class PropertyDetailView(DetailView):
 
 # --- WRITE VIEWS (for logged-in users, protected by @login_required) ---
 
-class AddPropertyView(CreateView):
+class AddPropertyView(LoginRequiredMixin, CreateView):
     model = Property
     form_class = PropertyForm
     template_name = 'reviews/add_property.html'
