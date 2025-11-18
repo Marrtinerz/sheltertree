@@ -83,6 +83,11 @@ DEFAULT_FROM_EMAIL = config('DEFAULT_FROM_EMAIL')
 SKIP_APPROVAL_EMAIL_SEND = config('SKIP_APPROVAL_EMAIL_SEND', default=False, cast=bool)
 SKIP_REVIEW_EMAIL_SEND = config('SKIP_REVIEW_EMAIL_SEND', default=False, cast=bool)
 
+
+# CONTENT SECURITY POLICY (CSP) ENFORCEMENT
+CSP_REPORT_ONLY = config('CSP_REPORT_ONLY', default=False, cast=bool)
+
+
 # --- Logging ---
 # A basic logging setup that prints to the console, ideal for Docker/containerized environments.
 LOGGING = {

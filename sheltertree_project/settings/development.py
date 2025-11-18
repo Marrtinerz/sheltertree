@@ -52,3 +52,12 @@ AFRICASTALKING_API_KEY = config('AFRICASTALKING_API_KEY', default=None)
 AFRICASTALKING_USERNAME = config('AFRICASTALKING_USERNAME', default=None)
 AFRICASTALKING_SENDER_ID = config('AFRICASTALKING_SENDER_ID', default=None)
 AFRICASTALKING_WHATSAPP_NUMBER = config('AFRICASTALKING_WHATSAPP_NUMBER', default=None)
+
+
+
+
+
+
+
+# In development, we want the browser to report violations but not block them.
+CSP_REPORT_ONLY = True

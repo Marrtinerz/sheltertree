@@ -57,6 +57,7 @@ INSTALLED_APPS = [
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
+    'csp.middleware.CSPMiddleware',
     'whitenoise.middleware.WhiteNoiseMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     # LocaleMiddleware must come after SessionMiddleware and before CommonMiddleware
@@ -255,3 +256,60 @@ MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 # #Paystack settings
 # PAYSTACK_PUBLIC_KEY = config('PAYSTACK_PUBLIC_KEY')
 # PAYSTACK_SECRET_KEY = config('PAYSTACK_SECRET_KEY')
+
+
+
+# ==============================================================================
+# CONTENT SECURITY POLICY (CSP)
+# A world-class security feature to prevent XSS and other injection attacks.
+# We explicitly whitelist trusted sources for scripts, styles, images, etc.
+# ==============================================================================
+
+# Defines the default policy for any directive not explicitly set.
+# 'self' allows resources from our own domain.
+CSP_DEFAULT_SRC = ("'self'",)
+
+# Defines where scripts can be loaded from.
+CSP_SCRIPT_SRC = (
+    "'self'",
+    "'unsafe-inline'",         # NOTE: Often required by Bootstrap/HTMX for inline scripts. Long-term, we can aim to remove this.
+    "connect.facebook.net",    # REQUIRED for Facebook Pixel
+    "embed.tawk.to",           # REQUIRED for Tawk.to chat widget
+)
+
+# Defines where stylesheets can be loaded from.
+CSP_STYLE_SRC = (
+    "'self'",
+    "'unsafe-inline'",         # NOTE: Often required by Bootstrap.
+    "fonts.googleapis.com",    # If you use Google Fonts
+)
+
+# Defines where images can be loaded from.
+CSP_IMG_SRC = (
+    "'self'",
+    "data:",                   # Allows for inline images (e.g., base64 encoded)
+    "https://*.facebook.com",  # Facebook's tracking pixels and images
+)
+
+# Defines where fonts can be loaded from.
+CSP_FONT_SRC = (
+    "'self'",
+    "fonts.gstatic.com",       # Companion to Google Fonts
+)
+
+# Defines where we can make background requests to (XHR, Fetch, etc.).
+CSP_CONNECT_SRC = (
+    "'self'",
+    "connect.facebook.net",    # REQUIRED for Facebook Pixel events
+    "embed.tawk.to",           # REQUIRED for Tawk.to
+    "wss://*.tawk.to",         # REQUIRED for Tawk.to's live WebSocket connection
+)
+
+# Defines which sites can embed our content in an iframe.
+CSP_FRAME_ANCESTORS = ("'self'",)
+
+# Defines which sites we can embed in an iframe on our page.
+CSP_FRAME_SRC = (
+    "'self'",
+    "https://*.facebook.com",  # Allows for Facebook's iframes (e.g., for login buttons)
+)
