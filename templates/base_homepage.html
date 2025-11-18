@@ -59,31 +59,30 @@
         <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/cookieconsent@3/build/cookieconsent.min.css" />
     {% endif %}
 
-    <!-- Google Analytics 4 -->
-    {% if GOOGLE_ANALYTICS_ID %}
-        <script>
-          // This function will be called either by the consent banner or directly
-          function fireGoogleAnalytics() {
-              window.dataLayer = window.dataLayer || [];
-              function gtag(){dataLayer.push(arguments);}
-              gtag('js', new Date());
-              gtag('config', '{{ GOOGLE_ANALYTICS_ID }}');
-          }
-        </script>
-        <script async src="https://www.googletagmanager.com/gtag/js?id={{ GOOGLE_ANALYTICS_ID }}"></script>
-    {% endif %}
-
-    <!-- Google Tag Manager -->
-    <script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
-    new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
-    j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
-    'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
-    })(window,document,'script','dataLayer','GTM-NB8KPHH4');</script>
-    <!-- End Google Tag Manager -->    
     {% block extra_head %}{% endblock %}
 
-    <!-- Meta Pixel Code -->
+    <!-- ==================================================================== -->
+    <!-- ANALYTICS & TRACKING SCRIPTS - WORLD-CLASS LOADING ORDER -->
+    <!-- ==================================================================== -->
+
+    <!-- 1. Google Tag Manager (Data Layer Initialization) -->
+    <!-- This MUST come first. It initializes the dataLayer that all other scripts will use. -->
     <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      // We push the GTM start event here, which is cleaner
+      window.dataLayer.push({'gtm.start': new Date().getTime(), event:'gtm.js'});
+      
+      // If you have a GA4 ID, configure it here through the dataLayer
+      {% if GOOGLE_ANALYTICS_ID %}
+        gtag('config', '{{ GOOGLE_ANALYTICS_ID }}');
+      {% endif %}
+    </script>
+
+    <!-- 2. Meta Pixel Base Code -->
+    <!-- Load the core Facebook library next. -->
+    <script id="facebook-pixel-script">
     !function(f,b,e,v,n,t,s)
     {if(f.fbq)return;n=f.fbq=function(){n.callMethod?
     n.callMethod.apply(n,arguments):n.queue.push(arguments)};
@@ -98,7 +97,11 @@
     <noscript><img height="1" width="1" style="display:none"
     src="https://www.facebook.com/tr?id=1560499118419218&ev=PageView&noscript=1"
     /></noscript>
-    <!-- End Meta Pixel Code -->
+    
+    <!-- 3. Google Tag Manager (The Container) -->
+    <!-- This script can now load asynchronously, knowing the dataLayer is ready. -->
+    <script async src="https://www.googletagmanager.com/gtm.js?id=GTM-NB8KPHH4"></script>
+    
 </head>
 
 <body class="d-flex flex-column h-100">
