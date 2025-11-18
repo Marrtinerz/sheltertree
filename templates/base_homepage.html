@@ -79,7 +79,8 @@
     j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
     'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
     })(window,document,'script','dataLayer','GTM-NB8KPHH4');</script>
-    <!-- End Google Tag Manager -->
+    <!-- End Google Tag Manager -->    
+    {% block extra_head %}{% endblock %}
 
     <!-- Meta Pixel Code -->
     <script>
@@ -98,8 +99,6 @@
     src="https://www.facebook.com/tr?id=1560499118419218&ev=PageView&noscript=1"
     /></noscript>
     <!-- End Meta Pixel Code -->
-    
-    {% block extra_head %}{% endblock %}
 </head>
 
 <body class="d-flex flex-column h-100">
