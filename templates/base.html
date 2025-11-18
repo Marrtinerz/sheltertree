@@ -72,7 +72,7 @@
 
     <!-- 1. Google Tag Manager (Data Layer Initialization) -->
     <!-- This MUST come first. It initializes the dataLayer that all other scripts will use. -->
-    <script>
+    {% comment %} <script>
       window.dataLayer = window.dataLayer || [];
       function gtag(){dataLayer.push(arguments);}
       gtag('js', new Date());
@@ -83,7 +83,7 @@
       {% if GOOGLE_ANALYTICS_ID %}
         gtag('config', '{{ GOOGLE_ANALYTICS_ID }}');
       {% endif %}
-    </script>
+    </script> {% endcomment %}
 
     <!-- 2. Meta Pixel Base Code -->
     <!-- Load the core Facebook library next. -->
@@ -103,9 +103,9 @@
     src="https://www.facebook.com/tr?id=1560499118419218&ev=PageView&noscript=1"
     /></noscript>
     
-    <!-- 3. Google Tag Manager (The Container) -->
+    {% comment %} <!-- 3. Google Tag Manager (The Container) -->
     <!-- This script can now load asynchronously, knowing the dataLayer is ready. -->
-    <script async src="https://www.googletagmanager.com/gtm.js?id=GTM-NB8KPHH4"></script>
+    <script async src="https://www.googletagmanager.com/gtm.js?id=GTM-NB8KPHH4"></script> {% endcomment %}
     
 </head>
 
