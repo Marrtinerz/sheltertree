@@ -65,7 +65,7 @@
     <!-- ANALYTICS & TRACKING SCRIPTS - WORLD-CLASS LOADING ORDER -->
     <!-- ==================================================================== -->
 
-    {% comment %} <!-- 1. Google Tag Manager (Data Layer Initialization) -->
+    <!-- 1. Google Tag Manager (Data Layer Initialization) -->
     <!-- This MUST come first. It initializes the dataLayer that all other scripts will use. -->
     <script>
       window.dataLayer = window.dataLayer || [];
@@ -78,7 +78,7 @@
       {% if GOOGLE_ANALYTICS_ID %}
         gtag('config', '{{ GOOGLE_ANALYTICS_ID }}');
       {% endif %}
-    </script> {% endcomment %}
+    </script>
 
     <!-- 2. Meta Pixel Base Code -->
     <!-- Load the core Facebook library next. -->
@@ -98,10 +98,10 @@
     src="https://www.facebook.com/tr?id=1560499118419218&ev=PageView&noscript=1"
     /></noscript>
     
-    {% comment %} <!-- 3. Google Tag Manager (The Container) -->
+    <!-- 3. Google Tag Manager (The Container) -->
     <!-- This script can now load asynchronously, knowing the dataLayer is ready. -->
-    <script async src="https://www.googletagmanager.com/gtm.js?id=GTM-NB8KPHH4"></script> {% endcomment %}
-
+    <script async src="https://www.googletagmanager.com/gtm.js?id=GTM-NB8KPHH4"></script>
+    
 </head>
 
 <body class="d-flex flex-column h-100">
