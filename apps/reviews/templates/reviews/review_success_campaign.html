@@ -1,0 +1,264 @@
+{% load i18n %}
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% trans "Review Submitted!" %} | ShelterTree</title>
+    <!-- Bootstrap 5 -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- FontAwesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts (Inter) -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            /* SHELTERTREE BRAND COLORS */
+            --st-primary: #005A31; /* Deep Trusted Green */
+            --st-primary-light: #e6f4ea; /* Very light green for backgrounds */
+            --st-accent: #21b576; /* Vibrant Green for highlights */
+        }
+
+        body {
+            background-color: #f4f6f8;
+            font-family: 'Inter', sans-serif;
+            min-height: 100vh; 
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            padding-top: 3rem;
+            padding-bottom: 3rem;
+        }
+        .campaign-card {
+            border: none;
+            border-radius: 24px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.08);
+            overflow: hidden;
+            max-width: 550px;
+            width: 100%;
+        }
+        .card-header-image {
+            /* BRAND FIX: ShelterTree Green Gradient */
+            background: linear-gradient(135deg, #21b576 0%, #005A31 100%);
+            color: white;
+            padding: 2.5rem 2rem;
+            text-align: center;
+            position: relative;
+        }
+        .success-icon-circle {
+            width: 70px;
+            height: 70px;
+            background: rgba(255,255,255,0.2);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 1.5rem;
+            font-size: 2rem;
+            color: white;
+            backdrop-filter: blur(5px);
+        }
+        /* Timeline Styles */
+        .step-indicator {
+            display: flex;
+            align-items: flex-start;
+            margin-bottom: 1.5rem;
+            position: relative;
+        }
+        .step-indicator:not(:last-child)::after {
+            content: '';
+            position: absolute;
+            left: 20px;
+            top: 45px;
+            bottom: -15px;
+            width: 2px;
+            background-color: #e9ecef;
+            z-index: 1;
+        }
+        .step-icon {
+            width: 42px;
+            height: 42px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            margin-right: 15px;
+            flex-shrink: 0;
+            z-index: 2;
+            background-color: #f8f9fa;
+            font-size: 14px;
+            color: #6c757d; /* Muted default */
+        }
+        .step-done {
+            background-color: #d1e7dd; /* Success Green Light */
+            color: #198754; /* Success Green */
+            border: 2px solid #ffffff;
+        }
+        .step-active {
+            /* BRAND FIX: Active step uses Brand Green */
+            background-color: var(--st-primary-light);
+            color: var(--st-primary);
+            border: 2px solid #ffffff;
+            box-shadow: 0 0 0 4px rgba(33, 181, 118, 0.15); /* Subtle green glow */
+        }
+        .step-pending {
+            background-color: #fff;
+            color: #adb5bd;
+            border: 2px solid #e9ecef;
+        }
+        .whatsapp-btn {
+            background-color: #25D366; /* WhatsApp Brand Green (Keep this, it's recognizable) */
+            color: white;
+            border: none;
+            transition: all 0.2s ease;
+        }
+        .whatsapp-btn:hover {
+            background-color: #1ebc57;
+            color: white;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(37, 211, 102, 0.3);
+        }
+        .hover-primary:hover { color: var(--st-primary) !important; }
+        
+        .btn-outline-primary {
+            /* BRAND FIX: Button border/text color */
+            color: var(--st-primary);
+            border-color: var(--st-primary);
+        }
+        .btn-outline-primary:hover {
+            background-color: var(--st-primary);
+            color: white;
+            border-color: var(--st-primary);
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container px-3">
+        <div class="campaign-card bg-white mx-auto">
+            
+            <!-- HEADER: Gratitude & Validation -->
+            <div class="card-header-image">
+                <div class="success-icon-circle">
+                    <i class="fas fa-heart"></i>
+                </div>
+                <h1 class="h2 fw-bold mb-2">{% trans "You're Amazing!" %}</h1>
+                <p class="mb-0 opacity-90 small">
+                    {% trans "Thank you for sharing your experience. Honest reviews like yours help everyone find peaceful homes." %}
+                </p>
+            </div>
+
+            <div class="card-body p-4 p-md-5">
+                
+                <!-- THE PROCESS EXPLAINED -->
+                <h6 class="text-uppercase text-muted fw-bold small mb-4 text-center">{% trans "Next Steps" %}</h6>
+
+                <!-- Step 1: Review Submitted -->
+                <div class="step-indicator">
+                    <div class="step-icon step-done"><i class="fas fa-check"></i></div>
+                    <div>
+                        <h6 class="mb-1 fw-bold">{% trans "Review Submitted" %}</h6>
+                        <p class="small text-muted mb-0">{% trans "We have received your contribution." %}</p>
+                    </div>
+                </div>
+
+                <!-- Step 2: Verification (The Variable Step) -->
+                <div class="step-indicator">
+                    {% if user.is_phone_verified %}
+                        <div class="step-icon step-done"><i class="fas fa-check"></i></div>
+                    {% else %}
+                        <div class="step-icon step-active">2</div>
+                    {% endif %}
+                    <div>
+                        <h6 class="mb-1 fw-bold">{% trans "Identity Verification" %}</h6>
+                        <p class="small text-muted mb-0">{% trans "To ensure quality, we verify that a real person wrote this review." %}</p>
+                    </div>
+                </div>
+
+                <!-- Step 3: Quality Check -->
+                <div class="step-indicator">
+                    <div class="step-icon step-pending"><i class="fas fa-search"></i></div>
+                    <div>
+                        <h6 class="mb-1 fw-bold">{% trans "Quality Check" %}</h6>
+                        <p class="small text-muted mb-0">
+                            {% trans "Our team ensures your review meets our Content Guidelines (e.g., no hate speech or spam)." %}
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Step 4: Reward -->
+                <div class="step-indicator">
+                    <div class="step-icon step-pending"><i class="fas fa-gift"></i></div>
+                    <div>
+                        <h6 class="mb-1 fw-bold">{% trans "Approval & Airtime" %}</h6>
+                        <p class="small text-muted mb-0">
+                            {% trans "Once approved (usually within 24h), we publish your review and send ₦2,000 airtime to your verified number." %}
+                        </p>
+                    </div>
+                </div>
+
+                <hr class="my-4">
+
+                <!-- ACTION AREA -->
+                {% if not user.is_phone_verified %}
+                    <!-- CASE 1: USER NEEDS VERIFICATION -->
+                    <div class="text-center">
+                        <div class="bg-warning bg-opacity-10 p-3 rounded-3 mb-4 border border-warning border-opacity-25 text-start">
+                            <div class="d-flex">
+                                <i class="fas fa-exclamation-circle text-warning mt-1 me-3 flex-shrink-0"></i>
+                                <p class="mb-0 small text-dark">
+                                    <strong>{% trans "Action Required:" %}</strong> {% trans "We cannot process your airtime reward until your account is verified." %}
+                                </p>
+                            </div>
+                        </div>
+
+                        <a href="{% url 'phone_add' %}" class="btn whatsapp-btn btn-lg w-100 rounded-pill py-3 fw-bold">
+                            <i class="fab fa-whatsapp me-2"></i> {% trans "Verify via WhatsApp Now" %}
+                        </a>
+                        <p class="small text-muted mt-2">{% trans "Secure, fast, and spam-free." %}</p>
+                    </div>
+
+                {% else %}
+                    <!-- CASE 2: USER IS ALREADY VERIFIED -->
+                    <div class="text-center">
+                        <div class="bg-success bg-opacity-10 p-4 rounded-3 border border-success border-opacity-25">
+                            <i class="fas fa-check-circle text-success display-5 mb-3"></i>
+                            <h3 class="h5 fw-bold text-success">{% trans "You're All Set!" %}</h3>
+                            <p class="text-muted small mb-0">
+                                {% trans "Your account is verified. Our moderation team will review your submission shortly. Look out for an email notification when your review goes live!" %}
+                            </p>
+                        </div>
+                        <div class="mt-4">
+                            <a href="{% url 'reviews:home' %}" class="btn btn-outline-primary rounded-pill px-4">
+                                {% trans "Return to Homepage" %}
+                            </a>
+                        </div>
+                    </div>
+                {% endif %}
+
+                <!-- OPTIONAL FOOTER -->
+                <div class="text-center mt-5 pt-3 border-top">
+                    <p class="small text-muted mb-3">{% trans "Follow us for updates & more giveaways" %}</p>
+                    <div class="d-flex justify-content-center gap-4 mb-4">
+                        <a href="#" class="text-muted fs-5 hover-primary"><i class="fab fa-twitter"></i></a>
+                        <a href="#" class="text-muted fs-5 hover-primary"><i class="fab fa-instagram"></i></a>
+                        <a href="#" class="text-muted fs-5 hover-primary"><i class="fab fa-facebook"></i></a>
+                    </div>
+                    
+                    {% if not user.is_phone_verified %}
+                        <a href="{% url 'reviews:home' %}" class="text-muted small text-decoration-none opacity-75 hover-primary">
+                            {% trans "Skip verification & go to Homepage" %}
+                        </a>
+                    {% endif %}
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+</body>
+</html>

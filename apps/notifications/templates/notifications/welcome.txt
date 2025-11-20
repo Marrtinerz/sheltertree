@@ -1,31 +1,32 @@
 {% load i18n %}
 Hi {{ user.get_short_name|default:user.username }},
 
-My name is Martins, and I'm the founder of ShelterTree. I wanted to personally welcome you to our community.
+I’m Martins, the founder of ShelterTree. Welcome to the inside track.
 
-I started ShelterTree after my own difficult search for a new home. I remember the anxiety, the uncertainty, and the endless questions: "Will they actually refund my caution/deposit? Does it flood during the raining season? What are the neighbors upstairs *really* like?"
+Let's be honest: finding a new home usually feels like a gamble.
 
-These are the details that turn a property into a peaceful home. They're also the details that are impossible to find in a standard property listing.
+Sometimes you win the jackpot: constant electricity, angelic neighbors, and a landlord who actually fixes things. (Yes, they exist!)
 
-That's why we're here. ShelterTree is a community built on the simple idea that by sharing our honest experiences, we can help each other find those undisturbed places of rest we all deserve.
+Other times... well, the "scenic view" turns out to be a view of a noisy generator or a passageway for dust from the football pitch across.
 
+ShelterTree is here to remove the guesswork. We believe you shouldn't have to move in to find out if a place is a sanctuary or a stress test. Whether you're looking for a hidden gem or warning others about a dud, you're in the right place.
 
-Thank you for becoming a vital part of this mission. You can get started right away—what would you like to do first?
+So, what's on your mind today?
 
 ------------------------------------
-FIND INFORMATION
-Explore reviews in your city.
+FIND A GEM
+See where people are actually happy living.
 https://{{ domain }}{% url 'reviews:property-list' %}
 ------------------------------------
 
 ------------------------------------
 SHARE YOUR EXPERIENCE
-Sharing the story of your home.
+Love it or loathe it? Leave a review.
 https://{{ domain }}{% url 'reviews:search' %}?intent=review
 ------------------------------------
 
 
-Thank you again for believing in this. We're so glad you're here.
+Thanks for joining us. Here's to finding your peace of mind.
 
 Warmly,
 

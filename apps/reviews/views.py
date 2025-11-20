@@ -694,7 +694,7 @@ def vote_on_review(request, review_pk):
 
 class ReviewSuccessView(LoginRequiredMixin, DetailView):
     model = Review
-    template_name = 'reviews/review_success.html'
+    template_name = 'reviews/review_success_campaign.html'
     context_object_name = 'review' # The object will be available as 'review' in the template
     pk_url_kwarg = 'review_pk' # Tells the DetailView to get the object using 'review_pk' from the URL
 
