@@ -529,7 +529,7 @@ class AddUnitAndReviewView(LoginRequiredMixin, TemplateView):
         
         # --- The trigger for the core value tracking in GA ---
         bus = EventBus(self.request)
-        bus.push_event('submit_review')
+        bus.push_event('Lead')
 
 
         # Store the newly created review on the view instance so get_success_url can access it.
@@ -609,7 +609,7 @@ class AddReviewView(LoginRequiredMixin, CreateView):
         
         # --- 3. Continue with existing success logic ---
         bus = EventBus(self.request)
-        bus.push_event('submit_review')
+        bus.push_event('Lead')
         
         # Let the parent class handle the redirect.
         # We call form.save() ourselves, so we pass commit=False to the parent
