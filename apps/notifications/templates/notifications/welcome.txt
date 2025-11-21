@@ -15,7 +15,7 @@ So, what's on your mind today?
 
 ------------------------------------
 FIND A GEM
-See where people are actually happy living.
+Browse our gallery of homes. Read reviews.
 https://{{ domain }}{% url 'reviews:property-list' %}
 ------------------------------------
 
