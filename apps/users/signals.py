@@ -3,41 +3,62 @@ from django.dispatch import receiver
 from apps.notifications.services import notification_service
 from apps.core.event_bus import EventBus
 
-# --- THE NEW, WORLD-CLASS HANDLER ---
-@receiver(email_confirmed)
-def handle_first_email_confirmation(sender, request, email_address, **kwargs):
+# ==============================================================================
+# REUSABLE CORE LOGIC
+# ==============================================================================
+def _process_welcome_sequence(user, request):
     """
-    Listens for the signal that a user has confirmed their email.
-    It then checks if a welcome email has already been sent. If not, it sends one
-    and sets a flag to prevent it from being sent again.
+    Checks the user's history. If they haven't received a welcome email yet,
+    sends it and marks the flag.
+    
+    This is the single source of truth.
     """
-    user = email_address.user
-
-    # This is the "Gate". We only proceed if the "memory" says we haven't sent it yet.
+    # THE GATE: Check the flag. 
+    # This prevents sending it again if they change their email later.
     if not user.welcome_email_sent:
-        print(f"INFO: First email confirmation for {user.username}. Sending welcome email.")
+        print(f"INFO: Initiating welcome sequence for {user.email}")
+        
+        # 1. Send the Email
         notification_service.send_welcome_email(user)
         
-        # the trigger for the signup funnel in GA.
-        bus = EventBus(request)
-        bus.push_event('CompleteRegistration')
+        # 2. Track the Analytics Event
+        # (We check if request exists, as sometimes signals fire outside a request context)
+        if request:
+            bus = EventBus(request)
+            bus.push_event('CompleteRegistration')
         
-        # This is the crucial step: update the user's "memory".
+        # 3. Update the User's Memory
         user.welcome_email_sent = True
-        # Use update_fields for an efficient database query.
         user.save(update_fields=['welcome_email_sent'])
     else:
-        print(f"INFO: A subsequent email was confirmed for {user.username}. No welcome email will be sent.")
+        print(f"INFO: Welcome email already sent for {user.email}. Skipping.")
 
 
-# --- (Optional but Recommended) Cleanup ---
-# This handler is not needed for the welcome email logic. You can remove it
-# or keep it for other "on signup" tasks that don't depend on verification.
+# ==============================================================================
+# SIGNAL 1: STANDARD SIGNUP (Code Verification)
+# ==============================================================================
+@receiver(email_confirmed)
+def handle_manual_email_confirmation(sender, request, email_address, **kwargs):
+    """
+    Fires when a user successfully enters the 6-digit code.
+    This is the 'Verification' moment for standard users.
+    """
+    _process_welcome_sequence(email_address.user, request)
+
+
+# ==============================================================================
+# SIGNAL 2: SOCIAL SIGNUP (Google, etc.)
+# ==============================================================================
 @receiver(user_signed_up)
-def handle_user_signup(sender, request, user, **kwargs):
+def handle_social_signup(sender, request, user, **kwargs):
     """
-    Listens for the signal that a new user has signed up.
-    This is a great place to create an initial user profile, but not for sending
-    a welcome email that should only go out after verification.
+    Fires immediately when a user account is created.
+    We check if this is a social login. If so, we treat the trust from Google
+    as instant verification and send the welcome email immediately.
     """
-    print(f"INFO: New user '{user.username}' has signed up. Their account is created but may not yet be verified.")
+    # 'sociallogin' is present in kwargs ONLY for social signups
+    social_login = kwargs.get('sociallogin')
+
+    if social_login:
+        print(f"INFO: Social login detected for {user.email}. Bypassing manual code verification.")
+        _process_welcome_sequence(user, request)

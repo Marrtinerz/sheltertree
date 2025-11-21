@@ -20,7 +20,7 @@ https://{{ domain }}{% url 'reviews:property-list' %}
 ------------------------------------
 
 ------------------------------------
-SHARE YOUR EXPERIENCE
+RATE YOUR PLACE
 Love it or loathe it? Leave a review.
 https://{{ domain }}{% url 'reviews:search' %}?intent=review
 ------------------------------------

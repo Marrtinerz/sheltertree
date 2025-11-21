@@ -2,44 +2,49 @@
 {% load i18n %}
 
 {% block content %}
-    <p style="font-size: 1.2em;"><strong>{% blocktrans with name=user.get_short_name|default:user.username %}Hi {{ name }},{% endblocktrans %}</strong></p>
+    <!-- Main Wrapper for Typography Control -->
+    <div style="font-family: sans-serif; color: #333333; line-height: 1.6;">
 
-    <p>{% blocktrans %}I’m Martins, the founder of ShelterTree. Welcome to the inside track.{% endblocktrans %}</p>
+        <p style="font-size: 1.2em; margin-bottom: 25px;"><strong>{% blocktrans with name=user.get_short_name|default:user.username %}Hi {{ name }},{% endblocktrans %}</strong></p>
 
-    <p>{% blocktrans %}Let's be honest: finding a new home usually feels like a gamble.{% endblocktrans %}</p>
+        <p style="margin-bottom: 20px;">{% blocktrans %}I’m Martins, the founder of ShelterTree. Welcome to the inside track.{% endblocktrans %}</p>
 
-    <p>{% blocktrans %}Sometimes you win the jackpot: constant electricity, angelic neighbors, and a landlord who actually fixes things. (Yes, they exist!){% endblocktrans %}</p>
-    
-    <p>{% blocktrans %}Other times... well, the "scenic view" turns out to be a view of a noisy generator or a passageway for dust from the football pitch across.{% endblocktrans %}</p> 
+        <p style="margin-bottom: 20px;">{% blocktrans %}Let's be honest: finding a new home usually feels like a gamble.{% endblocktrans %}</p>
 
-    <p>{% blocktrans %}ShelterTree is here to remove the guesswork. We believe you shouldn't have to move in to find out if a place is a sanctuary or a stress test. Whether you're looking for a hidden gem or warning others about a dud, you're in the right place.{% endblocktrans %}</p>
+        <p style="margin-bottom: 20px;">{% blocktrans %}Sometimes you win the jackpot: constant electricity, angelic neighbors, and a landlord who actually fixes things. (Yes, they exist!){% endblocktrans %}</p>
+        
+        <p style="margin-bottom: 20px;">{% blocktrans %}Other times... well, the "scenic view" turns out to be a view of a noisy generator or a passageway for dust from the football pitch across.{% endblocktrans %}</p> 
 
-    <p>{% blocktrans %}So, what's on your mind today?{% endblocktrans %}</p>
-    
-    <!-- ==================================================================== -->
-    <!-- THE CTA TABLE                                                        -->
-    <!-- ==================================================================== -->
-    <table width="100%" border="0" cellspacing="0" cellpadding="0" style="margin: 30px 0; border-top: 1px solid #eee; padding-top: 20px;">
-        <tr>
-            <!-- Column 1: Find -->
-            <td align="center" style="padding: 10px; vertical-align: top; width: 50%;">
-                <h3 style="margin-top: 0; font-size: 16px;">{% trans "Find a Gem" %}</h3>
-                <p style="margin: 5px 0 15px; color: #555; font-size: 14px;">{% trans "See where people are actually happy living." %}</p>
-                <a href="https://{{ domain }}{% url 'reviews:property-list' %}" class="button">{% trans "Browse Reviews" %}</a>
-            </td>
-            <!-- Column 2: Share -->
-            <td align="center" style="padding: 10px; vertical-align: top; width: 50%;">
-                <h3 style="margin-top: 0; font-size: 16px;">{% trans "Rate Your Place" %}</h3>
-                <p style="margin: 5px 0 15px; color: #555; font-size: 14px;">{% trans "Love it or loathe it? Leave a review." %}</p>
-                <a href="https://{{ domain }}{% url 'reviews:search' %}?intent=review" class="button">{% trans "Leave a Review" %}</a>
-            </td>
-        </tr>
-    </table>
-    
-    <p>{% blocktrans %}Thanks for joining us. Here's to finding your peace of mind.{% endblocktrans %}</p>
+        <p style="margin-bottom: 20px;">{% blocktrans %}ShelterTree is here to remove the guesswork. We believe you shouldn't have to move in to find out if a place is a sanctuary or a stress test. Whether you're looking for a hidden gem or warning others about a dud, you're in the right place.{% endblocktrans %}</p>
 
-    <p style="margin-bottom: 5px;">{% blocktrans %}Warmly,{% endblocktrans %}</p>
-    
-    <p style="margin: 0;"><strong>Martins</strong></p>
-    <p style="margin-top: 0; color: #888;">{% trans "Founder, ShelterTree" %}</span></p>
+        <p style="margin-bottom: 20px;">{% blocktrans %}So, what's on your mind today?{% endblocktrans %}</p>
+        
+        <!-- ==================================================================== -->
+        <!-- THE CTA TABLE                                                        -->
+        <!-- ==================================================================== -->
+        <table width="100%" border="0" cellspacing="0" cellpadding="0" style="margin: 35px 0; border-top: 1px solid #eeeeee; padding-top: 25px;">
+            <tr>
+                <!-- Column 1: Find -->
+                <td align="center" style="padding: 15px; vertical-align: top; width: 50%;">
+                    <h3 style="margin-top: 0; margin-bottom: 8px; font-size: 16px; color: #000;">{% trans "Find a Gem" %}</h3>
+                    <p style="margin: 0 0 15px; color: #666666; font-size: 14px; line-height: 1.5;">{% trans "See where people are actually happy living." %}</p>
+                    <a href="https://{{ domain }}{% url 'reviews:property-list' %}" class="button">{% trans "Browse Reviews" %}</a>
+                </td>
+                <!-- Column 2: Share -->
+                <td align="center" style="padding: 15px; vertical-align: top; width: 50%;">
+                    <h3 style="margin-top: 0; margin-bottom: 8px; font-size: 16px; color: #000;">{% trans "Rate Your Place" %}</h3>
+                    <p style="margin: 0 0 15px; color: #666666; font-size: 14px; line-height: 1.5;">{% trans "Love it or loathe it? Leave a review." %}</p>
+                    <a href="https://{{ domain }}{% url 'reviews:search' %}?intent=review" class="button">{% trans "Leave a Review" %}</a>
+                </td>
+            </tr>
+        </table>
+        
+        <p style="margin-bottom: 20px;">{% blocktrans %}Thanks for joining us. Here's to finding your peace of mind.{% endblocktrans %}</p>
+
+        <p style="margin-bottom: 5px;">{% blocktrans %}Warmly,{% endblocktrans %}</p>
+        
+        <p style="margin: 0;"><strong>Martins</strong></p>
+        <p style="margin-top: 0; color: #888888; font-size: 0.9em;">{% trans "Founder, ShelterTree" %}</span></p>
+
+    </div>
 {% endblock %}
