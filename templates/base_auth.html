@@ -2,7 +2,58 @@
 {% load i18n %}
 {% load static %}
 
-{# We are completely overriding the default content block to create our own layout #}
+{# ================================================================== #}
+{# 1. INJECT STYLES (World-Class Floating Eye Implementation)         #}
+{# ================================================================== #}
+{% block extra_css %}
+    {{ block.super }}
+    <style>
+        /* 1. The Anchor */
+        .password-wrapper {
+            position: relative !important;
+        }
+
+        /* 2. The Button Reset */
+        .password-toggle-btn {
+            position: absolute !important;
+            top: 50% !important;
+            right: 15px !important;
+            transform: translateY(-50%) !important;
+            z-index: 100 !important;
+            
+            background: transparent !important;
+            border: none !important;
+            outline: none !important;
+            box-shadow: none !important;
+            
+            padding: 0 !important;
+            color: #6c757d; /* Default gray (Bootstrap text-muted) */
+            font-size: 1.2rem;
+            cursor: pointer;
+            
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 40px;
+            height: 100%;
+            transition: color 0.2s ease; /* Smooth color transition */
+        }
+
+        /* 3. The Hover Effect - SHELTERTREE GREEN */
+        .password-toggle-btn:hover {
+            /* Use your specific brand hex code */
+            color: #21b576 !important; 
+            
+            /* OR, if you've set up Bootstrap variables correctly, use: */
+            /* color: var(--bs-primary) !important; */
+        }
+    </style>
+{% endblock %}
+
+
+{# ================================================================== #}
+{# 2. THE LAYOUT STRUCTURE                                            #}
+{# ================================================================== #}
 {% block main_content_wrapper %}
     {# By placing our layout in this block, we prevent the default container from rendering #}
     <main>
@@ -35,3 +86,37 @@
 
 {# We no longer need a block content, as we've replaced the wrapper that contains it #}
 {% block content %}{% endblock %}
+
+
+{# ================================================================== #}
+{# 3. INJECT JAVASCRIPT (Handles the click event)                     #}
+{# ================================================================== #}
+{% block extra_js %}
+    {{ block.super }}
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const toggleButtons = document.querySelectorAll('.password-toggle-btn');
+
+            toggleButtons.forEach(button => {
+                button.addEventListener('click', function(e) {
+                    e.preventDefault(); // Stop form submission
+                    
+                    // Find the wrapper, then the input inside it
+                    const wrapper = this.closest('.password-wrapper');
+                    const input = wrapper.querySelector('input');
+                    const icon = this.querySelector('i');
+
+                    if (input.type === 'password') {
+                        input.type = 'text';
+                        icon.classList.remove('fa-eye');
+                        icon.classList.add('fa-eye-slash');
+                    } else {
+                        input.type = 'password';
+                        icon.classList.remove('fa-eye-slash');
+                        icon.classList.add('fa-eye');
+                    }
+                });
+            });
+        });
+    </script>
+{% endblock %}
