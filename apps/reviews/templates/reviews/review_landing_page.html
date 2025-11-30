@@ -1,0 +1,177 @@
+{% extends "base_homepage.html" %}
+{% load i18n %}
+{% load static %}
+
+{% block title %}{% trans "The Truth Movement" %} | ShelterTree{% endblock %}
+
+{% block content %}
+
+<!-- ==================================================================== -->
+<!-- SECTION 1: THE "TRUTH" HERO                                          -->
+<!-- ==================================================================== -->
+<div class="hero-section" style="background: linear-gradient(rgba(0,0,0,0.7), rgba(0,0,0,0.7)), url('{% static 'img/campaign_hero_bg.jpg' %}'); background-size: cover; background-position: center;">
+    <div class="container text-center text-white py-5">
+        <div class="row justify-content-center align-items-center" style="min-height: 70vh;">
+            <div class="col-lg-9">
+                <!-- The Aggressive Hook -->
+                <span class="badge bg-warning text-dark text-uppercase fw-bold mb-3 px-3 py-2">{% trans "Don't Stay Silent" %}</span>
+                <h1 class="display-3 fw-bold mb-3">{% trans "Does Your House Deserve 5 Stars?" %}</h1>
+                <h2 class="display-5 fw-light mb-4 text-white-50">{% trans "...Or a Warning Label?" %}</h2>
+                
+                <p class="lead mb-5 px-md-5">
+                    {% trans "Too many people suffer in silence with flooding, bad security, and darkness. Break the cycle. Review your apartment today and protect the next tenant." %}
+                </p>
+
+                <!-- The "Action" Search Bar -->
+                <div class="card p-2 shadow-lg border-0" style="border-radius: 50px;">
+                    <div class="card-body p-1">
+                        <form action="{% url 'reviews:search' %}" method="get" class="d-flex align-items-center">
+                            <!-- Hidden input to tell the backend user wants to review -->
+                            <input type="hidden" name="intent" value="review">
+                            
+                            <div class="flex-grow-1">
+                                {{ search_form.q }} <!-- Ensure your form widget has placeholder="Type your estate or street name..." -->
+                            </div>
+                            <button class="btn btn-primary rounded-pill px-4 ms-2 fw-bold" type="submit">
+                                {% trans "Review This Place" %}
+                            </button>
+                        </form>
+                    </div>
+                </div>
+                <p class="mt-3 small text-white-50"><i class="fas fa-lock me-1"></i> {% trans "Your review helps the community. We protect your privacy." %}</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- ==================================================================== -->
+<!-- SECTION 2: THE "WHY" (Dispelling Confusion)                          -->
+<!-- ==================================================================== -->
+<div class="container py-5">
+    <div class="row text-center mb-5">
+        <div class="col-lg-8 mx-auto">
+            <h2 class="fw-bold">{% trans "What is ShelterTree?" %}</h2>
+            <p class="lead text-muted">{% trans "We are not agents. We are not landlords. We are the database of truth for African housing." %}</p>
+        </div>
+    </div>
+
+    <div class="row g-4 text-center">
+        <!-- Feature 1 -->
+        <div class="col-md-4">
+            <div class="p-4 h-100 border rounded-3 bg-light">
+                <div class="text-primary mb-3"><i class="fas fa-bullhorn fa-3x"></i></div>
+                <h4 class="fw-bold">{% trans "A Voice for Tenants" %}</h4>
+                <p class="text-muted">{% trans "For years, landlords held all the power. Now, you have a voice. Share your story—good or bad—and hold them accountable." %}</p>
+            </div>
+        </div>
+        <!-- Feature 2 -->
+        <div class="col-md-4">
+            <div class="p-4 h-100 border rounded-3 bg-light">
+                <div class="text-primary mb-3"><i class="fas fa-search-dollar fa-3x"></i></div>
+                <h4 class="fw-bold">{% trans "Due Diligence" %}</h4>
+                <p class="text-muted">{% trans "Does the road flood? Is the transformer bad? Agents won't tell you. ShelterTree reviews tell you the ground truth before you pay." %}</p>
+            </div>
+        </div>
+        <!-- Feature 3 -->
+        <div class="col-md-4">
+            <div class="p-4 h-100 border rounded-3 bg-light">
+                <div class="text-primary mb-3"><i class="fas fa-shield-alt fa-3x"></i></div>
+                <h4 class="fw-bold">{% trans "Community Protection" %}</h4>
+                <p class="text-muted">{% trans "By leaving a review, you aren't just complaining. You are saving a stranger from making a mistake or helping them find a safe home." %}</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- ==================================================================== -->
+<!-- SECTION 3: SOCIAL PROOF (The "Vibe")                                 -->
+<!-- ==================================================================== -->
+<div class="bg-dark text-white py-5">
+    <div class="container">
+        <div class="row align-items-center">
+            <div class="col-lg-6 mb-4 mb-lg-0">
+                <h2 class="display-6 fw-bold mb-3">{% trans "Real Reviews. Real Impact." %}</h2>
+                <p class="lead text-white-50">{% trans "See what your neighbors are saying." %}</p>
+                
+                <div class="d-flex gap-3 mt-4">
+                    <div>
+                        <h3 class="fw-bold text-warning">100%</h3>
+                        <p class="small">{% trans "Anonymous Options" %}</p>
+                    </div>
+                    <div class="border-start border-secondary mx-2"></div>
+                    <div>
+                        <h3 class="fw-bold text-warning">Verified</h3>
+                        <p class="small">{% trans "Phone Verification" %}</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-lg-6">
+                <!-- A Single, Powerful Testimonial Card -->
+                <div class="card text-dark border-0 shadow-lg">
+                    <div class="card-body p-4">
+                        <div class="d-flex align-items-center mb-3">
+                            <img src="{% static 'img/avatars/sprites/Cat.jpg' %}" width="50" class="rounded-circle bg-light p-1">
+                            <div class="ms-3">
+                                <h6 class="fw-bold mb-0">Lagos Resident</h6>
+                                <small class="text-muted">Verified Reviewer</small>
+                            </div>
+                            <div class="ms-auto text-warning">
+                                <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="far fa-star"></i><i class="far fa-star"></i><i class="far fa-star"></i>
+                            </div>
+                        </div>
+                        <h5 class="fw-bold">"The Flood is a Nightmare"</h5>
+                        <p class="card-text">"The agent told us the road was good. He lied. Every time it rains, we are trapped for 2 days. The security is okay, but the water damage to my car was not worth it. Don't rent here unless you have a boat."</p>
+                        <hr>
+                        <p class="small text-muted mb-0"><i class="fas fa-map-marker-alt me-2"></i>Reviewed: <strong>Greenville Estate, Ajah</strong></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- ==================================================================== -->
+<!-- SECTION 4: THE INSTRUCTION (How to Participate)                      -->
+<!-- ==================================================================== -->
+<div class="container py-5 text-center">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <h2 class="fw-bold mb-5">{% trans "How to Save a Neighbor in 2 Minutes" %}</h2>
+        </div>
+    </div>
+    <div class="row justify-content-center g-4">
+        <div class="col-md-3">
+            <div class="display-4 text-primary fw-bold mb-2">1</div>
+            <h5 class="fw-bold">{% trans "Search" %}</h5>
+            <p class="text-muted small">{% trans "Type the name of your estate, street, or building." %}</p>
+        </div>
+        <div class="col-md-1 d-none d-md-block pt-4"><i class="fas fa-arrow-right text-muted fa-2x"></i></div>
+        <div class="col-md-3">
+            <div class="display-4 text-primary fw-bold mb-2">2</div>
+            <h5 class="fw-bold">{% trans "Rate" %}</h5>
+            <p class="text-muted small">{% trans "Answer simple questions about light, water, and security." %}</p>
+        </div>
+        <div class="col-md-1 d-none d-md-block pt-4"><i class="fas fa-arrow-right text-muted fa-2x"></i></div>
+        <div class="col-md-3">
+            <div class="display-4 text-primary fw-bold mb-2">3</div>
+            <h5 class="fw-bold">{% trans "Help" %}</h5>
+            <p class="text-muted small">{% trans "Your review goes live. You just helped 1,000s of people." %}</p>
+        </div>
+    </div>
+</div>
+
+<!-- ==================================================================== -->
+<!-- SECTION 5: FINAL CTA                                                 -->
+<!-- ==================================================================== -->
+<div class="py-5" style="background-color: #f8f9fa;">
+    <div class="container text-center">
+        <h2 class="display-6 fw-bold mb-4">{% trans "Ready to tell your story?" %}</h2>
+        <a href="{% url 'reviews:search' %}?intent=review" class="btn btn-primary rounded-pill px-5 py-3 shadow-sm fw-bold">
+            {% trans "Write a Review Now" %}
+        </a>
+        <p class="mt-3 text-muted">{% trans "It takes less than 2 minutes." %}</p>
+    </div>
+</div>
+
+{% endblock %}

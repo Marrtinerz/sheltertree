@@ -43,5 +43,6 @@ urlpatterns = [
     
     path('features/request-a-review/', views.RequestReviewComingSoonView.as_view(), name='request_review_coming_soon'),
     path('features/request-a-review/success/', TemplateView.as_view(template_name='reviews/coming_soon_success.html'), name='coming_soon_success'),
+    path('review-landing-page/', TemplateView.as_view(template_name='reviews/review_landing_page.html'), name='review_landing_page'),
     
 ]
