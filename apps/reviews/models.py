@@ -20,6 +20,7 @@ class PropertyStatus(models.TextChoices):
 
 class ReviewStatus(models.TextChoices):
     PENDING_PROPERTY_APPROVAL = 'PROP_PENDING', _('Pending Property Approval')
+    PENDING_SIGNUP = 'PENDING_SIGNUP', _('Pending User Signup')
     PENDING_CONTENT_REVIEW = 'CONT_PENDING', _('Pending Content Review')
     APPROVED = 'APPROVED', _('Approved')
     REJECTED = 'REJECTED', _('Rejected')

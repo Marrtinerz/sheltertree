@@ -35,7 +35,11 @@ urlpatterns = [
     path('property/<int:property_pk>/unit-reviews/<int:unit_pk>/', views.get_unit_reviews, name='get_unit_reviews'),
     path('property/<int:property_pk>/search-units/', views.search_units_htmx, name='search_units_htmx'),
     path('property/<int:property_pk>/unit-dropdown/', views.get_unit_dropdown_content, name='get_unit_dropdown'),
-    
+    path('property/process-pending/', views.ProcessPendingPropertyView.as_view(), name='process-pending-property'),
+    path('review/process-pending/', views.ProcessPendingReviewView.as_view(), name='process-pending-review'),
+    path('lazy-flow/skip/', views.SkipLazyFlow.as_view(), name='lazy-flow-skip'),
+    path('lazy-flow/verify/', views.StartVerificationFromLazyFlow.as_view(), name='lazy-flow-verify'),
+    path('property/<int:property_pk>/continue/', views.PropertyContinueToReviewView.as_view(), name='property-continue-to-review'),
     
     # --- LOCATIONS ---
     path('', include('apps.locations.urls')),

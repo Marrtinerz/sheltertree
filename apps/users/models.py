@@ -45,6 +45,11 @@ class CustomUser(AbstractUser):
         help_text=_("Indicates if the user has completed the second stage of onboarding.")
     )
     
+    lazy_registration_complete = models.BooleanField(
+        default=True,
+        help_text=_("Indicates if the user has seen the review success page and completed the lazy registration.")
+    )
+    
     welcome_email_sent = models.BooleanField(
         default=False,
         help_text=_("Indicates if the welcome email has been sent to the user.") 

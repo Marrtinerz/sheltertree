@@ -8,96 +8,133 @@
 <div class="container my-5">
     <div class="row justify-content-center">
         <div class="col-lg-8">
-            <div class="card shadow-lg add-property-wizard">
-                <div class="card-header text-center">
-                    <h1 class="mb-1 h2">{% trans "Add a Property" %}</h1>
-                    <p class="mb-0 opacity-80">{% trans "Your contribution would help a sibling, friend, or someone find their next peaceful home." %}</p>
+            <div class="card shadow-lg border-0" style="border-radius: 16px;">
+                <!-- Premium Header -->
+                <div class="card-header bg-white border-bottom-0 pt-5 pb-4 text-center">
+                    <div class="mb-3">
+                        <span class="icon-circle bg-primary bg-opacity-10 text-primary d-inline-flex align-items-center justify-content-center rounded-circle" style="width: 64px; height: 64px;">
+                            <i class="fas fa-home fa-2x"></i>
+                        </span>
+                    </div>
+                    <h1 class="h3 fw-bold mb-2">{% trans "Add a Property" %}</h1>
+                    <p class="text-muted mb-0 mx-auto" style="max-width: 500px;">
+                        {% trans "Help your community discover their next peaceful home." %}
+                    </p>
                 </div>
                 
-                <div class="card-body p-4 p-md-5">
+                <div class="card-body p-4 p-md-5 pt-0">
                     <form method="post" novalidate id="addPropertyForm">
                         {% csrf_token %}
 
-                        <!-- THE RESTORED ERROR DISPLAY BLOCK -->
                         {% if form.non_field_errors %}
-                            <div class="alert alert-danger">
-                                {{ form.non_field_errors }}
+                            <div class="alert alert-danger rounded-3 mb-4">
+                                <i class="fas fa-exclamation-circle me-2"></i> {{ form.non_field_errors }}
                             </div>
                         {% endif %}
 
-                        <!-- 1. The "Wizard" Path Selector -->
-                        <div class="form-path-selector text-center mb-4">
-                            <p class="fw-bold">{% trans "How would you like to add the property?" %}</p>
-                            <div class="btn-group w-100" role="group">
-                                <input type="radio" class="btn-check" name="add_method" id="method-search" value="search" checked>
-                                <label class="btn btn-outline-primary" for="method-search"><i class="fas fa-search me-2"></i>{% trans "Search First (Recommended)" %}</label>
-
-                                <input type="radio" class="btn-check" name="add_method" id="method-manual" value="manual">
-                                <label class="btn btn-outline-primary" for="method-manual"><i class="fas fa-keyboard me-2"></i>{% trans "Enter Manually" %}</label>
+                        <!-- ======================================================= -->
+                        <!-- 1. THE SMART SEARCH (Default View) -->
+                        <!-- ======================================================= -->
+                        <div id="search-container" class="mb-4 transition-fade">
+                            <label class="form-label fw-bold text-dark">{% trans "Start by searching for the property" %}</label>
+                            <div class="position-relative">
+                                <i id="search-icon" class="fas fa-search position-absolute text-muted" style="left: 15px; top: 50%; transform: translateY(-50%); pointer-events: none;"></i>
+                                {{ form.property_search|attr:"class:form-control form-control ps-5 rounded-pill shadow-sm"|attr:"placeholder:Type the name of the estate or building..."|attr:"autocomplete:off" }}
+                                
+                                <!-- Suggestions Dropdown -->
+                                <!-- Added 'overflow-y-auto' and a max-height style -->
+                                <div id="suggestions-container" class="mt-2 position-absolute w-100 shadow-lg rounded-3 bg-white" style="z-index: 1050; display: none; top: 100%; max-height: 300px; overflow-y: auto;"></div>
                             </div>
-                        </div>
-
-                        <!-- 2. The Form Sections -->
-                        <!-- Path 1: Google Search Section -->
-                        <div id="google-search-section" class="form-section">
-                            <div class="position-relative mb-3">
-                                <label for="{{ form.property_search.id_for_label }}" class="form-label">{{ form.property_search.label }}</label>
-                                {{ form.property_search|attr:"class:form-control" }}
-                                <div id="suggestions-container" class="mt-1"></div>
+                            
+                            <!-- The Escape Hatch -->
+                            <div class="text-center mt-3">
+                                <button type="button" id="btn-switch-manual" class="btn btn-link text-decoration-none text-muted btn-sm">
+                                    <i class="fas fa-map-marker-alt me-1"></i> {% trans "Can't find it on the map? Enter address manually" %}
+                                </button>
                             </div>
                         </div>
                         
-                        <!-- Path 2: Manual Entry Section (Initially Hidden) -->
-                        <div id="manual-entry-section" class="form-section" style="display: none;">
-                            <div class="mb-3">
-                                <label for="{{ form.name.id_for_label }}" class="form-label">{{ form.name.label }}</label>
-                                {{ form.name|attr:"class:form-control" }}
-                                {% if form.name.help_text %}<small class="form-text text-muted">{{ form.name.help_text }}</small>{% endif %}
+                        <!-- ======================================================= -->
+                        <!-- 2. THE MANUAL ENTRY FORM (Initially Hidden) -->
+                        <!-- ======================================================= -->
+                        <div id="manual-entry-container" class="transition-fade" style="display: none;">
+                            <div class="d-flex justify-content-between align-items-center mb-4">
+                                <h5 class="fw-bold m-0 text-primary">{% trans "Property Details" %}</h5>
+                                <button type="button" id="btn-switch-search" class="btn btn-outline-secondary btn-sm rounded-pill">
+                                    <i class="fas fa-arrow-left me-1"></i> {% trans "Back to Search" %}
+                                </button>
                             </div>
-                            <div class="mb-3">
-                                <label for="manual_address" class="form-label">{{ form.address.label }}*</label>
-                                <input type="text" id="manual_address" class="form-control" placeholder="{{ form.address.field.widget.attrs.placeholder }}">
-                                {{ form.address.errors }}
-                            </div>
-                            <div class="mb-3">
-                                <label for="manual_city" class="form-label">{{ form.city.label }}*</label>
-                                <input type="text" id="manual_city" class="form-control" placeholder="{{ form.city.field.widget.attrs.placeholder }}">
-                                {{ form.city.errors }}
-                            </div>
-                            <div class="mb-3">
-                                <label for="manual_postal_code" class="form-label">{{ form.postal_code.label }}</label>
-                                <input type="text" id="manual_postal_code" class="form-control" placeholder="{{ form.postal_code.field.widget.attrs.placeholder }}">
-                                {{ form.postal_code.errors }}
+
+                            <div class="row g-3">
+                                <!-- Property Name -->
+                                <div class="col-12">
+                                    <label for="{{ form.name.id_for_label }}" class="form-label fw-bold">{{ form.name.label }}</label>
+                                    {{ form.name|attr:"class:form-control"|attr:"placeholder:e.g., Sunrise Apartments" }}
+                                    {% if form.name.help_text %}<div class="form-text">{{ form.name.help_text }}</div>{% endif %}
+                                </div>
+
+                                <!-- Manual Address Fields -->
+                                <div class="col-12">
+                                    <label for="manual_address" class="form-label fw-bold">{{ form.address.label }} <span class="text-danger">*</span></label>
+                                    <!-- Use name="address" if this is the actual bound field, but since you have hidden fields below, keeping separate IDs for JS syncing is safer unless you bind directly. 
+                                         However, the 'connectManualInputsToHiddenFields' JS function handles the sync. 
+                                         Ideally, we should just render the form field here if we want server-side errors to show up on THIS field. 
+                                         But your current architecture uses hidden fields for submission. I will stick to your architecture. -->
+                                    <input type="text" id="manual_address" class="form-control" placeholder="{{ form.address.field.widget.attrs.placeholder }}">
+                                    <!-- Display errors for the hidden address field here -->
+                                    <div class="invalid-feedback d-block">{{ form.address.errors }}</div>
+                                </div>
+
+                                <div class="col-md-6">
+                                    <label for="manual_city" class="form-label fw-bold">{{ form.city.label }} <span class="text-danger">*</span></label>
+                                    <input type="text" id="manual_city" class="form-control" placeholder="{{ form.city.field.widget.attrs.placeholder }}">
+                                    <div class="invalid-feedback d-block">{{ form.city.errors }}</div>
+                                </div>
+
+                                <div class="col-md-6">
+                                    <label for="manual_postal_code" class="form-label fw-bold">{{ form.postal_code.label }}</label>
+                                    <input type="text" id="manual_postal_code" class="form-control" placeholder="{{ form.postal_code.field.widget.attrs.placeholder }}">
+                                </div>
                             </div>
                         </div>
 
-                        <!-- Section 3: Shared Details (Property Type, Country, State) -->
-                        <div id="shared-details-section" class="form-section" style="display: none;">
-                             <hr class="my-4">
-                             <div class="mb-3">
-                                <label for="{{ form.property_type.id_for_label }}" class="form-label">{{ form.property_type.label }}</label>
-                                {{ form.property_type|attr:"class:form-select" }}
-                                {% if form.property_type.help_text %}<div class="form-text">{{ form.property_type.help_text }}</div>{% endif %}
+                        <!-- ======================================================= -->
+                        <!-- 3. SHARED DETAILS (Location & Type) -->
+                        <!-- ======================================================= -->
+                        <div id="shared-details-container" class="transition-fade mt-4 pt-4 border-top" style="display: none;">
+                            <h5 class="fw-bold mb-3 text-primary">{% trans "Location & Type" %}</h5>
+                            
+                            <div class="row g-3">
+                                <div class="col-12">
+                                    <label for="{{ form.property_type.id_for_label }}" class="form-label fw-bold">{{ form.property_type.label }} <span class="text-danger">*</span></label>
+                                    {{ form.property_type|attr:"class:form-select" }}
+                                    {% if form.property_type.help_text %}<div class="form-text">{{ form.property_type.help_text }}</div>{% endif %}
+                                </div>
+                                
+                                <div class="col-md-6">
+                                    <label for="{{ form.country.id_for_label }}" class="form-label fw-bold">{{ form.country.label }} <span class="text-danger">*</span></label>
+                                    {{ form.country|attr:"class:form-select" }}
+                                </div>
+                                
+                                <div class="col-md-6">
+                                    <label for="{{ form.state.id_for_label }}" class="form-label fw-bold">{{ form.state.label }} <span class="text-danger">*</span></label>
+                                    {{ form.state|attr:"class:form-select" }}
+                                </div>
                             </div>
-                            <div class="mb-3">
-                                <label for="{{ form.country.id_for_label }}" class="form-label">{{ form.country.label }}*</label>
-                                {{ form.country|attr:"class:form-select" }}
-                            </div>
-                            <div class="mb-3">
-                                <label for="{{ form.state.id_for_label }}" class="form-label">{{ form.state.label }}*</label>
-                                {{ form.state|attr:"class:form-select" }}
+
+                            <div class="d-grid mt-5">
+                                <button type="submit" class="btn btn-primary btn-lg rounded-pill fw-bold shadow-sm">
+                                    {% trans "Submit Property" %} <i class="fas fa-arrow-right ms-2"></i>
+                                </button>
                             </div>
                         </div>
 
-                        <!-- Hidden Fields (Unchanged but critical) -->
+                        <!-- Hidden Fields (These are the actual fields submitted) -->
                         <div style="display: none;">
                             {{ form.address }} {{ form.city }} {{ form.postal_code }}
                         </div>
                         {{ form.latitude.as_hidden }} {{ form.longitude.as_hidden }} {{ form.google_place_id.as_hidden }}
                         
-                        <div class="d-grid mt-4">
-                            <button type="submit" class="btn btn-primary">{% trans "Submit Property for Approval" %}</button>
-                        </div>
                     </form>
                 </div>
             </div>
@@ -107,71 +144,101 @@
 {% endblock %}
 
 {% block extra_js %}
-<!-- THE FULLY CORRECTED AND ROBUST JAVASCRIPT BLOCK -->
 <script>
-    // These must be in the global scope for the Google callback to find them
+    // --- Global Variables ---
     let sessionToken;
     const DEBOUNCE_DELAY = 400;
 
+    // --- UI Elements Cache ---
+    const ui = {
+        searchContainer: document.getElementById('search-container'),
+        manualContainer: document.getElementById('manual-entry-container'),
+        sharedContainer: document.getElementById('shared-details-container'),
+        btnSwitchManual: document.getElementById('btn-switch-manual'),
+        btnSwitchSearch: document.getElementById('btn-switch-search'),
+        searchInput: document.getElementById('{{ form.property_search.id_for_label }}'),
+        searchIcon: document.getElementById('search-icon'), // <--- NEW
+        suggestionsContainer: document.getElementById('suggestions-container'),
+        
+        // Hidden Inputs
+        googlePlaceId: document.getElementById('{{ form.google_place_id.id_for_label }}'),
+        
+        // Dropdowns
+        countryDropdown: document.getElementById('{{ form.country.id_for_label }}'),
+        stateDropdown: document.getElementById('{{ form.state.id_for_label }}')
+    };
+
     /**
-     * Main callback function called by the Google Maps script after it loads.
-     * This function is the single entry point and MUST be in the global scope.
+     * Entry Point
      */
     function initPropertyAutocomplete() {
         if (!google || !google.maps || !google.maps.places) {
             console.error("ShelterTree Maps Error: Google Places library not available.");
             return;
         }
-        // Initialize all functionalities
-        setupWizardToggle();
+        setupEventListeners();
         setupDebouncedAutocomplete();
         connectManualInputsToHiddenFields();
         setupDependentDropdowns();
     }
 
     /**
-     * Sets up the event listeners for the new "wizard" radio buttons.
+     * Helper: Toggles the search icon to a spinner
      */
-    function setupWizardToggle() {
-        const googleSection = document.getElementById('google-search-section');
-        const manualSection = document.getElementById('manual-entry-section');
-        const sharedSection = document.getElementById('shared-details-section');
-        const searchRadio = document.getElementById('method-search');
-        const manualRadio = document.getElementById('method-manual');
-
-        function toggleFormPath() {
-            if (manualRadio.checked) {
-                googleSection.style.display = 'none';
-                manualSection.style.display = 'block';
-                sharedSection.style.display = 'block';
-            } else { // Default to search path
-                googleSection.style.display = 'block';
-                manualSection.style.display = 'none';
-                // Only show shared section if a Google Place has been selected
-                if (!document.getElementById('{{ form.google_place_id.id_for_label }}').value) {
-                    sharedSection.style.display = 'none';
-                }
-            }
+    function toggleLoading(isLoading) {
+        if (!ui.searchIcon) return;
+        if (isLoading) {
+            ui.searchIcon.className = "fas fa-spinner fa-spin position-absolute text-primary";
+            ui.searchInput.disabled = true; // Prevent double clicks
+        } else {
+            ui.searchIcon.className = "fas fa-search position-absolute text-muted";
+            ui.searchInput.disabled = false;
         }
-        searchRadio.addEventListener('change', toggleFormPath);
-        manualRadio.addEventListener('change', toggleFormPath);
-        toggleFormPath(); // Run once on page load
     }
 
     /**
-     * Populates form fields with data from the Google Places API and triggers the UI update.
+     * 1. UI Transition Logic
+     */
+    function setupEventListeners() {
+        if (ui.btnSwitchManual) {
+            ui.btnSwitchManual.addEventListener('click', () => {
+                ui.searchContainer.style.display = 'none';
+                ui.manualContainer.style.display = 'block';
+                ui.sharedContainer.style.display = 'block'; 
+                if (ui.googlePlaceId) ui.googlePlaceId.value = '';
+            });
+        }
+
+        if (ui.btnSwitchSearch) {
+            ui.btnSwitchSearch.addEventListener('click', () => {
+                ui.manualContainer.style.display = 'none';
+                ui.searchContainer.style.display = 'block';
+                if (!ui.googlePlaceId.value) {
+                    ui.sharedContainer.style.display = 'none';
+                }
+            });
+        }
+    }
+
+    /**
+     * 2. Google Places Integration
      */
     function fillInAddressDetails(place) {
-        const safeSetValue = (id, value) => { const el = document.getElementById(id); if (el) el.value = value; };
+        const safeSetValue = (id, value) => { 
+            const el = document.getElementById(id); 
+            if (el) el.value = value || ''; 
+        };
         
-        safeSetValue('{{ form.google_place_id.id_for_label }}', place.id || '');
+        safeSetValue('{{ form.google_place_id.id_for_label }}', place.id);
         safeSetValue('{{ form.latitude.id_for_label }}', place.location ? place.location.lat() : '');
         safeSetValue('{{ form.longitude.id_for_label }}', place.location ? place.location.lng() : '');
         
-        safeSetValue('{{ form.address.id_for_label }}', place.formattedAddress || '');
-        safeSetValue('manual_address', place.formattedAddress || '');
+        const address = place.formattedAddress || '';
+        safeSetValue('{{ form.address.id_for_label }}', address);
+        safeSetValue('manual_address', address);
 
-        safeSetValue('{{ form.name.id_for_label }}', place.displayName || '');
+        const name = place.displayName || '';
+        safeSetValue('{{ form.name.id_for_label }}', name);
         
         let city = '', postal_code = '';
         if (place.addressComponents) {
@@ -181,49 +248,123 @@
                 if (types.includes("postal_code")) postal_code = component.longText;
             }
         }
+        
         safeSetValue('{{ form.city.id_for_label }}', city);
         safeSetValue('manual_city', city);
+        
         safeSetValue('{{ form.postal_code.id_for_label }}', postal_code);
         safeSetValue('manual_postal_code', postal_code);
 
-        // Show the shared details section after a place is selected
-        document.getElementById('shared-details-section').style.display = 'block';
+        ui.sharedContainer.style.display = 'block';
+        ui.sharedContainer.scrollIntoView({ behavior: 'smooth', block: 'start' });
     }
 
-    // --- All other helper functions are restored from your original, functional version ---
+    // --- Autocomplete Logic ---
 
-    function setupDependentDropdowns() {     
-        const countryDropdown = document.getElementById('{{ form.country.id_for_label }}');
-        const stateDropdown = document.getElementById('{{ form.state.id_for_label }}');
-        if (!countryDropdown || !stateDropdown) { return; }
+    function debounce(func, delay) {
+        let timeout;
+        return function(...args) { 
+            clearTimeout(timeout); 
+            timeout = setTimeout(() => func.apply(this, args), delay); 
+        };
+    }
+    
+    function setupDebouncedAutocomplete() {
+        const searchInput = ui.searchInput;
+        const container = ui.suggestionsContainer;
+        
+        if (!searchInput || !container) return;
 
-        countryDropdown.addEventListener('change', async function() {
-            const countryId = this.value;
-            stateDropdown.innerHTML = '<option value="">--- {% trans "Loading..." %} ---</option>';
-            stateDropdown.disabled = true;
+        searchInput.addEventListener('focus', () => { 
+            if (!sessionToken) sessionToken = new google.maps.places.AutocompleteSessionToken(); 
+        });
 
-            if (!countryId) {
-                stateDropdown.innerHTML = '<option value="">--- {% trans "Select a Country First" %} ---</option>';
-                return;
+        const debouncedFetch = debounce(async (inputValue) => {
+            if (inputValue.length > 2 && sessionToken) {
+                await fetchPlacePredictions(inputValue, container, searchInput);
+            } else {
+                container.style.display = 'none';
             }
+        }, DEBOUNCE_DELAY);
 
-            try {
-                const response = await fetch(`/api/get-states/?country_id=${countryId}`);
-                if (!response.ok) { throw new Error('Network response was not ok'); }
-                const data = await response.json();
+        searchInput.addEventListener('input', (event) => debouncedFetch(event.target.value));
+        
+        searchInput.addEventListener('blur', () => {
+            setTimeout(() => { 
+                if (!container.contains(document.activeElement)) {
+                    container.style.display = 'none'; 
+                }
+            }, 200);
+        });
+    }
 
-                stateDropdown.innerHTML = '<option value="">--- {% trans "Select a State" %} ---</option>';
-                data.states.forEach(state => {
-                    stateDropdown.appendChild(new Option(state.name, state.id));
-                });
-                stateDropdown.disabled = false;
-            } catch (error) {
-                console.error('Error fetching states:', error);
-                stateDropdown.innerHTML = '<option value="">--- {% trans "Error loading states" %} ---</option>';
-            }
+    async function fetchPlacePredictions(inputValue, container, searchInput) {
+        const request = {
+            input: inputValue,
+            sessionToken: sessionToken,
+        };
+        try {
+            const { suggestions } = await google.maps.places.AutocompleteSuggestion.fetchAutocompleteSuggestions(request);
+            displaySuggestions(suggestions, container, searchInput);
+        } catch (error) { 
+            console.error("Autocomplete API call failed:", error); 
+        }
+    }
+    
+    function displaySuggestions(suggestions, container, searchInput) {
+        container.innerHTML = '';
+        if (!suggestions || suggestions.length === 0) { 
+            container.style.display = 'none'; 
+            return; 
+        }
+        
+        const ul = document.createElement('ul');
+        ul.className = 'list-group list-group-flush mb-0';
+        
+        suggestions.forEach(suggestion => {
+            const li = document.createElement('li');
+            li.className = 'list-group-item list-group-item-action border-0 px-3 py-2';
+            li.style.cursor = 'pointer';
+            
+            li.textContent = suggestion.placePrediction.text.text;
+            
+            // --- THE CRITICAL FIX IS HERE ---
+            li.addEventListener('mousedown', async () => {
+                // 1. Immediate UI Feedback
+                searchInput.value = li.textContent;
+                container.style.display = 'none'; // Hide dropdown instantly
+                toggleLoading(true); // Show spinner instantly
+
+                // 2. Perform Async Network Request
+                await getSelectedPlaceDetails(suggestion.placePrediction.placeId);
+                
+                // 3. Cleanup
+                toggleLoading(false); // Hide spinner
+                sessionToken = undefined;
+            });
+            ul.appendChild(li);
         });
         
+        container.appendChild(ul);
+        container.style.display = 'block';
     }
+
+    async function getSelectedPlaceDetails(placeId) {
+        if (!placeId) return;
+        const placeFields = ["displayName", "addressComponents", "location", "formattedAddress", "id"];
+        try {
+            const place = new google.maps.places.Place({ id: placeId });
+            await place.fetchFields({ fields: placeFields, sessionToken: sessionToken });
+            fillInAddressDetails(place);
+        } catch (error) { 
+            console.error("Error fetching place details:", error); 
+            toggleLoading(false); // Ensure spinner stops on error
+        }
+    }
+
+    /**
+     * 3. Manual Input Synchronization
+     */
     function connectManualInputsToHiddenFields() {
         const fieldMap = {
             'manual_address': '{{ form.address.id_for_label }}',
@@ -238,69 +379,41 @@
             }
         }
     }
-    
-    function debounce(func, delay) {
-        let timeout;
-        return function(...args) { clearTimeout(timeout); timeout = setTimeout(() => func.apply(this, args), delay); };
-    }
-    
-    function setupDebouncedAutocomplete() {
-        const searchInput = document.getElementById('{{ form.property_search.id_for_label }}');
-        const suggestionsContainer = document.getElementById('suggestions-container');
-        searchInput.addEventListener('focus', () => { if (!sessionToken) sessionToken = new google.maps.places.AutocompleteSessionToken(); });
-        const debouncedFetch = debounce(async (inputValue) => {
-            if (inputValue.length > 2 && sessionToken) await fetchPlacePredictions(inputValue, suggestionsContainer, searchInput);
-            else suggestionsContainer.style.display = 'none';
-        }, DEBOUNCE_DELAY);
-        searchInput.addEventListener('input', (event) => debouncedFetch(event.target.value));
-        searchInput.addEventListener('blur', () => setTimeout(() => { if (!suggestionsContainer.contains(document.activeElement)) suggestionsContainer.style.display = 'none'; }, 200));
-    }
 
-    async function fetchPlacePredictions(inputValue, suggestionsContainer, searchInput) {
-        const request = {
-            input: inputValue,
-            sessionToken: sessionToken,
-            // locationBias: africaBounds, // This biases results to the African continent
-        };
-        try {
-            const { suggestions } = await google.maps.places.AutocompleteSuggestion.fetchAutocompleteSuggestions(request);
-            displaySuggestions(suggestions, suggestionsContainer, searchInput);
-        } catch (error) { console.error("Autocomplete API call failed:", error); }
-    }
-    
-    function displaySuggestions(suggestions, suggestionsContainer, searchInput) {
-        suggestionsContainer.innerHTML = '';
-        if (!suggestions || suggestions.length === 0) { suggestionsContainer.style.display = 'none'; return; }
-        const ul = document.createElement('ul');
-        ul.className = 'list-group position-absolute shadow-sm';
-        ul.style.zIndex = '1000';
-        ul.style.width = searchInput.offsetWidth + 'px';
-        suggestions.forEach(suggestion => {
-            const li = document.createElement('li');
-            li.className = 'list-group-item list-group-item-action';
-            li.style.cursor = 'pointer';
-            li.textContent = suggestion.placePrediction.text.text;
-            li.addEventListener('mousedown', async () => {
-                searchInput.value = li.textContent;
-                suggestionsContainer.style.display = 'none';
-                await getSelectedPlaceDetails(suggestion.placePrediction.placeId);
-                sessionToken = undefined;
-            });
-            ul.appendChild(li);
+    /**
+     * 4. Dependent Dropdowns (Country -> State)
+     */
+    function setupDependentDropdowns() {     
+        const { countryDropdown, stateDropdown } = ui;
+        if (!countryDropdown || !stateDropdown) return;
+
+        countryDropdown.addEventListener('change', async function() {
+            const countryId = this.value;
+            stateDropdown.innerHTML = '<option value="">--- {% trans "Loading..." %} ---</option>';
+            stateDropdown.disabled = true;
+
+            if (!countryId) {
+                stateDropdown.innerHTML = '<option value="">--- {% trans "Select a Country First" %} ---</option>';
+                return;
+            }
+
+            try {
+                const response = await fetch(`/api/get-states/?country_id=${countryId}`);
+                if (!response.ok) throw new Error('Network response was not ok');
+                const data = await response.json();
+
+                stateDropdown.innerHTML = '<option value="">--- {% trans "Select a State" %} ---</option>';
+                data.states.forEach(state => {
+                    stateDropdown.appendChild(new Option(state.name, state.id));
+                });
+                stateDropdown.disabled = false;
+            } catch (error) {
+                console.error('Error fetching states:', error);
+                stateDropdown.innerHTML = '<option value="">--- {% trans "Error loading states" %} ---</option>';
+            }
         });
-        suggestionsContainer.appendChild(ul);
-        suggestionsContainer.style.display = 'block';
     }
 
-    async function getSelectedPlaceDetails(placeId) {
-        if (!placeId) return;
-        const placeFields = ["displayName", "addressComponents", "location", "formattedAddress", "id"];
-        try {
-            const place = new google.maps.places.Place({ id: placeId });
-            await place.fetchFields({ fields: placeFields, sessionToken: sessionToken });
-            fillInAddressDetails(place);
-        } catch (error) { console.error("Error fetching place details:", error); }
-    }
 </script>
 <script src="https://maps.googleapis.com/maps/api/js?key={{ GOOGLE_MAPS_API_KEY }}&libraries=places&callback=initPropertyAutocomplete&loading=async" defer></script>
 {% endblock %}

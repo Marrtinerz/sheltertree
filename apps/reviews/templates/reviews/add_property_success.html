@@ -1,52 +1,176 @@
-{% extends "base.html" %}
 {% load i18n %}
+{% load static %}
 
-{% block title %}{% trans "Property Submitted" %} | ShelterTree{% endblock %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% trans "Property Submitted" %} | ShelterTree</title>
+    
+    <!-- Bootstrap 5 -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- FontAwesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Manrope Font -->
+    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --st-primary: #005A31;
+            --st-accent: #21b576;
+        }
+        body {
+            background-color: #f4f6f8;
+            font-family: 'Manrope', sans-serif;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            padding: 2rem 1rem;
+        }
+        
+        /* The Main Wrapper */
+        .campaign-wrapper {
+            width: 100%;
+            max-width: 550px;
+            margin: 0 auto;
+            position: relative;
+        }
 
-{% block content %}
-<div class="container my-5">
+        /* 1. The Header (Background Card) */
+        .header-card {
+            background: linear-gradient(135deg, #21b576 0%, #005A31 100%);
+            color: white;
+            border-radius: 24px;
+            padding: 3rem 2rem 4rem 2rem; /* Extra padding at bottom for the visual "gap" */
+            text-align: center;
+            box-shadow: 0 15px 30px rgba(0,90,49,0.15);
+            position: relative;
+            z-index: 1;
+        }
+
+        .icon-circle {
+            width: 70px;
+            height: 70px;
+            background: rgba(255,255,255,0.2);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 1.5rem;
+            font-size: 2rem;
+            color: white;
+            backdrop-filter: blur(5px);
+            border: 2px solid rgba(255,255,255,0.3);
+        }
+
+        /* 2. The Action Card (Floating on top) */
+        .action-card {
+            background: white;
+            border-radius: 20px;
+            padding: 2.5rem 2rem;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.08);
+            text-align: center;
+            
+            /* The Layout Magic: Pull it up over the header */
+            margin-top: -3rem; 
+            margin-left: 1.5rem;
+            margin-right: 1.5rem;
+            position: relative;
+            z-index: 10; /* Ensures it sits ON TOP of the header */
+        }
+
+        .btn-primary {
+            background-color: var(--st-primary);
+            border-color: var(--st-primary);
+            transition: all 0.2s ease;
+            box-shadow: 0 8px 20px rgba(0, 90, 49, 0.2);
+        }
+        .btn-primary:hover {
+            background-color: #004526;
+            border-color: #004526;
+            transform: translateY(-3px);
+            box-shadow: 0 12px 25px rgba(0, 90, 49, 0.3);
+        }
+
+        .info-box {
+            background-color: #f0fdf4; /* Very light green tint */
+            border-radius: 12px;
+            padding: 1rem 1.25rem;
+            text-align: left;
+            margin-top: 1.5rem;
+            border: 1px solid #dcfce7;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
     <div class="row justify-content-center">
-        <div class="col-lg-8">
-            <div class="card success-page-card text-center">
-                <div class="card-body p-4 p-md-5">
-
-                    <!-- The Animated Success Icon -->
-                    <div class="success-icon-wrapper mb-4">
-                        <i class="fas fa-check success-icon"></i>
+        <div class="col-12">
+            
+            <div class="campaign-wrapper">
+                
+                <!-- 1. HEADER CARD (Background) -->
+                <div class="header-card">
+                    <div class="icon-circle shadow-sm">
+                        <i class="fas fa-check"></i>
                     </div>
-
-                    <!-- The Validation & Thank You Message -->
-                    <h1 class="display-5 fw-bold">{% trans "You're a Pioneer!" %}</h1>
-                    <p class="lead text-muted">
+                    <h1 class="h3 fw-bold mb-2">{% trans "You're a Pioneer!" %}</h1>
+                    <p class="opacity-90 mb-0 small">
                         {% blocktrans with property_name=property.name %}
-                        Thank you for adding <strong class="text-primary">{{ property_name }}</strong> to ShelterTree. You're helping build a more transparent community.
+                        <strong class="text-warning">{{ property_name }}</strong> is now in our system.
                         {% endblocktrans %}
                     </p>
-                    <p>{% trans "Our team will review the submission, typically within 24 hours." %}</p>
+                </div>
 
-                    <hr class="my-4">
+                <!-- 2. ACTION CARD (Foreground - Popout) -->
+                <div class="action-card">
+                    
+                    <h2 class="h4 fw-bold mb-2 text-dark">{% trans "Don't Stop Now." %}</h2>
+                    <p class="text-muted mb-4 small">
+                        {% trans "An address is just a location. Your experience is the story. Add the first review to help your community." %}
+                    </p>
 
-                    <!-- The "Next Step" Call to Action -->
-                    <div class="next-step-section">
-                        <h2 class="h3 fw-bold">{% trans "Ready for the Final Step?" %}</h2>
-                        <p class="mb-3">
-                            {% trans "Your property is in the queue, but your journey isn't over. Add your specific unit details and write your review now. It will be automatically published once the property is approved." %}
-                        </p>
-                        
-                        <!-- The Primary CTA Button -->
-                        <a href="{% url 'reviews:add-unit-and-review' property.pk %}" class="btn btn-primary btn-lg rounded-pill px-5 py-3">
-                            <i class="fas fa-pencil-alt me-2"></i>{% trans "Continue to Add Your Review" %}
+                    <!-- PRIMARY CTA: High Contrast, Front and Center -->
+                    <div class="d-grid gap-3">
+                        <a href="{% url 'reviews:property-continue-to-review' property.pk %}" class="btn btn-primary btn-lg rounded-pill py-3 fw-bold">
+                            <i class="fas fa-star me-2"></i>{% trans "Write the First Review" %}
                         </a>
                     </div>
-                    
-                    <!-- The Secondary "Escape Hatch" Link -->
-                    <div class="mt-3">
-                        <a href="{% url 'reviews:home' %}" class="text-muted small">{% trans "I'll do this later" %}</a>
+
+                    <!-- INFO BOX: Reassurance (Secondary Hierarchy) -->
+                    <div class="info-box">
+                        <div class="d-flex">
+                            <i class="fas fa-info-circle text-success mt-1 me-3 flex-shrink-0"></i>
+                            <div>
+                                <p class="small text-muted mb-0 lh-sm">
+                                    {% trans "Your review will be published automatically as soon as our team approves the property details (usually within 24h)." %}
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- SECONDARY CTA: Explicit "Exit" -->
+                    <div class="mt-4">
+                        <a href="{% url 'reviews:lazy-flow-skip' %}" class="text-muted small text-decoration-none">
+                            {% trans "Skip & go to Homepage" %}
+                        </a>
                     </div>
 
                 </div>
+
+                <!-- Footer / Trust Signals -->
+                <div class="text-center mt-4 opacity-75">
+                    <p class="small text-muted mb-0"><i class="fas fa-lock me-1"></i> {% trans "Your contribution is secure & anonymous." %}</p>
+                </div>
+
             </div>
+
         </div>
     </div>
 </div>
-{% endblock %}
+
+</body>
+</html>

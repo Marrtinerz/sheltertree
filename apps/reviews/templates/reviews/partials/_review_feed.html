@@ -91,14 +91,13 @@
                 It's the definitive "ShelterTree Way" to handle this UI pattern.
             {% endcomment %}
 
-            {% if not user.is_authenticated %}
+            {% comment %} {% if not user.is_authenticated %}
                 <p class="text-info mb-3">
                     <a href="{% url 'account_login' %}?next={{ request.path }}" class="nav-link text-info">
                         {% trans "Log in or sign up to leave a review" %}
                     </a>
                 </p>
-            {% endif %}
-            {% comment %} <p class="text-info mb-3">{% trans "Log in or sign up to leave a review"%}</p> {% endcomment %}
+            {% endif %} {% endcomment %}
             <!-- THE FIX: Wrap the buttons in a flex container -->
             <div class="d-flex justify-content-center flex-wrap gap-3">
                 <!-- The `me-2` is now removed from this button -->

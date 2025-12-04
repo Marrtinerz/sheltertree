@@ -1,5 +1,6 @@
 # apps/users/adapter.py
 
+from datetime import timedelta
 from allauth.account.adapter import DefaultAccountAdapter
 from django.urls import reverse
 from django.contrib import messages
@@ -10,64 +11,79 @@ from allauth.socialaccount.adapter import DefaultSocialAccountAdapter
 from allauth.core.exceptions import ImmediateHttpResponse
 from django.shortcuts import redirect
 from django.contrib.auth import get_user_model
+from django.utils import timezone
+from apps.reviews.models import Review, Property
 
 class MyAccountAdapter(DefaultAccountAdapter):
 
-    # def get_login_redirect_url(self, request):
-    #     """
-    #     This method is called after a user successfully logs in.
+    def get_login_redirect_url(self, request):
+        # print("DEBUG: get_login_redirect_url called")
+        smart_url = self._get_smart_redirect(request, request.user)
+        if smart_url:
+            # print(f"DEBUG: Redirecting to {smart_url}")
+            return smart_url
+        # print("DEBUG: Falling back to default login redirect")
+        return super().get_login_redirect_url(request)
 
-    #     We first check for a specific redirect URL that we manually saved
-    #     in the session. This is the most reliable way to handle redirects
-    #     that must survive a complex flow like email confirmation.
+    def get_email_verification_redirect_url(self, email_address):
+        # print("DEBUG: get_email_verification_redirect_url called")
+        request = self.request 
+        # email_address.user is the user instance associated with the email
+        user = email_address.user
+        # print(f"DEBUG: User is {user}")
 
-    #     If our specific URL isn't found, we fall back to Allauth's default
-    #     logic, which will use the `next` parameter or the LOGIN_REDIRECT_URL.
-    #     """
+        smart_url = self._get_smart_redirect(request, user)
+        if smart_url:
+            # print(f"DEBUG: Redirecting to {smart_url}")
+            return smart_url
         
-    #     # --- THE DEFINITIVE FIX ---
-    #     # Try to retrieve (and remove) our manually saved URL from the session.
-    #     # The .pop() method is ideal here.
-    #     redirect_url = request.session.pop('login_redirect_url', None)
-        
-    #     if redirect_url:
-    #         # If we found our URL, use it. This is our highest priority.
-    #         return redirect_url
-        
-    #     # If our session variable wasn't there, fall back to the default behavior.
-    #     return super().get_login_redirect_url(request)
-    
-    # def get_password_change_redirect_url(self, request):
-    #     """
-    #     --- THE CRITICAL FIX ---
-    #     The method signature has been corrected to (self, request), which matches
-    #     the parent class in django-allauth. The 'user' argument has been removed.
-        
-    #     This method is called by allauth after a password is successfully changed.
-    #     We override it to redirect to the user's profile hub.
-    #     """
-    #     # We can still access the user via request.user if needed, but it's not required here.
-        
-    #     # Add a success message that will be displayed on the destination page.
-    #     # messages.success(request, _("Your password has been changed successfully."))
-        
-    #     # Return the URL of the profile hub.
-    #     return reverse('account_profile')
-    
+        # print("DEBUG: Falling back to default email verification redirect")
+        return super().get_email_verification_redirect_url(email_address)
+
+    def _get_smart_redirect(self, request, user):
+        """
+        Intelligent redirection.
+        """
+        # 0. EXIT EARLY if flow is already complete
+        if user and hasattr(user, 'lazy_registration_complete') and user.lazy_registration_complete:
+            # print("DEBUG: User has already completed lazy flow. Ignoring recent content.")
+            return None
+
+        # 1. Session Check (Fastest)
+        if request and 'pending_review_submission' in request.session:
+            # print("DEBUG: Found pending_review_submission in session")
+            return reverse('reviews:process-pending-review')
+        if request and 'pending_property_submission' in request.session:
+            # print("DEBUG: Found pending_property_submission in session")
+            return reverse('reviews:process-pending-property')
+
+        # 2. Database Fallback (No Time Limit)
+        # We simply check if this user has authored ANY content recently.
+        if user:
+            # print(f"DEBUG: Checking DB for user {user.pk}")
+            
+            # Check for ANY review by this author (We assume the most recent is the one)
+            # We sort by ID desc to get the latest.
+            latest_review = Review.objects.filter(author=user).order_by('-id').first()
+            if latest_review:
+                # print(f"DEBUG: Found review {latest_review.pk} for user")
+                return reverse('reviews:process-pending-review')
+            
+            # Check for ANY property
+            latest_prop = Property.objects.filter(added_by=user).order_by('-id').first()
+            if latest_prop:
+                # print(f"DEBUG: Found property {latest_prop.pk} for user")
+                return reverse('reviews:process-pending-property')
+            
+            # print("DEBUG: No reviews or properties found for user in DB")
+
+        return None
+
+    # ... (Keep generate_email_verification_code and format_email_subject as is) ...
     def generate_email_verification_code(self):
-        """
-        Overrides the default alphanumeric code generation to create a
-        simple, 6-digit numeric code.
-        """
         return str(random.randint(100000, 999999))
     
     def format_email_subject(self, subject):
-        """
-        Overrides the default subject formatting to remove the site name prefix.
-        This gives us full, clean control over our email subject lines.
-        """
-        # The default adapter adds a "[Site Name]" prefix.
-        # Our new, world-class version simply returns the subject as-is.
         return force_str(subject)
     
 

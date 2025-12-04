@@ -1,0 +1,52 @@
+{% extends "base.html" %}
+{% load i18n %}
+
+{% block title %}{% trans "Property Submitted" %} | ShelterTree{% endblock %}
+
+{% block content %}
+<div class="container my-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <div class="card success-page-card text-center">
+                <div class="card-body p-4 p-md-5">
+
+                    <!-- The Animated Success Icon -->
+                    <div class="success-icon-wrapper mb-4">
+                        <i class="fas fa-check success-icon"></i>
+                    </div>
+
+                    <!-- The Validation & Thank You Message -->
+                    <h1 class="display-5 fw-bold">{% trans "You're a Pioneer!" %}</h1>
+                    <p class="lead text-muted">
+                        {% blocktrans with property_name=property.name %}
+                        Thank you for adding <strong class="text-primary">{{ property_name }}</strong> to ShelterTree. You're helping build a more transparent community.
+                        {% endblocktrans %}
+                    </p>
+                    <p>{% trans "Our team will review the submission, typically within 24 hours." %}</p>
+
+                    <hr class="my-4">
+
+                    <!-- The "Next Step" Call to Action -->
+                    <div class="next-step-section">
+                        <h2 class="h3 fw-bold">{% trans "Ready for the Final Step?" %}</h2>
+                        <p class="mb-3">
+                            {% trans "Your property is in the queue, but your journey isn't over. Add your specific unit details and write your review now. It will be automatically published once the property is approved." %}
+                        </p>
+                        
+                        <!-- The Primary CTA Button -->
+                        <a href="{% url 'reviews:add-unit-and-review' property.pk %}" class="btn btn-primary btn-lg rounded-pill px-5 py-3">
+                            <i class="fas fa-pencil-alt me-2"></i>{% trans "Continue to Add Your Review" %}
+                        </a>
+                    </div>
+                    
+                    <!-- The Secondary "Escape Hatch" Link -->
+                    <div class="mt-3">
+                        <a href="{% url 'reviews:home' %}" class="text-muted small">{% trans "I'll do this later" %}</a>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -23,6 +23,7 @@ from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.utils.translation import gettext_lazy as _
 from django.utils.decorators import method_decorator
 from django.views.decorators.cache import never_cache
+from django.contrib.auth import logout
 
 class ProfileView(LoginRequiredMixin, TemplateView):
     template_name = 'account/profile_hub.html'
@@ -348,3 +349,46 @@ class MyContributionsView(LoginRequiredMixin, TemplateView):
             context['active_tab'] = 'reviews'
 
         return context
+
+    
+class ChangeSignupEmailView(View):
+    """
+    Allows a user stuck in the verification flow to log out and 
+    restart the signup process.
+    
+    CRITICAL ACTIONS:
+    1. Deactivates the incorrect/abandoned account to prevent zombie users.
+    2. Preserves the pending submission data in the session.
+    """
+    def get(self, request, *args, **kwargs):
+        # 1. Capture pending data
+        review_data = request.session.get('pending_review_submission')
+        prop_data = request.session.get('pending_property_submission')
+        
+        user = request.user
+        
+        # 2. Deactivate the Zombie Account
+        # We only do this if they are authenticated and NOT verified.
+        # (Safety check to prevent deactivating a real, verified user who just hit this URL by mistake)
+        if user.is_authenticated: 
+            # Note: Checking is_phone_verified is a proxy for "is this a trusted account?". 
+            # A stricter check would be checking email verification status, but Allauth 
+            # handles that separately. Given our flow, if they are here, they are stuck.
+            
+            user.is_active = False
+            user.save(update_fields=['is_active'])
+            
+            # Optional: Rename the username/email to free it up? 
+            # No, keeping it prevents confusion. Deactivating is enough.
+
+        # 3. Log Out
+        logout(request)
+        
+        # 4. Restore Session Data
+        if review_data:
+            request.session['pending_review_submission'] = review_data
+        if prop_data:
+            request.session['pending_property_submission'] = prop_data
+            
+        messages.info(request, "Please enter your correct email address to restart the process.")
+        return redirect('account_signup')

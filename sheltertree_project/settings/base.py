@@ -69,7 +69,7 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     # The allauth middleware is required for its advanced session
     # management and other authentication-related features.
-    "allauth.account.middleware.AccountMiddleware",
+    'allauth.account.middleware.AccountMiddleware',
     'apps.users.middleware.OnboardingMiddleware',
 ]
 

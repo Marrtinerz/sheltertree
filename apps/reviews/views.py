@@ -1,3 +1,4 @@
+from datetime import timedelta
 from django.shortcuts import render, redirect, get_object_or_404
 from django.urls import reverse_lazy
 from django.views.generic import ListView, DetailView
@@ -5,7 +6,7 @@ from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.utils.translation import gettext_lazy as _
 from django.db.models import Avg, Count, Sum, OuterRef, Subquery, Case, When, IntegerField
-from django.views.generic import TemplateView, CreateView
+from django.views.generic import TemplateView, CreateView, View
 from django.contrib.postgres.search import SearchQuery, SearchRank, SearchVector
 from .models import Property, PropertyUnit, Review, PropertyStatus, ReviewStatus, Vote, PropertyManager, FloodingSeverity
 from .forms import PropertyForm, PropertyUnitForm, ReviewForm, PropertySearchForm
@@ -21,6 +22,7 @@ from apps.core.event_bus import EventBus
 from django.db.models import Count
 from apps.core.forms import PlatformFeedbackForm
 from apps.core.models import PlatformFeedback
+from django.utils import timezone
 
 
 # --- READ-ONLY VIEWS (for the public) ---
@@ -410,33 +412,52 @@ class PropertyDetailView(DetailView):
 
 # --- WRITE VIEWS (for logged-in users, protected by @login_required) ---
 
-class AddPropertyView(LoginRequiredMixin, CreateView):
+class AddPropertyView(CreateView):
+    """
+    Handles the creation of a new Property.
+    Supports "Lazy Registration" (Anonymous Submissions).
+    - Logged In: Creates property linked to user.
+    - Anonymous: Creates 'Orphan' property and prompts login to claim it.
+    """
     model = Property
     form_class = PropertyForm
     template_name = 'reviews/add_property.html'
     
     def form_valid(self, form):
-        """
-        This is the corrected implementation. We modify the form's instance
-        and then let the parent class handle the save operation.
-        """
-        # Set the fields that are not on the form
-        form.instance.status = PropertyStatus.PENDING_APPROVAL
-        form.instance.added_by = self.request.user
-        
-        messages.success(self.request, _("Property submitted for review! Now, please add your unit and review."))
-        
-        # DO NOT save here. Let the parent class do it.
-        # The super().form_valid(form) call will save the instance and set self.object.
-        return super().form_valid(form)
+        # --- PATH A: LOGGED IN ---
+        if self.request.user.is_authenticated:
+            form.instance.status = PropertyStatus.PENDING_APPROVAL
+            form.instance.added_by = self.request.user
+            self.object = form.save()
+            
+            # messages.success(self.request, _("Property submitted for review! Now, please add your unit and review."))
+            
+            return redirect(self.get_success_url())
+
+        # --- PATH B: ANONYMOUS (The "Growth" Flow) ---
+        else:
+            # 1. SAVE to Database immediately (Capture the Inventory)
+            form.instance.status = PropertyStatus.PENDING_APPROVAL
+            form.instance.added_by = None # Orphaned for now
+            self.object = form.save()
+            
+            # 2. Store ID in session for "claiming" later
+            pending_data = {
+                'property_id': self.object.pk,
+                'type': 'property_claim' # Flag for the Handler
+            }
+            self.request.session['pending_property_submission'] = pending_data
+            
+            # 3. Redirect to Login -> Handler
+            login_url = reverse_lazy('account_login')
+            handler_url = reverse_lazy('reviews:process-pending-property')
+            
+            messages.info(self.request, _("Property saved! Please log in or sign up to claim it and add your review."))
+            
+            return redirect(f'{login_url}?next={handler_url}')
 
     def get_success_url(self):
-        """
-        This method will work correctly because the super().form_valid() call
-        in the corrected code above will set self.object before this is called.
-        """
         return reverse_lazy('reviews:add-property-success', kwargs={'pk': self.object.pk})
-
 
 def add_property_success(request, pk):
     """
@@ -447,124 +468,198 @@ def add_property_success(request, pk):
     return render(request, 'reviews/add_property_success.html', {'property': property_instance})
 
 
-class AddUnitAndReviewView(LoginRequiredMixin, TemplateView):
+class ProcessPendingPropertyView(LoginRequiredMixin, View):
+    """
+    Handles 'claiming' a property submitted anonymously.
+    Includes robustness for Signal race conditions and session loss.
+    """
+    def get(self, request, *args, **kwargs):
+        # 1. Try to get ID from Session
+        pending_data = request.session.get('pending_property_submission')
+        property_id = pending_data.get('property_id') if pending_data else None
+        
+        property_obj = None
+
+        # 2. Strategy A: Look up by ID (if session survived)
+        if property_id:
+            try:
+                property_obj = Property.objects.get(pk=property_id)
+            except Property.DoesNotExist:
+                pass
+        
+        # 3. Strategy B: Database Fallback (if session died)
+        if not property_obj:
+            # Look back 30 mins to match the Signal/Adapter window
+            recent_time = timezone.now() - timedelta(minutes=30)
+            property_obj = Property.objects.filter(
+                added_by=request.user, 
+                created_at__gte=recent_time
+            ).order_by('-created_at').first()
+
+        # 4. Final Validation (Stop the Loop Here)
+        if not property_obj:
+            # We truly have nothing. Stop loop and exit.
+            request.session['lazy_flow_completed'] = True
+            return redirect('home')
+
+        # --- CONVERGENCE POINT ---
+
+        # 5. Ownership Enforcement
+        # If we found it via Session ID, we ensure the current user owns it.
+        # This handles the "Typo User" case where we need to steal it back.
+        if property_obj.added_by != request.user:
+            property_obj.added_by = request.user
+            property_obj.save()
+
+        # 6. Analytics
+        bus = EventBus(request)
+        bus.push_event('submit_property') 
+
+        # 7. Clean up Session
+        if 'pending_property_submission' in request.session:
+            del request.session['pending_property_submission']
+            
+        # 8. Mark Flow Complete (Stop Middleware)
+        request.session['lazy_flow_completed'] = True
+
+        messages.success(request, _("Property verified! Now, please add your unit and review."))
+        return redirect('reviews:add-property-success', pk=property_obj.pk)
+
+class PropertyContinueToReviewView(LoginRequiredMixin, View):
+    """
+    Sets the lazy flow as complete, then forwards user to add a review.
+    """
+    def get(self, request, property_pk):
+        # 1. Mark flow as complete so middleware stops intercepting
+        if not request.user.lazy_registration_complete:
+            request.user.lazy_registration_complete = True
+            request.user.save(update_fields=['lazy_registration_complete'])
+        
+        # 2. Redirect to the next step
+        return redirect('reviews:add-unit-and-review', property_pk=property_pk)
+
+class AddUnitAndReviewView(TemplateView):
     """
     Handles the creation of a new PropertyUnit and its associated Review.
-    This view manages two forms simultaneously and provides a clean,
-    class-based structure for the logic.
+    Refactored for Lazy Registration (Draft Pattern).
     """
     template_name = 'reviews/add_unit_and_review.html'
     
     def dispatch(self, request, *args, **kwargs):
-        """
-        This method runs first. It's the perfect place to fetch objects
-        that are needed by both GET and POST requests.
-        """
-        # Fetch the parent property once and attach it to the view instance.
         self.property = get_object_or_404(Property, pk=self.kwargs['property_pk'])
         return super().dispatch(request, *args, **kwargs)
 
     def get_context_data(self, **kwargs):
-        """
-        Populates the context dictionary for the template.
-        """
         context = super().get_context_data(**kwargs)
         context['property'] = self.property
-        # If forms aren't passed in kwargs (e.g., on initial GET), create empty ones.
         context.setdefault('unit_form', PropertyUnitForm(property=self.property))
         context.setdefault('review_form', ReviewForm())
         return context
 
     def get(self, request, *args, **kwargs):
-        """
-        Handles GET requests: displays the empty forms.
-        """
         return self.render_to_response(self.get_context_data())
 
     def post(self, request, *args, **kwargs):
-        """
-        Handles POST requests: validates both forms and processes the data.
-        """
         unit_form = PropertyUnitForm(request.POST, property=self.property)
         review_form = ReviewForm(request.POST)
 
+        # Both forms must be valid to proceed
         if unit_form.is_valid() and review_form.is_valid():
             return self.forms_valid(unit_form, review_form)
         else:
             return self.forms_invalid(unit_form, review_form)
 
     def forms_valid(self, unit_form, review_form):
-        """
-        This method is called when both forms are valid.
-        It contains all the success logic from your original FBV.
-        """
-        # Save the unit, linking it to the property.
-        unit = unit_form.save(commit=False)
-        unit.property = self.property
-        unit.save()
-
-        # Save the review, linking it to the new unit and the user.
-        review = review_form.save(commit=False)
-        review.unit = unit
-        review.author = self.request.user
         
-        # Set the review's initial status based on the parent property's status.
-        if self.property.status == PropertyStatus.APPROVED:
+        # --- PATH A: LOGGED IN (Standard Flow) ---
+        if self.request.user.is_authenticated:
+            # 1. Save Unit
+            unit = unit_form.save(commit=False)
+            unit.property = self.property
+            unit.save()
+
+            # 2. Save Review
+            review = review_form.save(commit=False)
+            review.unit = unit
+            review.author = self.request.user
             review.status = ReviewStatus.PENDING_CONTENT_REVIEW
+            review.save()
+            
+            # 3. Handle Feedback
+            feedback_text = review_form.cleaned_data.get('platform_feedback')
+            if feedback_text and feedback_text.strip():
+                PlatformFeedback.objects.create(
+                    user=self.request.user,
+                    feedback_text=feedback_text,
+                    source_url=self.request.META.get('HTTP_REFERER', 'unknown')
+                )
+            
+            # 4. Analytics & Success
+            bus = EventBus(self.request)
+            bus.push_event('Lead')
+
+            self.object = review
+            return redirect(self.get_success_url())
+
+        # --- PATH B: ANONYMOUS (The "Draft" Flow) ---
         else:
-            review.status = ReviewStatus.PENDING_PROPERTY_APPROVAL
-        
-        # The Review's save() method handles the is_author_phone_verified snapshot.
-        review.save()
-        
-        # --- 2. THE WORLD-CLASS ADDITION: Process the optional feedback ---
-        feedback_text = review_form.cleaned_data.get('platform_feedback')
-        
-        if feedback_text and feedback_text.strip():
-            PlatformFeedback.objects.create(
-                user=self.request.user,
-                feedback_text=feedback_text,
-                source_url=self.request.META.get('HTTP_REFERER', 'unknown')
-            )
-        
-        # --- The trigger for the core value tracking in GA ---
-        bus = EventBus(self.request)
-        bus.push_event('Lead')
+            # --- PATH B: ANONYMOUS ---
+            # 1. Save Unit
+            unit = unit_form.save(commit=False)
+            unit.property = self.property
+            unit.save()
 
+            # 2. Save Review
+            review = review_form.save(commit=False)
+            review.unit = unit
+            review.author = None
+            review.status = ReviewStatus.PENDING_SIGNUP
+            review.save()
+            
+            # 3. Handle Feedback & Get ID
+            feedback_id = None # Initialize
+            feedback_text = review_form.cleaned_data.get('platform_feedback')
+            
+            if feedback_text and feedback_text.strip():
+                feedback = PlatformFeedback.objects.create(
+                    user=None,
+                    feedback_text=feedback_text,
+                    source_url="pending_signup_flow_unit_review"
+                )
+                feedback_id = feedback.pk # <--- CAPTURE ID
 
-        # Store the newly created review on the view instance so get_success_url can access it.
-        self.object = review
-        return redirect(self.get_success_url())
+            # 4. Store IDs in Session
+            pending_data = {
+                'review_id': review.pk,
+                'feedback_id': feedback_id, # <--- STORE ID
+                'type': 'unit_and_review' 
+            }
+            self.request.session['pending_review_submission'] = pending_data
+            
+            # 5. Redirect
+            login_url = reverse_lazy('account_login')
+            handler_url = reverse_lazy('reviews:process-pending-review')
+            messages.info(self.request, _("Unit added and review saved! Please log in or sign up to verify it."))
+            return redirect(f'{login_url}?next={handler_url}')
 
     def forms_invalid(self, unit_form, review_form):
-        """
-        This method is called when one or both forms are invalid.
-        It re-renders the page with the forms containing the error messages.
-        """
         return self.render_to_response(
             self.get_context_data(unit_form=unit_form, review_form=review_form)
         )
 
     def get_success_url(self):
-        """
-        Returns the URL to redirect to after a successful submission.
-        """
         return reverse_lazy('reviews:review_success', kwargs={'review_pk': self.object.pk})
 
-
-class AddReviewView(LoginRequiredMixin, CreateView):
+class AddReviewView(CreateView):
     """
     Handles the creation of a new Review for a specific PropertyUnit.
-    This is the modern, scalable, and professional "Review Composer" view.
+    Refactored to support "Lazy Registration" using the "Draft Pattern".
     """
     model = Review
     form_class = ReviewForm
-    template_name = 'reviews/add_review_to_unit.html' # The new premium template
+    template_name = 'reviews/add_review_to_unit.html'
 
     def get_context_data(self, **kwargs):
-        """
-        Passes the necessary unit and property context to the template.
-        """
         context = super().get_context_data(**kwargs)
         self.unit = get_object_or_404(PropertyUnit, pk=self.kwargs['unit_pk'])
         context['unit'] = self.unit
@@ -572,62 +667,168 @@ class AddReviewView(LoginRequiredMixin, CreateView):
         return context
 
     def get_form_kwargs(self):
-        """
-        Passes keyword arguments to the form. We could use this to pass
-        'is_bounty' if we were handling that flow here.
-        """
         kwargs = super().get_form_kwargs()
-        # Example for the future:
-        # unit = get_object_or_404(PropertyUnit, pk=self.kwargs['unit_pk'])
-        # if unit.property.community_question:
-        #     kwargs['is_bounty'] = True
         return kwargs
 
     def form_valid(self, form):
-        """
-        This method is called when the submitted form is valid.
-        It now handles both the Review and the optional PlatformFeedback.
-        """
-        unit = get_object_or_404(PropertyUnit, pk=self.kwargs['unit_pk'])
-        
-        # --- 1. Process the main Review object ---
-        review = form.save(commit=False)
-        review.unit = unit
-        review.author = self.request.user
-        review.status = ReviewStatus.PENDING_CONTENT_REVIEW
-        review.save()
-        self.object = review # Assign to self.object for get_success_url
+        self.unit = get_object_or_404(PropertyUnit, pk=self.kwargs['unit_pk'])
 
-        # --- 2. ADD THIS BLOCK: Process the optional feedback ---
-        feedback_text = form.cleaned_data.get('platform_feedback')
-        if feedback_text and feedback_text.strip():
-            PlatformFeedback.objects.create(
-                user=self.request.user,
-                feedback_text=feedback_text,
-                source_url=self.request.META.get('HTTP_REFERER', 'unknown')
-            )
-        
-        # --- 3. Continue with existing success logic ---
-        bus = EventBus(self.request)
-        bus.push_event('Lead')
-        
-        # Let the parent class handle the redirect.
-        # We call form.save() ourselves, so we pass commit=False to the parent
-        # to avoid saving twice. A better pattern is to let the parent save.
-        # Let's refactor for world-class practice:
-        
-        # The line `self.object = form.save()` above is sufficient.
-        # The call to super().form_valid(form) is what triggers the redirect.
-        return super().form_valid(form)
+        # --- PATH A: LOGGED IN (Standard Flow) ---
+        if self.request.user.is_authenticated:
+            
+            # 1. Process the Review
+            review = form.save(commit=False)
+            review.unit = self.unit
+            review.author = self.request.user
+            review.status = ReviewStatus.PENDING_CONTENT_REVIEW
+            review.save()
+            self.object = review 
+
+            # 2. Process Optional Feedback
+            feedback_text = form.cleaned_data.get('platform_feedback')
+            if feedback_text and feedback_text.strip():
+                PlatformFeedback.objects.create(
+                    user=self.request.user,
+                    feedback_text=feedback_text,
+                    source_url=self.request.META.get('HTTP_REFERER', 'unknown')
+                )
+            
+            # 3. Analytics (Matches your GTM Custom Event Trigger)
+            bus = EventBus(self.request)
+            bus.push_event('Lead')
+            
+            return redirect(self.get_success_url())
+
+        # --- PATH B: ANONYMOUS (The "Draft" Flow) ---
+        else:
+            # 1. SAVE to Database as Draft (Capture the Data)
+            review = form.save(commit=False)
+            review.unit = self.unit
+            review.author = None 
+            review.status = ReviewStatus.PENDING_SIGNUP
+            review.save()
+            
+            # 2. Capture Feedback & Get ID
+            feedback_id = None # Initialize
+            feedback_text = form.cleaned_data.get('platform_feedback')
+            
+            if feedback_text and feedback_text.strip():
+                feedback = PlatformFeedback.objects.create(
+                    user=None,
+                    feedback_text=feedback_text,
+                    source_url="pending_signup_flow"
+                )
+                feedback_id = feedback.pk # <--- CAPTURE ID
+
+            # 3. Store IDs in session
+            pending_data = {
+                'review_id': review.pk, 
+                'feedback_id': feedback_id, # <--- STORE ID
+                'type': 'review_only'
+            }
+            
+            self.request.session['pending_review_submission'] = pending_data
+            
+            # 4. Redirect
+            login_url = reverse_lazy('account_login')
+            handler_url = reverse_lazy('reviews:process-pending-review')
+            messages.info(self.request, _("Your review has been saved! Please log in or sign up to verify it and make it live."))
+            return redirect(f'{login_url}?next={handler_url}')
 
     def get_success_url(self):
-        """
-        Returns the URL to redirect to after a successful submission.
-        This is where we send the user to our "incentive" page.
-        """
         return reverse_lazy('reviews:review_success', kwargs={'review_pk': self.object.pk})
     
+class ProcessPendingReviewView(LoginRequiredMixin, View):
+    """
+    Handles the post-login redirection for reviews.
+    Includes Trusted Handoff logic (Stealing from Typo User) and Status Promotion.
+    """
+    def get(self, request, *args, **kwargs):
+        # 1. Try to get ID from Session
+        pending_data = request.session.get('pending_review_submission')
+        review_id = pending_data.get('review_id') if pending_data else None
 
+        review = None
+
+        # 2. Strategy A: Look up by ID (if session survived)
+        if review_id:
+            try:
+                review = Review.objects.get(pk=review_id)
+            except Review.DoesNotExist:
+                pass
+
+        # 3. Strategy B: Database Fallback (if session died)
+        if not review:
+            recent_time = timezone.now() - timedelta(minutes=30)
+            review = Review.objects.filter(
+                author=request.user, 
+                created_at__gte=recent_time
+            ).order_by('-created_at').first()
+
+        # 4. Final Validation
+        if not review:
+            request.session['lazy_flow_completed'] = True
+            return redirect('home')
+
+        # --- CONVERGENCE POINT ---
+        
+        # 5. Ownership Enforcement (Trusted Handoff)
+        # If we have the session ID (or found it via DB fallback), we enforce ownership.
+        # This fixes the "Typo User" case. We steal it back.
+        if review.author != request.user:
+            review.author = request.user
+
+        # 6. Status Promotion (The "Go Live" Step)
+        # We ensure the review is moved out of the "Pending Signup" limbo.
+        # This runs even if the Signal already claimed it, ensuring consistency.
+        if review.status == ReviewStatus.PENDING_SIGNUP:
+            if review.unit.property.status == PropertyStatus.APPROVED:
+                review.status = ReviewStatus.PENDING_CONTENT_REVIEW
+            else:
+                review.status = ReviewStatus.PENDING_PROPERTY_APPROVAL
+
+        # 7. Sync Verification
+        if request.user.is_phone_verified and not review.is_author_phone_verified:
+            review.is_author_phone_verified = True
+            
+        review.save()
+
+        # 8. Analytics (Conversion Event)
+        bus = EventBus(request)
+        bus.push_event('submit_review') 
+
+        # 9. Cleanup Session
+        if 'pending_review_submission' in request.session:
+            del request.session['pending_review_submission']
+
+        # 10. Mark Flow Complete (Stop Middleware)
+        request.session['lazy_flow_completed'] = True
+
+        return redirect('reviews:review_success', review_pk=review.pk)
+    
+class SkipLazyFlow(LoginRequiredMixin, View):
+    """
+    Marks the lazy registration flow as complete and redirects to Home.
+    """
+    def get(self, request, *args, **kwargs):
+        user = request.user
+        
+        if not user.lazy_registration_complete:
+            user.lazy_registration_complete = True
+            user.save(update_fields=['lazy_registration_complete'])
+
+        # messages.info(request, _("You can verify your account later from your Profile."))
+        return redirect('reviews:home') # Redirect to Home, not property-list (simpler)
+    
+class StartVerificationFromLazyFlow(LoginRequiredMixin, View):
+    def get(self, request, *args, **kwargs):
+        # 1. Mark flow as complete (so middleware stops intercepting)
+        request.user.lazy_registration_complete = True
+        request.user.save(update_fields=['lazy_registration_complete'])
+        
+        # 2. Redirect to Phone Add
+        return redirect('phone_add')
+        
 class HomePageView(TemplateView):
     """
     Renders the static homepage. The search form is added to the context

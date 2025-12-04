@@ -10,4 +10,5 @@ urlpatterns = [
     path('phone/add/', views.AddPhoneView.as_view(), name='phone_add'),
     path('phone/verify/', views.VerifyPhoneView.as_view(), name='phone_verify'),
     path('my-contributions/', views.MyContributionsView.as_view(), name='my_contributions'),
+    path('signup/change-email/', views.ChangeSignupEmailView.as_view(), name='change_signup_email'),
 ]
