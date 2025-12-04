@@ -1,0 +1,353 @@
+{% load i18n %}
+{% load static %}
+{% load widget_tweaks %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% trans "The Truth Campaign" %} | ShelterTree</title>
+    
+    <!-- BRANDING & ICONS -->
+    <link rel="shortcut icon" href="{% static 'favicons/favicon.ico' %}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- FONTS & BOOTSTRAP -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&display=swap" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    
+    <!-- ANIMATION -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"/>
+
+    <style>
+        :root {
+            --st-green: #005A31;
+            --st-accent: #21b576;
+            --st-gold: #FFC107;
+        }
+        
+        body {
+            font-family: 'Inter', sans-serif;
+            overflow-x: hidden;
+        }
+
+        /* --- 1. IMMERSIVE HEADER --- */
+        .campaign-nav {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            z-index: 1000;
+            padding: 1.5rem 0;
+        }
+        .brand-logo {
+            height: 60px; /* Constraints the vertical logo */
+            width: auto;
+            /* Optional: Make logo pure white for contrast on dark bg */
+            filter: brightness(0) invert(1); 
+            transition: transform 0.3s ease;
+        }
+        .brand-logo:hover { transform: scale(1.05); }
+
+        /* --- 2. HERO SECTION --- */
+        .hero {
+            min-height: 100vh; /* Takes full screen */
+            background: linear-gradient(180deg, rgba(0,20,10,0.85) 0%, rgba(0,40,20,0.7) 100%), 
+                        url('{% static "img/campaign_hero_bg.jpg" %}');
+            background-size: cover;
+            background-position: center;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            padding-top: 80px; /* Offset for logo */
+        }
+
+        /* --- 3. SEARCH CONTAINER (Glassmorphism) --- */
+        .search-glass {
+            background: rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 50px;
+            padding: 8px;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        .search-glass:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 15px 35px rgba(0,0,0,0.2);
+        }
+        .form-control-glass {
+            background: transparent;
+            border: none;
+            color: white;
+            font-size: 1.1rem;
+            padding-left: 20px;
+        }
+        .form-control-glass::placeholder { color: rgba(255,255,255,0.7); }
+        .form-control-glass:focus { 
+            background: transparent; 
+            box-shadow: none; 
+            color: white; 
+        }
+
+        /* --- 4. ANIMATED BADGE --- */
+        .truth-badge {
+            background-color: var(--st-gold);
+            color: #000;
+            font-weight: 800;
+            letter-spacing: 1px;
+            padding: 8px 16px;
+            border-radius: 30px;
+            display: inline-block;
+            margin-bottom: 1.5rem;
+            box-shadow: 0 0 15px rgba(255, 193, 7, 0.5);
+        }
+
+        /* --- 5. SUGGESTIONS DROPDOWN --- */
+        #suggestions-container {
+            position: absolute;
+            top: 110%; /* Push it down slightly */
+            left: 15px;
+            right: 15px;
+            background: white;
+            border-radius: 16px;
+            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            z-index: 1050;
+            text-align: left;
+        }
+        .list-group-item {
+            border: none;
+            padding: 12px 20px;
+            color: #333;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+        .list-group-item:hover { background-color: #f8f9fa; color: var(--st-green); }
+        .list-group-item strong { color: var(--st-green); }
+
+        /* --- 6. TRUST FOOTER --- */
+        .trust-footer {
+            position: absolute;
+            bottom: 20px;
+            width: 100%;
+            text-align: center;
+            opacity: 0.7;
+            font-size: 0.85rem;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- 1. MINIMAL HEADER (LOGO ONLY) -->
+    <nav class="campaign-nav text-center">
+        <div class="container">
+            <a href="{% url 'reviews:home' %}">
+                <!-- IMPORTANT: Ensure this path matches your logo file -->
+                <img src="{% static 'img/brand/logo.png' %}" alt="ShelterTree Logo" class="brand-logo">
+            </a>
+        </div>
+    </nav>
+
+    <!-- 2. HERO CONTENT -->
+    <section class="hero">
+        <div class="container text-center">
+            <div class="row justify-content-center">
+                <div class="col-lg-9 col-xl-8">
+                    
+                    <!-- Hook -->
+                    <div class="animate__animated animate__fadeInDown">
+                        <div class="truth-badge">
+                            <i class="fas fa-bullhorn me-2"></i>THE TRUTH CAMPAIGN
+                        </div>
+                    </div>
+
+                    <!-- Headline -->
+                    <h1 class="display-3 fw-bold mb-3 animate__animated animate__fadeInUp animate__delay-1s">
+                        Does Your Landlord Deserve <span style="color: var(--st-gold);">5 Stars?</span>
+                    </h1>
+                    
+                    <!-- Subhead -->
+                    <h2 class="h2 fw-light mb-5 text-white-50 animate__animated animate__fadeInUp animate__delay-1s">
+                        ...Or a Warning Label?
+                    </h2>
+
+                    <!-- Search Bar -->
+                    <div class="search-wrapper mb-4 animate__animated animate__fadeInUp animate__delay-2s position-relative">
+                        <div class="search-glass d-flex align-items-center">
+                            
+                            <!-- Search Icon (Spinner logic hook) -->
+                            <i id="search-icon" class="fas fa-search text-white ms-3 fs-5"></i>
+                            
+                            <!-- The Input -->
+                            <!-- Note: We use the existing SearchForm from context, or manual input -->
+                            <input type="text" 
+                                   id="campaign-search-input" 
+                                   name="q" 
+                                   class="form-control form-control-glass flex-grow-1" 
+                                   placeholder="Type the name of your estate, street, or building..." 
+                                   autocomplete="off">
+                            
+                            <!-- The Button -->
+                            <button id="search-submit-btn" class="btn btn-light rounded-pill px-4 py-2 fw-bold text-uppercase ms-2" style="color: var(--st-green);">
+                                Review It
+                            </button>
+                        </div>
+
+                        <!-- Suggestions Dropdown (Populated by JS) -->
+                        <div id="suggestions-container" style="display: none;"></div>
+                    </div>
+
+                    <!-- Trust Indicators -->
+                    <div class="d-flex justify-content-center gap-4 text-white-50 animate__animated animate__fadeIn animate__delay-3s">
+                        <div class="d-flex align-items-center">
+                            <i class="fas fa-shield-alt me-2 text-success"></i>
+                            <span>Anonymous</span>
+                        </div>
+                        <div class="d-flex align-items-center">
+                            <i class="fas fa-check-circle me-2 text-success"></i>
+                            <span>Verified</span>
+                        </div>
+                        <div class="d-flex align-items-center">
+                            <i class="fas fa-bolt me-2 text-warning"></i>
+                            <span>Impactful</span>
+                        </div>
+                    </div>
+
+                    <!-- Secondary Option (Subtle) -->
+                    <div class="mt-5 animate__animated animate__fadeIn animate__delay-3s">
+                        <a href="{% url 'reviews:property-list' %}" class="text-white text-decoration-none opacity-50 small hover-opacity">
+                            Not ready to review? <span class="text-white text-decoration-underline">Browse reports instead.</span>
+                        </a>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- TRUST FOOTER -->
+    <div class="trust-footer text-white">
+        <p class="mb-0">&copy; {% now "Y" %} ShelterTree. Built for the Community.</p>
+    </div>
+
+    <!-- ==================================================================== -->
+    <!-- JAVASCRIPT (Smart Search Logic)                                      -->
+    <!-- ==================================================================== -->
+    <script>
+        // Configuration
+        const GOOGLE_API_KEY = "{{ GOOGLE_MAPS_API_KEY }}";
+        const SEARCH_URL = "{% url 'reviews:search' %}";
+        let sessionToken;
+        const DEBOUNCE_DELAY = 400;
+
+        const ui = {
+            input: document.getElementById('campaign-search-input'),
+            container: document.getElementById('suggestions-container'),
+            icon: document.getElementById('search-icon'),
+            btn: document.getElementById('search-submit-btn')
+        };
+
+        // Initialize Google Places
+        function initAutocomplete() {
+            if (!ui.input) return;
+            
+            ui.input.addEventListener('focus', () => {
+                if (!sessionToken) sessionToken = new google.maps.places.AutocompleteSessionToken();
+            });
+
+            ui.input.addEventListener('input', debounce(async (e) => {
+                const val = e.target.value;
+                if (val.length > 2) {
+                    await fetchSuggestions(val);
+                } else {
+                    ui.container.style.display = 'none';
+                }
+            }, DEBOUNCE_DELAY));
+
+            // Handle "Review It" button click manually to force the intent
+            ui.btn.addEventListener('click', (e) => {
+                e.preventDefault();
+                submitSearch(ui.input.value);
+            });
+            
+            // Handle "Enter" key
+            ui.input.addEventListener('keypress', (e) => {
+                if (e.key === 'Enter') {
+                    e.preventDefault();
+                    submitSearch(ui.input.value);
+                }
+            });
+        }
+
+        // Fetch Logic
+        async function fetchSuggestions(query) {
+            try {
+                const { suggestions } = await google.maps.places.AutocompleteSuggestion.fetchAutocompleteSuggestions({
+                    input: query,
+                    sessionToken: sessionToken
+                });
+                renderSuggestions(suggestions);
+            } catch (e) { console.error(e); }
+        }
+
+        // Render Logic
+        function renderSuggestions(suggestions) {
+            ui.container.innerHTML = '';
+            if (!suggestions || suggestions.length === 0) {
+                ui.container.style.display = 'none';
+                return;
+            }
+
+            const ul = document.createElement('ul');
+            ul.className = 'list-group list-group-flush mb-0';
+
+            suggestions.forEach(s => {
+                const li = document.createElement('li');
+                li.className = 'list-group-item list-group-item-action';
+                // Highlight the matched text roughly
+                li.innerHTML = `<i class="fas fa-map-marker-alt text-muted me-2"></i> ${s.placePrediction.text.text}`;
+                
+                li.addEventListener('mousedown', () => {
+                    ui.input.value = s.placePrediction.text.text;
+                    ui.container.style.display = 'none';
+                    // Submit immediately upon selection for speed
+                    submitSearch(s.placePrediction.text.text);
+                });
+                ul.appendChild(li);
+            });
+
+            ui.container.appendChild(ul);
+            ui.container.style.display = 'block';
+        }
+
+        // Submit Logic (Redirects to Search Results with Intent)
+        function submitSearch(query) {
+            if (!query) return;
+            // Construct URL: /search/?q=Query&intent=review
+            const url = `${SEARCH_URL}?q=${encodeURIComponent(query)}&intent=review`;
+            window.location.href = url;
+        }
+
+        // Utilities
+        function debounce(func, delay) {
+            let timeout;
+            return function(...args) { clearTimeout(timeout); timeout = setTimeout(() => func.apply(this, args), delay); };
+        }
+        
+        // Hide dropdown on click outside
+        document.addEventListener('click', (e) => {
+            if (!ui.input.contains(e.target) && !ui.container.contains(e.target)) {
+                ui.container.style.display = 'none';
+            }
+        });
+
+    </script>
+    
+    <!-- Load Google Maps -->
+    <script src="https://maps.googleapis.com/maps/api/js?key={{ GOOGLE_MAPS_API_KEY }}&libraries=places&callback=initAutocomplete&loading=async" defer></script>
+
+</body>
+</html>

@@ -9,7 +9,7 @@
 <!-- ==================================================================== -->
 <!-- SECTION 1: THE "TRUTH" HERO                                          -->
 <!-- ==================================================================== -->
-<div class="hero-section" style="background: linear-gradient(rgba(0,0,0,0.7), rgba(0,0,0,0.7)), url('{% static 'img/campaign_hero_bg.jpg' %}'); background-size: cover; background-position: center;">
+<div class="hero-section" style="background: linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.5)), url('{% static 'img/hero_background.jpg' %}'); background-size: cover; background-position: center;">
     <div class="container text-center text-white py-5">
         <div class="row justify-content-center align-items-center" style="min-height: 70vh;">
             <div class="col-lg-9">
@@ -33,7 +33,7 @@
                                 {{ search_form.q }} <!-- Ensure your form widget has placeholder="Type your estate or street name..." -->
                             </div>
                             <button class="btn btn-primary rounded-pill px-4 ms-2 fw-bold" type="submit">
-                                {% trans "Review This Place" %}
+                                {% trans "Review this Home" %}
                             </button>
                         </form>
                     </div>
@@ -50,7 +50,7 @@
 <div class="container py-5">
     <div class="row text-center mb-5">
         <div class="col-lg-8 mx-auto">
-            <h2 class="fw-bold">{% trans "What is ShelterTree?" %}</h2>
+            <h2 class="fw-bold">{% trans "Who is ShelterTree?" %}</h2>
             <p class="lead text-muted">{% trans "We are not agents. We are not landlords. We are the database of truth for African housing." %}</p>
         </div>
     </div>
@@ -61,7 +61,7 @@
             <div class="p-4 h-100 border rounded-3 bg-light">
                 <div class="text-primary mb-3"><i class="fas fa-bullhorn fa-3x"></i></div>
                 <h4 class="fw-bold">{% trans "A Voice for Tenants" %}</h4>
-                <p class="text-muted">{% trans "For years, landlords held all the power. Now, you have a voice. Share your story—good or bad—and hold them accountable." %}</p>
+                <p class="text-muted">{% trans "For years, Agents & landlords held all the power. Now, you have a voice. Share your story—good or bad—and hold them accountable." %}</p>
             </div>
         </div>
         <!-- Feature 2 -->

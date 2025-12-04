@@ -834,7 +834,7 @@ class HomePageView(TemplateView):
     Renders the static homepage. The search form is added to the context
     via the global context processor.
     """
-    template_name = 'reviews/home.html'
+    template_name = 'reviews/review_landing_page.html'
 
 
 def vote_on_review(request, review_pk):
