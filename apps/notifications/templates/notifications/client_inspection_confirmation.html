@@ -1,0 +1,25 @@
+{% extends "base_email.html" %}
+
+{% block content %}
+    <p>Hi {{ name }},</p>
+
+    <p><strong>Thank you for choosing certainty over risk.</strong></p> 
+    
+    <p>We have successfully received your request for a ShelterTree Property Inspection.</p>
+
+    <div style="border-left: 4px solid #005A31; padding-left: 15px; margin: 20px 0;">
+        <p><strong>What happens next?</strong></p>
+        <p>A ShelterTree Intelligence Officer will review your details and contact you within <strong>2 business hours</strong> to verify access and confirm the schedule.</p>
+    </div>
+
+    <p>If you are on a tight deadline, you can fast-track your request by messaging us directly:</p>
+
+    <div class="button-container">
+        
+        <a href="https://wa.me/2348026016593" class="button" style="background-color: #25D366;">Chat on WhatsApp</a>
+    </div>
+
+    <p>We look forward to protecting your investment.</p>
+
+    <p>Best regards,<br><strong>The ShelterTree Team</strong></p>
+{% endblock %}

@@ -148,6 +148,42 @@ class NotificationService:
             recipient_list=[user.email] if user else None
         )
         
+        
+    #inspection service notifications   
+    def send_inspection_inquiry_admin_alert(self, inquiry_data):
+        """
+        Notifies the internal team (you) immediately when a new lead comes in.
+        """
+        # Hardcoded admin email for now, or fetch from settings
+        admin_email = settings.ADMIN_EMAIL_RECEIVER # Ensure this is set in settings.py!
+        
+        context = {
+            'name': inquiry_data.get('name'),
+            'email': inquiry_data.get('email'),
+            'phone_number': inquiry_data.get('phone_number'),
+            'property_details': inquiry_data.get('property_details'),
+        }
+        
+        self._send_email(
+            template_base_name='admin_inspection_alert',
+            context=context,
+            recipient_list=[admin_email]
+        )
+
+    def send_inspection_inquiry_client_confirmation(self, client_email, client_name):
+        """
+        Sends an immediate trust-building autoresponder to the client.
+        """
+        context = {
+            'name': client_name,
+        }
+        
+        self._send_email(
+            template_base_name='client_inspection_confirmation',
+            context=context,
+            recipient_list=[client_email]
+        )
+    
     
     # --- NEW: ONBOARDING & ENGAGEMENT NOTIFICATIONS ---
 

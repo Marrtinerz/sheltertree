@@ -13,6 +13,7 @@ from django.views.generic import FormView
 from .forms import ReportInquiryForm
 
 from apps.reviews.models import Property
+from apps.notifications.services import notification_service 
 
 # This will eventually come from settings or a model. For the sprint, it's a constant.
 # Paystack requires the amount in the lowest currency unit (kobo for NGN).
@@ -68,7 +69,7 @@ VERIFIED_REPORT_PRICE_KOBO = 1000000 * 100  # ₦1,000,000.00
 
 class SheltertreeIntelligenceLandingPageView(FormView):
     """
-    Renders the main landing page for the ShelterTree Intelligence platform
+    Renders the main landing page for ShelterTree Intelligence (Inspections)
     and handles the lead capture form submission.
     """
     template_name = 'intelligence/sheltertree_intelligence_landing_page.html'
@@ -81,6 +82,21 @@ class SheltertreeIntelligenceLandingPageView(FormView):
         return context
 
     def form_valid(self, form):
-        # The business logic for handling the inquiry will be implemented on Day 3.
-        print(f"Form is valid. Data: {form.cleaned_data}") # Placeholder for Day 2
+        # 1. Bot Protection (Honeypot)
+        if form.cleaned_data.get('honeypot'):
+            return super().form_valid(form) # Silent success for bots
+
+        inquiry_data = form.cleaned_data
+        
+        # 2. Internal Alert (To You)
+        notification_service.send_inspection_inquiry_admin_alert(
+            inquiry_data=inquiry_data
+        )
+
+        # 3. Client Confirmation (To Them)
+        notification_service.send_inspection_inquiry_client_confirmation(
+            client_email=inquiry_data['email'],
+            client_name=inquiry_data['name']
+        )
+        
         return super().form_valid(form)

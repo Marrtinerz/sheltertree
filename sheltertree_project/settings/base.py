@@ -212,6 +212,8 @@ ACCOUNT_UNIQUE_EMAIL = True
 # We can also configure the code's length for a better UX
 ACCOUNT_EMAIL_VERIFICATION_CODE_LENGTH = 6
 
+ADMIN_EMAIL_RECEIVER = 'support@mysheltertree.com'
+
 # --- REDIRECTS ---
 LOGIN_URL = 'account_login'
 LOGIN_REDIRECT_URL = '/'

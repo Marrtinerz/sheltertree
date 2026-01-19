@@ -1,0 +1,10 @@
+New Inspection Request Received.
+
+Client Name: {{ name }}
+Email: {{ email }}
+Phone: {{ phone_number }}
+
+Property Details:
+{{ property_details }}
+
+Action Required: Call immediately.

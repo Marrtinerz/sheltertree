@@ -1,0 +1,17 @@
+{% extends "base_email.html" %}
+
+{% block content %}
+    <h2>🚀 New Inspection Lead</h2>
+    <p>A new request has been submitted via the landing page.</p>
+    
+    <div style="background-color: #f8f9fa; padding: 15px; border-radius: 5px; border: 1px solid #e9ecef;">
+        <p><strong>Name:</strong> {{ name }}</p>
+        <p><strong>Email:</strong> <a href="mailto:{{ email }}">{{ email }}</a></p>
+        <p><strong>Phone:</strong> <a href="tel:{{ phone_number }}">{{ phone_number }}</a></p>
+    </div>
+
+    <h3>Property/Access Details:</h3>
+    <p style="white-space: pre-wrap; background-color: #fff3cd; padding: 10px; border: 1px solid #ffeeba;">{{ property_details }}</p>
+
+    <p><strong>Next Step:</strong> Call the client immediately to confirm availability and process payment.</p>
+{% endblock %}

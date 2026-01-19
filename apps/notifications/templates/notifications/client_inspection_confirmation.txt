@@ -1,0 +1,10 @@
+Hi {{ name }},
+
+Thank you for choosing ShelterTree. We have received your request for a property inspection.
+
+Our Intelligence Officer will contact you within 2 business hours to confirm the details and schedule the inspection.
+
+If you need a faster response, you can WhatsApp us here: https://wa.me/2348026016593
+
+Best regards,
+The ShelterTree Team
