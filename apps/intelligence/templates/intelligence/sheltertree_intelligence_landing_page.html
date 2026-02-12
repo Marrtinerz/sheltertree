@@ -3,74 +3,160 @@
 {% load widget_tweaks %}
 {% load i18n %}
 
-{% block title %}ShelterTree Inspections - Don't Rent or Buy a Headache{% endblock %}
+{% block title %}ShelterTree Technical Audits - Buy your Home with Confidence{% endblock %}
 
 {% block extra_head %}
-    {# --- Premium Typography & Icons --- #}
+    {# --- TYPOGRAPHY: MANROPE (The ShelterTree Brand Font) --- #}
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=Inter:wght@400;500;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
     
     <style>
+        :root {
+            --st-green: #005A31;
+            --st-light-green: #E8F5E9;
+            --st-accent: #FFD54F; /* A warmer, friendlier yellow */
+            --st-text: #2D3748;
+            --st-muted: #718096;
+        }
+
+        body {
+            font-family: 'Manrope', sans-serif; /* Applied globally */
+            color: var(--st-text);
+        }
+
         /* --- Hero Styling --- */
-        .hero-section-inspection {
-            /* Ensure you have this image or change the path */
-            background: linear-gradient(rgba(0, 0, 0, 0.75), rgba(0, 0, 0, 0.85)), url('{% static "img/hero_inspection.jpg" %}');
+        .hero-section-friendly {
+            /* Warm, inviting overlay instead of dark/scary */
+            background: linear-gradient(rgba(13, 14, 13, 0.6), rgba(0, 70, 35, 0.5)), url('{% static "img/hero_background3.jpg" %}');
             background-size: cover;
             background-position: center;
             padding: 6rem 0 8rem;
-        }
-
-        /* --- Pricing Card Tweaks --- */
-        .promo-badge {
-            background-color: #ffeeba;
-            color: #856404;
-            font-size: 0.75rem;
-            padding: 0.35rem 0.6rem;
-            border-radius: 4px;
-            font-weight: 700;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-        }
-        .old-price {
-            text-decoration: line-through;
-            color: #adb5bd;
-            font-size: 1.1rem;
-            margin-right: 0.5rem;
-        }
-        .new-price {
-            color: #005A31; /* ShelterTree Green */
-            font-weight: 800;
-            font-size: 2.2rem;
+            position: relative;
         }
         
-        /* --- WhatsApp Button Branding --- */
-        .btn-whatsapp {
-            background-color: #25D366;
-            border-color: #25D366;
-            color: white;
-            transition: all 0.3s ease;
-        }
-        .btn-whatsapp:hover {
-            background-color: #128C7E;
-            border-color: #128C7E;
-            color: white;
-            transform: translateY(-2px);
-            box-shadow: 0 4px 12px rgba(37, 211, 102, 0.4);
+        /* Soft, rounded curve at bottom of hero (Airbnb style) */
+        .hero-curve {
+            position: absolute;
+            bottom: 1px;
+            left: 0;
+            width: 100%;
+            overflow: hidden;
+            line-height: 0;
         }
 
-        /* --- Responsive Adjustments --- */
+        /* --- Card Styling (Soft & Premium) --- */
+        .card {
+            border: 1px solid rgba(0,0,0,0.05);
+            border-radius: 24px; /* Friendly curves */
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.08) !important;
+        }
+
+        /* --- Pricing & Badges --- */
+        .promo-pill {
+            background-color: var(--st-accent);
+            color: #5D4037;
+            font-size: 0.75rem;
+            padding: 0.35rem 1rem;
+            border-radius: 50px;
+            font-weight: 700;
+            letter-spacing: 0.5px;
+        }
+        .price-tag {
+            color: var(--st-green);
+            font-weight: 800;
+            font-size: 2.5rem;
+            letter-spacing: -1px;
+        }
+        .price-strike {
+            text-decoration: line-through;
+            color: var(--st-muted);
+            font-size: 1.1rem;
+            font-weight: 500;
+        }
+
+        /* --- Feature Lists --- */
+        .feature-item {
+            display: flex;
+            align-items: flex-start;
+            margin-bottom: 1rem;
+            font-size: 0.95rem;
+            color: #4A5568;
+        }
+        .check-icon {
+            color: var(--st-green);
+            background-color: var(--st-light-green);
+            width: 24px;
+            height: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            margin-right: 12px;
+            flex-shrink: 0;
+            font-size: 0.8rem;
+        }
+
+        /* --- WhatsApp Button --- */
+        .btn-whatsapp {
+            background-color: #25D366;
+            color: white;
+            font-weight: 600;
+            border: none;
+        }
+        .btn-whatsapp:hover {
+            background-color: #1DA851;
+            color: white;
+            box-shadow: 0 4px 15px rgba(37, 211, 102, 0.3);
+        }
+
+        /* --- Input Fields --- */
+        .form-control-lg {
+            border-radius: 12px;
+            border: 1px solid #E2E8F0;
+            padding: 1rem;
+            font-size: 1rem;
+        }
+        .form-control-lg:focus {
+            border-color: var(--st-green);
+            box-shadow: 0 0 0 4px rgba(0, 90, 49, 0.1);
+        }
+        
+        /* Mobile Tweaks */
         @media (max-width: 768px) {
-            .hero-section-inspection {
-                padding: 4rem 0;
-                text-align: left !important;
+            .hero-section-friendly { padding: 4rem 0 6rem; }
+            .display-4 { font-size: 2.2rem; }
+        }
+
+
+        /* Update your feature-list styles with this */
+        .feature-list li {
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: flex-start; /* Aligns icon to top of text */
+            font-size: 0.95rem;
+            color: #212529;
+            line-height: 1.5;
+        }
+
+        /* Ensure the icon doesn't shrink when text wraps */
+        .check-icon {
+            flex-shrink: 0; 
+            margin-top: 2px; /* Visual alignment fix */
+        }
+
+        /* Responsive Font Sizing */
+        @media (max-width: 576px) {
+            .price-tag {
+                font-size: 2rem; /* Slightly smaller on very small phones */
             }
-            .hero-section-inspection h1 {
-                font-size: 2.5rem;
-            }
-            .display-5 {
-                font-size: 2rem;
+            .feature-item {
+                font-size: 0.9rem; /* Better fit for mobile */
             }
         }
     </style>
@@ -81,172 +167,261 @@
 <!-- ============================================ -->
 <!-- HERO SECTION -->
 <!-- ============================================ -->
-<section class="hero-section-inspection text-white text-center text-md-center">
+<section class="hero-section-friendly text-white text-center">
     <div class="container">
         <div class="row justify-content-center">
             <div class="col-lg-9">
-                <div class="d-inline-block mb-3">
-                    <span class="badge bg-warning text-dark px-3 py-2 rounded-pill fw-bold border border-white">
-                        <i class="bi bi-tag-fill me-1"></i> {% trans "Launch Promo: 50% OFF" %}
+                <div class="d-inline-block mb-4">
+                    <!-- 
+                        FIX: 
+                        1. Removed 'bg-opacity-20' and 'text-white'
+                        2. Added 'text-success' (Green) and 'shadow-sm' for pop
+                        3. Kept 'bg-white' for a clean pill look
+                    -->
+                    <span class="bg-white text-success px-4 py-2 rounded-pill fw-bold small shadow-sm">
+                        <i class="bi bi-stars me-1"></i> {% trans "For Home Buyers & Investors" %}
                     </span>
                 </div>
-                <h1 class="display-3 fw-bold mb-4">Don't Rent/Buy a Headache.<br>Inspect Before You Pay.</h1>
-                <p class="lead mb-5 opacity-90 mx-auto" style="max-width: 700px;">
-                    Fresh paint hides mold and a faulty POP/ceiling. "Good light" hides millions in NEPA debt. 
-                    ShelterTree Inspectors check the wiring, plumbing, and structure so you don't lose your money.
+                <h1 class="display-4 fw-bold mb-4 tracking-tight">Don't Buy a Headache.<br>Inspect Before you Pay</h1>
+                <p class="lead mb-5 opacity-90 mx-auto fw-light" style="max-width: 750px; line-height: 1.6;">
+                    Buying a home is the start of a new chapter. We ensure it's a happy one.
+                    Our comprehensive audits reveal the hidden truths so you can sign with peace of mind.
                 </p>
-                <div class="d-grid gap-3 d-sm-flex justify-content-center">
-                    <a href="#pricing" class="btn btn-primary btn-lg fw-bold px-5 rounded-pill shadow-lg">
-                        View Plans
+                <div class="d-flex flex-column flex-sm-row gap-3 justify-content-center">
+                    <a href="#audit-plans" class="btn btn-light text-success px-5 rounded-pill fw-bold shadow-lg">
+                        Explore Audit Plans
                     </a>
-                    <a href="#inquiry-form" class="btn btn-outline-light btn-lg fw-bold px-5 rounded-pill">
-                        Book Now
+                    <a href="#inquiry-form" class="btn btn-outline-light px-5 rounded-pill fw-bold">
+                        Talk to an Expert
                     </a>
                 </div>
             </div>
         </div>
     </div>
+    
+    {% comment %} <!-- Soft Curve Divider -->
+    <div class="">
+        <svg data-name="Layer 1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 120" preserveAspectRatio="none">
+            <path d="M321.39,56.44c58-10.79,114.16-30.13,172-41.86,82.39-16.72,168.19-17.73,250.45-.39C823.78,31,906.67,72,985.66,92.83c70.05,18.48,146.53,26.09,214.34,3V0H0V27.35A600.21,600.21,0,0,0,321.39,56.44Z" fill="#ffffff"></path>
+        </svg>
+    </div> {% endcomment %}
 </section>
 
 <!-- ============================================ -->
-<!-- THE PROBLEM (The "Why") -->
+<!-- THE "WHY" (Empathy & Education) -->
 <!-- ============================================ -->
 <section class="py-5 bg-white">
-    <div class="container">
+    <div class="container py-4">
         <div class="row text-center mb-5">
             <div class="col-lg-8 mx-auto">
-                <h2 class="fw-bold text-dark">What the Agent Won't Tell You</h2>
-                <p class="text-muted">In Nigeria, "Move-in Ready" often means "Ready for Repairs." We protect you from the three biggest tenant nightmares.</p>
+                <h2 class="fw-bold mb-3">More Than Just Bricks & Mortar</h2>
+                <p class="text-muted lead">A home is where you rest. We check the things that could disturb that rest, ensuring your investment is secure and your living experience is peaceful.</p>
             </div>
         </div>
-        <div class="row g-4">
-            <!-- Problem 1 -->
-            <div class="col-md-4">
-                <div class="card h-100 border-0 shadow-sm text-center p-4 rounded-4">
-                    <div class="mb-3 d-inline-flex align-items-center justify-content-center rounded-circle bg-danger bg-opacity-10 text-danger" style="width: 64px; height: 64px;">
-                        <i class="bi bi-cash-coin fs-2"></i>
+        
+        <div class="row g-4 align-items-center">
+            <!-- Left: Image Collage -->
+            <div class="col-lg-6">
+                <div class="position-relative p-3">
+                    <!-- Placeholder for a warm image of a family or a nice home -->
+                    <img src="{% static 'img/home_inspection_collage.jpg' %}" alt="ShelterTree Inspection Details" class="img-fluid rounded-4 shadow-sm">
+                    <!-- Floating Badge -->
+                    <div class="position-absolute bottom-0 end-0 bg-white p-3 rounded-4 shadow-lg mb-5 me-5 border d-none d-md-block">
+                        <div class="d-flex align-items-center">
+                            <div class="check-icon me-3"><i class="bi bi-shield-check"></i></div>
+                            <div>
+                                <h6 class="fw-bold mb-0">100% Independent</h6>
+                                <small class="text-muted">We work for YOU, not the agent.</small>
+                            </div>
+                        </div>
                     </div>
-                    <h4 class="h5 fw-bold">The Inherited Debt</h4>
-                    <p class="small text-muted mb-0">Previous tenants leaving millions in unpaid electricity bills. If you move in without checking, that debt becomes <strong>yours</strong>.</p>
                 </div>
             </div>
-            <!-- Problem 2 -->
-            <div class="col-md-4">
-                <div class="card h-100 border-0 shadow-sm text-center p-4 rounded-4">
-                    <div class="mb-3 d-inline-flex align-items-center justify-content-center rounded-circle bg-danger bg-opacity-10 text-danger" style="width: 64px; height: 64px;">
-                        <i class="bi bi-cloud-rain-heavy-fill fs-2"></i>
-                    </div>
-                    <h4 class="h5 fw-bold">The "Dry" Flood</h4>
-                    <p class="small text-muted mb-0">The compound looks dry in December. But in July? We check high-water marks and drainage capacity to predict the flood risk.</p>
-                </div>
-            </div>
-            <!-- Problem 3 -->
-            <div class="col-md-4">
-                <div class="card h-100 border-0 shadow-sm text-center p-4 rounded-4">
-                    <div class="mb-3 d-inline-flex align-items-center justify-content-center rounded-circle bg-danger bg-opacity-10 text-danger" style="width: 64px; height: 64px;">
-                        <i class="bi bi-bricks fs-2"></i>
-                    </div>
-                    <h4 class="h5 fw-bold">The POP Trap</h4>
-                    <p class="small text-muted mb-0">Poorly installed POP ceilings look great until a hidden roof leak causes them to collapse. We check for the warning signs.</p>
-                </div>
-            </div>
-        </div>
-    </div>
-</section>
-
-<!-- ============================================ -->
-<!-- PRICING SECTION -->
-<!-- ============================================ -->
-<section id="pricing" class="py-5 bg-light">
-    <div class="container">
-        <div class="row mb-5 text-center">
-            <div class="col-lg-8 mx-auto">
-                <h2 class="fw-bold">Choose Your Protection Level</h2>
-                <p class="text-muted">Small investment. Massive peace of mind.</p>
-            </div>
-        </div>
-
-        <div class="row align-items-center justify-content-center">
             
-            <!-- Tier 1: The Snag List -->
-            <div class="col-lg-4 mb-4">
-                <div class="card border-0 shadow-sm h-100 rounded-4">
-                    <div class="card-body p-4 text-center d-flex flex-column">
-                        <h5 class="fw-bold text-muted mb-3">The "Snag" List</h5>
-                        <div class="mb-3">
-                            <span class="old-price">₦60,000</span>
-                            <span class="new-price">₦35,000</span>
+            <!-- Right: The 4 Pillars (Refined) -->
+            <div class="col-lg-6 ps-lg-5">
+                
+                <!-- Pillar 1: Structural -->
+                <div class="mb-4">
+                    <div class="d-flex">
+                        <div class="me-3">
+                            <span class="btn btn-light rounded-circle text-primary fw-bold shadow-sm" style="width: 60px; height: 60px; display: flex; align-items: center; justify-content: center;">
+                                <i class="bi bi-bricks fs-3"></i>
+                            </span>
                         </div>
-                        <span class="badge bg-light text-dark mb-4 border align-self-center">Save 40%</span>
-                        <p class="small text-muted">Best for: Students & Studio Apartments.</p>
+                        <div>
+                            <h5 class="fw-bold mb-1">Structural Integrity & Finishes</h5>
+                            <p class="text-muted small mb-0">We go beyond surface cracks. We analyze load-bearing walls, foundation settlement signs, and critically, <strong>POP ceiling bonding</strong> to prevent collapse risks.</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Pillar 2: Moisture & Environment -->
+                <div class="mb-4">
+                    <div class="d-flex">
+                        <div class="me-3">
+                            <span class="btn btn-light rounded-circle text-primary fw-bold shadow-sm" style="width: 60px; height: 60px; display: flex; align-items: center; justify-content: center;">
+                                <i class="bi bi-droplet-half fs-3"></i>
+                            </span>
+                        </div>
+                        <div>
+                            <h5 class="fw-bold mb-1">Moisture & Environmental Defense</h5>
+                            <p class="text-muted small mb-0">From <strong>rising damp</strong> and hidden mold to external flood history and air quality (dust/ventilation). We ensure your environment is dry and breathable.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Pillar 3: Systems -->
+                <div class="mb-4">
+                    <div class="d-flex">
+                        <div class="me-3">
+                            <span class="btn btn-light rounded-circle text-primary fw-bold shadow-sm" style="width: 60px; height: 60px; display: flex; align-items: center; justify-content: center;">
+                                <i class="bi bi-lightning-charge fs-3"></i>
+                            </span>
+                        </div>
+                        <div>
+                            <h5 class="fw-bold mb-1">Critical Systems Performance</h5>
+                            <p class="text-muted small mb-0">We stress-test electrical panels for load capacity, check plumbing pressure for hidden leaks, and verify <strong>water purity/quality</strong> at the source.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Pillar 4: Neighborhood -->
+                <div class="mb-4">
+                    <div class="d-flex">
+                        <div class="me-3">
+                            <span class="btn btn-light rounded-circle text-primary fw-bold shadow-sm" style="width: 60px; height: 60px; display: flex; align-items: center; justify-content: center;">
+                                <i class="bi bi-shield-check fs-3"></i>
+                            </span>
+                        </div>
+                        <div>
+                            <h5 class="fw-bold mb-1">Safety & Location Intelligence</h5>
+                            <p class="text-muted small mb-0">A beautiful home needs a safe context. We verify accessibility and map proximity to <strong>Police Stations, Schools, Health Centers, Markets, etcetera</strong> to rate your convenience and emergency readiness.</p>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ============================================ -->
+<!-- PRICING SECTION (Mobile Optimized & 4-Pillar Aligned) -->
+<!-- ============================================ -->
+<section id="audit-plans" class="py-5" style="background-color: #FAFAFA;">
+    <div class="container py-2 py-md-4">
+        
+        <!-- Header -->
+        <div class="row mb-4 mb-md-5 text-center">
+            <div class="col-12 col-lg-8 mx-auto">
+                <h2 class="fw-bold h1">Comprehensive Audit Plans</h2>
+                <p class="text-muted">Designed for high-value transactions. Ensure your multi-million Naira investment performs from Day One.</p>
+            </div>
+        </div>
+
+        <div class="row justify-content-center g-4">
+            
+            <!-- Tier 1: Technical Integrity -->
+            <div class="col-12 col-md-10 col-lg-5">
+                <div class="card h-100 bg-white shadow-sm border-0 rounded-4">
+                    <div class="card-body p-4 p-lg-5">
+                        <div class="text-center border-bottom pb-4 mb-4">
+                            <h4 class="fw-bold mb-2 text-dark">Technical Integrity</h4>
+                            {% comment %} <p class="text-muted small mb-3 text-uppercase tracking-wide">For New Builds</p> {% endcomment %}
+                            
+                            <div class="d-flex justify-content-center align-items-baseline gap-2 flex-wrap">
+                                <span class="price-strike me-1">₦350,000</span>
+                                <span class="price-tag">₦300,000</span>
+                            </div>
+                            
+                            <div class="mt-2">
+                                <span class="badge bg-light text-dark border">Limited Time Offer</span>
+                            </div>
+                        </div>
                         
-                        <hr class="opacity-10 my-4">
+                        <p class="fw-bold small text-uppercase text-muted mb-3 tracking-wide text-center text-lg-start">PHYSICAL ASSET & SYSTEMS:</p>
                         
-                        <ul class="list-unstyled text-start small mb-4 flex-grow-1">
-                            <li class="mb-2"><i class="bi bi-check-circle-fill text-success me-2"></i>Electrical Sockets & Switches Check</li>
-                            <li class="mb-2"><i class="bi bi-check-circle-fill text-success me-2"></i>Plumbing Flow (Taps & Drains)</li>
-                            <li class="mb-2"><i class="bi bi-check-circle-fill text-success me-2"></i>Doors, Windows & Locks Integrity</li>
-                            <li class="mb-2"><i class="bi bi-check-circle-fill text-success me-2"></i>Basic Wall Moisture Check</li>
-                            <li class="text-muted mb-2 opacity-50"><i class="bi bi-x-circle me-2"></i>No Utility Debt Verification</li>
-                            <li class="text-muted opacity-50"><i class="bi bi-x-circle me-2"></i>No POP/Ceiling Check</li>
+                        <ul class="list-unstyled feature-list">
+                            <!-- Structural + POP -->
+                            <li class="feature-item"><div class="check-icon"><i class="bi bi-check"></i></div><span><strong>Structural & POP Analysis</strong> <span class="d-block text-muted small fw-normal">Cracks, Settlement & Ceiling Bonding</span></span></li>
+                            
+                            <!-- Moisture + Roof -->
+                            <li class="feature-item"><div class="check-icon"><i class="bi bi-check"></i></div><span><strong>Forensic Moisture Mapping</strong> <span class="d-block text-muted small fw-normal">Rising Damp & Roof/Void Leaks</span></span></li>
+                            
+                            <!-- Systems (Elec) -->
+                            <li class="feature-item"><div class="check-icon"><i class="bi bi-check"></i></div><span><strong>Electrical Load Stress Test</strong> <span class="d-block text-muted small fw-normal">Wiring Safety & Inverter Readiness</span></span></li>
+                            
+                            <!-- Systems (Water Quality Added) -->
+                            <li class="feature-item"><div class="check-icon"><i class="bi bi-check"></i></div><span><strong>Plumbing & Water Quality</strong> <span class="d-block text-muted small fw-normal">Pressure Test & Purity Check</span></span></li>
+                            
+                            <!-- Environment -->
+                            <li class="feature-item"><div class="check-icon"><i class="bi bi-check"></i></div><span><strong>Ventilation & Airflow Check</strong> <span class="d-block text-muted small fw-normal">Cross-ventilation & Mold Risk</span></span></li>
+                            
+                            <li class="feature-item mt-3 pt-3 border-top"><div class="check-icon"><i class="bi bi-file-earmark-pdf-fill"></i></div><strong>"Red Flag" Technical Report</strong></li>
                         </ul>
-                        <a href="#inquiry-form" class="btn btn-outline-primary w-100 rounded-pill fw-bold">Select Basic</a>
+                        
+                        <div class="mt-5">
+                            <a href="#inquiry-form" class="btn btn-outline-dark btn-lg w-100 rounded-pill fw-bold py-3">Book Technical Audit</a>
+                        </div>
                     </div>
                 </div>
             </div>
 
-            <!-- Tier 2: The Livability Audit (Highlighted) -->
-            <div class="col-lg-4 mb-4">
-                <div class="card border-primary border-2 shadow-lg h-100 rounded-4 position-relative" style="z-index: 10;">
-                    <div class="card-header bg-primary text-white text-center py-3 border-0">
-                        <span class="text-uppercase fw-bold small ls-1">Most Popular / Best Value</span>
+            <!-- Tier 2: The 360 Scan (The Flagship) -->
+            <div class="col-12 col-md-10 col-lg-5">
+                <div class="card h-100 bg-white shadow-lg border-primary border-2 position-relative rounded-4 overflow-hidden">
+                    <div class="position-absolute top-0 start-0 w-100 bg-primary text-white text-center py-1 small fw-bold text-uppercase">
+                        Recommended
                     </div>
-                    <div class="card-body p-4 text-center d-flex flex-column">
-                        <h5 class="fw-bold text-primary mb-3">The Livability Audit</h5>
-                        <div class="mb-3">
-                            <span class="old-price">₦120,000</span>
-                            <span class="new-price">₦65,000</span>
-                        </div>
-                        <span class="badge bg-warning text-dark mb-4 align-self-center">Save 45%</span>
-                        <p class="small text-muted">Best for: Families & Professionals.</p>
-                        
-                        <hr class="opacity-10 my-4">
-                        
-                        <ul class="list-unstyled text-start small mb-4 flex-grow-1">
-                            <li class="mb-2 fw-bold text-dark"><i class="bi bi-check-circle-fill text-success me-2"></i>Everything in Snag List</li>
-                            <li class="mb-2"><i class="bi bi-check-circle-fill text-success me-2"></i><strong>Utility Debt Verification</strong> (NEPA Bills)</li>
-                            <li class="mb-2"><i class="bi bi-check-circle-fill text-success me-2"></i><strong>Electrical Meter Audit</strong> (Bypass Check)</li>
-                            <li class="mb-2"><i class="bi bi-check-circle-fill text-success me-2"></i><strong>Visual POP Integrity Check</strong></li>
-                            <li class="mb-2"><i class="bi bi-check-circle-fill text-success me-2"></i>Flood Risk Assessment</li>
-                            <li class="mb-2"><i class="bi bi-check-circle-fill text-success me-2"></i>Water Pump & Tank Health</li>
-                        </ul>
-                        <a href="#inquiry-form" class="btn btn-primary btn-lg w-100 rounded-pill fw-bold shadow">Get Protected</a>
-                    </div>
-                </div>
-            </div>
 
-            <!-- Tier 3: The 360 Scan -->
-            <div class="col-lg-4 mb-4">
-                <div class="card border-0 shadow-sm h-100 rounded-4">
-                    <div class="card-body p-4 text-center d-flex flex-column">
-                        <h5 class="fw-bold text-muted mb-3">360° Technical Scan</h5>
-                        <div class="mb-3">
-                            <span class="old-price">₦250,000</span>
-                            <span class="new-price">₦125,000</span>
+                    <div class="card-body p-4 p-lg-5 pt-5">
+                        <div class="text-center border-bottom pb-4 mb-4">
+                            <h4 class="fw-bold text-success mb-2">360° Assurance</h4>
+                            {% comment %} <p class="text-muted small mb-3 text-uppercase tracking-wide">For Completed Homes & Estates</p> {% endcomment %}
+                            
+                            <div class="d-flex justify-content-center align-items-baseline gap-2 flex-wrap">
+                                <span class="price-strike me-1">₦500,000</span>
+                                <span class="price-tag">₦450,000</span>
+                            </div>
+                            
+                            <div class="mt-2">
+                                <span class="promo-pill shadow-sm">Limited Time Offer</span>
+                            </div>
                         </div>
-                        <span class="badge bg-light text-dark mb-4 border align-self-center">Save 50%</span>
-                        <p class="small text-muted">Best for: Home Buyers & Whole Buildings.</p>
                         
-                        <hr class="opacity-10 my-4">
+                        <p class="fw-bold small text-uppercase text-muted mb-3 tracking-wide text-center text-lg-start">EVERYTHING IN TECHNICAL, PLUS:</p>
                         
-                        <ul class="list-unstyled text-start small mb-4 flex-grow-1">
-                            <li class="mb-2 fw-bold text-dark"><i class="bi bi-check-circle-fill text-success me-2"></i>Everything in Livability Audit</li>
-                            <li class="mb-2"><i class="bi bi-check-circle-fill text-success me-2"></i>Roof & Ceiling Cavity Inspection</li>
-                            <li class="mb-2"><i class="bi bi-check-circle-fill text-success me-2"></i>Structural Crack Analysis</li>
-                            <li class="mb-2"><i class="bi bi-check-circle-fill text-success me-2"></i>Neighborhood Intelligence</li>
-                            <li class="mb-2"><i class="bi bi-check-circle-fill text-success me-2"></i>Repair Cost Estimates</li>
+                        <ul class="list-unstyled feature-list">
+                            <!-- Life Safety -->
+                            <li class="feature-item"><div class="check-icon"><i class="bi bi-check-lg"></i></div><span><strong>Life-Safety Proximity Map</strong> <span class="d-block text-muted small fw-normal">Time to Trauma Center/Police/Fire</span></span></li>
+                            
+                            <!-- Environment (Flooding/Access Added) -->
+                            <li class="feature-item"><div class="check-icon"><i class="bi bi-check-lg"></i></div><span><strong>Environmental & Access Scan</strong> <span class="d-block text-muted small fw-normal">Flood History, Road Accessibility & Dust</span></span></li>
+                            
+                            <!-- Reputation -->
+                            <li class="feature-item"><div class="check-icon"><i class="bi bi-check-lg"></i></div><span><strong>Developer Reputation Check</strong> <span class="d-block text-muted small fw-normal">Confidential Resident Interviews</span></span></li>
+                            
+                            <!-- Financials -->
+                            <li class="feature-item"><div class="check-icon"><i class="bi bi-check-lg"></i></div><span><strong>Bill of Quantities (BoQ)</strong> <span class="d-block text-muted small fw-normal">Detailed Repair Cost Estimates</span></span></li>
+                            
+                            <li class="feature-item"><div class="check-icon"><i class="bi bi-check-lg"></i></div><span><strong>Energy Cost Projection</strong> <span class="d-block text-muted small fw-normal">Diesel vs. Grid vs. Solar Opex</span></span></li>
+                            
+                            <!-- VIP Feature Box -->
+                            <li class="feature-item bg-light p-3 rounded-3 mt-3 border border-success border-opacity-25 align-items-center">
+                                <div class="check-icon bg-success text-white border-0"><i class="bi bi-person-video3"></i></div>
+                                <div>
+                                    <strong class="d-block text-dark">Executive Presentation</strong>
+                                    <span class="small text-muted" style="line-height: 1.2;">30-min Walkthrough & Negotiation Prep</span>
+                                </div>
+                            </li>
+
+                            <li class="feature-item mt-3 pt-3 border-top"><div class="check-icon"><i class="bi bi-folder-fill"></i></div><strong>Comprehensive Investment Dossier</strong></li>
                         </ul>
-                        <a href="#inquiry-form" class="btn btn-outline-primary w-100 rounded-pill fw-bold">Select 360°</a>
+                        
+                        <div class="mt-5">
+                            <a href="#inquiry-form" class="btn btn-primary btn-lg w-100 rounded-pill fw-bold py-3 shadow-sm">Book 360° Audit</a>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -256,74 +431,72 @@
 </section>
 
 <!-- ============================================ -->
-<!-- CTA / LEAD CAPTURE FORM -->
+<!-- CONTACT SECTION (Clean & Human) -->
 <!-- ============================================ -->
 <section id="inquiry-form" class="py-5 bg-white">
-    <div class="container">
+    <div class="container py-4">
         <div class="row justify-content-center">
             <div class="col-lg-8">
-                <div class="card shadow-lg border-0 rounded-4 overflow-hidden">
-                    <div class="card-header bg-dark text-white p-4 text-center">
-                        <h3 class="fw-bold mb-1">Book Your Inspection</h3>
-                        <p class="mb-0 text-white-50">Choose the fastest way to reach us.</p>
-                    </div>
-                    <div class="card-body p-4 p-md-5">
-                        
-                        <!-- OPTION 1: WHATSAPP (Fastest) -->
-                        <div class="mb-4">
-                            <!-- 
-                                IMPORTANT: Replace the phone number below with your actual business number.
-                                Format: 23480... (No '+' sign)
-                            -->
-                            <a href="https://wa.me/2348026016593?text=Hello%20ShelterTree%2C%20I%20want%20to%20book%20an%20inspection." target="_blank" class="btn btn-whatsapp btn-lg w-100 rounded-pill py-3 fw-bold d-flex align-items-center justify-content-center shadow-sm">
-                                <i class="bi bi-whatsapp fs-4 me-2"></i> Book via WhatsApp (Fastest)
-                            </a>
-                            <p class="text-center small text-muted mt-2 mb-0">Instant response during business hours.</p>
-                        </div>
+                <div class="text-center mb-5">
+                    <h2 class="fw-bold">Ready to secure your home?</h2>
+                    <p class="text-muted">Start a conversation with our Technical Team. No obligations.</p>
+                </div>
 
-                        <!-- DIVIDER -->
-                        <div class="position-relative text-center my-4">
-                            <hr class="text-muted opacity-25">
-                            <span class="position-absolute top-50 start-50 translate-middle bg-white px-3 text-muted fw-bold small">OR USE EMAIL</span>
-                        </div>
-
-                        <!-- OPTION 2: FORM -->
-                        <form action="" method="post" novalidate>
-                            {% csrf_token %}
-                            <!-- This form uses the existing ReportInquiryForm structure -->
-                            
-                            <div class="row g-3">
-                                <div class="col-12">
-                                    <div class="form-floating">
-                                        {% render_field form.name class="form-control bg-light border-0" placeholder="Name" %}
-                                        <label>{% trans "Your Full Name" %}</label>
-                                    </div>
+                <div class="card border-0 shadow-lg rounded-5 overflow-hidden">
+                    <div class="row g-0">
+                        <!-- Left: Info Panel (Desktop only) -->
+                        <div class="col-md-5 bg-light d-none d-md-flex align-items-center justify-content-center p-5">
+                            <div class="text-center">
+                                <div class="mb-4">
+                                    <img src="{% static 'img/brand/logo.png' %}" alt="ShelterTree" height="40" class="opacity-75">
                                 </div>
-                                <div class="col-md-6">
-                                    <div class="form-floating">
-                                        {% render_field form.email class="form-control bg-light border-0" placeholder="Email" %}
-                                        <label>{% trans "Email Address" %}</label>
-                                    </div>
-                                </div>
-                                <div class="col-md-6">
-                                    <div class="form-floating">
-                                        {% render_field form.phone_number class="form-control bg-light border-0" placeholder="Phone" %}
-                                        <label>{% trans "Phone Number" %}</label>
-                                    </div>
-                                </div>
-                                <div class="col-12">
-                                    <div class="form-floating">
-                                        {% render_field form.property_details class="form-control bg-light border-0" style="height: 100px" placeholder="Details" %}
-                                        <label>{% trans "Property Address & Access Details" %}</label>
-                                    </div>
-                                </div>
-                                <div class="col-12">
-                                    <button type="submit" class="btn btn-outline-primary w-100 py-3 fw-bold rounded-pill text-uppercase">
-                                        Submit Request
-                                    </button>
-                                </div>
+                                <h5 class="fw-bold mb-3">We move fast.</h5>
+                                <p class="small text-muted mb-4">Most inspections are scheduled within 24 hours of payment.</p>
+                                <a href="https://wa.me/2348026016593?text=Hello%20ShelterTree%2C%20I%20am%20interested%20in%20a%20Technical%20Audit%20for%20a%20property%20purchase." target="_blank" class="btn btn-whatsapp w-100 rounded-pill py-2 shadow-sm">
+                                    <i class="bi bi-whatsapp me-2"></i> Chat on WhatsApp
+                                </a>
                             </div>
-                        </form>
+                        </div>
+
+                        <!-- Right: Form -->
+                        <div class="col-md-7 p-4 p-md-5">
+                            <form action="" method="post" novalidate>
+                                {% csrf_token %}
+                                <h5 class="fw-bold mb-4">Request a Call Back</h5>
+                                
+                                <div class="form-floating mb-3">
+                                    {% render_field form.name class="form-control form-control-lg bg-light border-0" placeholder="Name" %}
+                                    <label class="text-muted">Your Name</label>
+                                </div>
+                                
+                                <div class="form-floating mb-3">
+                                    {% render_field form.email class="form-control form-control-lg bg-light border-0" placeholder="Email" %}
+                                    <label class="text-muted">Email Address</label>
+                                </div>
+
+                                <div class="form-floating mb-3">
+                                    {% render_field form.phone_number class="form-control form-control-lg bg-light border-0" placeholder="Phone" %}
+                                    <label class="text-muted">Phone Number</label>
+                                </div>
+
+                                <div class="form-floating mb-4">
+                                    {% render_field form.property_details class="form-control form-control-lg bg-light border-0" style="height: 120px" placeholder="Details" %}
+                                    <label class="text-muted">Property Details</label>
+                                </div>
+
+                                <button type="submit" class="btn btn-dark btn-lg w-100 rounded-pill fw-bold py-3">
+                                    Submit Request
+                                </button>
+                                
+                                <div class="d-md-none mt-4 text-center">
+                                    <p class="small text-muted mb-2">Or prefer to chat?</p>
+                                    <!-- Updated href with the pre-filled text parameter -->
+                                    <a href="https://wa.me/2348026016593?text=Hello%20ShelterTree%2C%20I%20am%20interested%20in%20a%20Technical%20Audit%20for%20a%20property%20purchase." target="_blank" class="text-success fw-bold text-decoration-none">
+                                        <i class="bi bi-whatsapp me-1"></i> Message us on WhatsApp
+                                    </a>
+                                </div>
+                            </form>
+                        </div>
                     </div>
                 </div>
             </div>

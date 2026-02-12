@@ -71,26 +71,26 @@
                 <!-- 2. The Confirmation Message -->
                 <h1 class="display-5 mb-3">{% trans "Request Received!" %}</h1>
                 <p class="lead text-muted mb-4">
-                    {% trans "Thank you for choosing certainty over risk. We have received your inspection details." %}
+                    {% trans "Thank you for choosing certainty over risk. We have received your audit request." %}
                 </p>
 
                 <!-- 3. The Expectations Setting -->
                 <div class="bg-light rounded-3 p-4 mb-4 text-start">
                     <h6 class="fw-bold text-dark mb-2"><i class="bi bi-clock-history me-2 text-primary"></i>{% trans "What happens next?" %}</h6>
                     <p class="small text-muted mb-0">
-                        {% trans "A ShelterTree Intelligence Officer will review your request and contact you within <strong>2 business hours</strong> to verify access details and send you a payment link." %}
+                        {% trans "A ShelterTree Inspector will review your submission and contact you within <strong>2 business hours</strong> to validate access protocols and finalize the audit schedule." %}
                     </p>
                 </div>
 
                 <!-- 4. The Action Buttons -->
                 <div class="d-grid gap-3">
                     <!-- Primary Return -->
-                    <a href="{% url 'reviews:home' %}" class="btn btn-primary btn-lg rounded-pill fw-bold">
+                    <a href="{% url 'reviews:home' %}" class="btn btn-primary rounded-pill fw-bold">
                         {% trans "Return to Homepage" %}
                     </a>
 
                     <!-- Secondary 'Urgent' Option -->
-                    <a href="https://wa.me/2348026016593?text=Hello%20ShelterTree%2C%20I%20just%20submitted%20a%20request%20via%20email%20and%20want%20to%20follow%20up." target="_blank" class="btn btn-whatsapp-outline btn-lg rounded-pill">
+                    <a href="https://wa.me/2348026016593?text=Hello%20ShelterTree%2C%20I%20just%20submitted%20a%20request%20via%20email%20and%20want%20to%20follow%20up." target="_blank" class="btn btn-whatsapp-outline rounded-pill">
                         <i class="bi bi-whatsapp me-2"></i> {% trans "I want a faster response" %}
                     </a>
                 </div>
