@@ -5,10 +5,11 @@
 # Secrets - These must NEVER be committed to version control.
 # Catches .env, .env.dev, .env.prod, etc. in any directory.
 **/.env*
-
+!.env.example
 # Local Databases
 db.sqlite3
 *.sqlite3
+
 
 # Python Artifacts
 __pycache__/
