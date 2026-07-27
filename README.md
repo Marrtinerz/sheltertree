@@ -121,7 +121,7 @@ The project is fully containerized for a frictionless development experience.
 
 ---
 
-## 🔒 Security Posture
+## Security
 * Absolute separation of configuration and code. No secrets are committed to version control.
 * Built-in Content Security Policy (CSP) headers to mitigate XSS.
 * Custom user authentication enforcing account email verification and robust lockout mechanisms against brute-force OTP guessing.
