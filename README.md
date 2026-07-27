@@ -88,7 +88,7 @@ The project is fully containerized for a frictionless development experience.
 
 1. **Clone the repository**
    ```bash
-   git clone https://github.com/yourusername/sheltertree.git
+   git clone https://github.com/Marrtinerz/sheltertree.git
    cd sheltertree
    ```
 
